@@ -26,6 +26,9 @@ export const dianeScenes: Scene[] = [
           { text: '"What are you working on?"', next: 'working' },
           { text: '"You don\'t look like a tourist."', next: 'tourist' },
         ],
+        choiceMode: 'topics',
+        endChoiceText: '[End conversation]',
+        convergeTo: 'diane_intro_close',
       },
       {
         id: 'intro',
@@ -55,6 +58,7 @@ export const dianeScenes: Scene[] = [
         text: 'She studies you.',
       },
       {
+        id: 'diane_intro_close',
         speaker: 'npc',
         text: "\"Diane. I'm in sales. What's your excuse for being here?\"",
       },

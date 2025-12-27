@@ -22,6 +22,8 @@ export const margeScenes: Scene[] = [
           { text: '"How long have you worked here?"', next: 'howlong' },
           { text: '"Something feels off about this place."', next: 'off' },
         ],
+        choiceMode: 'topics',
+        convergeTo: 'marge_intro_after',
       },
       {
         id: 'thanks',
@@ -39,6 +41,7 @@ export const margeScenes: Scene[] = [
         text: '"Off? Honey, the strangest thing here is Earl\'s taste in music. It\'s just a motel. Desert does funny things to people\'s heads, that\'s all."',
       },
       {
+        id: 'marge_intro_after',
         speaker: 'narration',
         text: 'She pours you a cup of coffee. It\'s burnt but strong.',
       },

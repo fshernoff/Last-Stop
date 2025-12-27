@@ -90,6 +90,9 @@ export interface DialogueLine {
   speaker: 'npc' | 'player' | 'narration'
   text: string
   choices?: DialogueChoice[]
+  convergeTo?: string // ID to continue after multi-branch choices
+  choiceMode?: 'single' | 'topics'
+  endChoiceText?: string
 }
 
 export interface Scene {

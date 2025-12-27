@@ -26,6 +26,8 @@ export const drifterScenes: Scene[] = [
           { text: '"You seem nervous."', next: 'nervous' },
           { text: '"What\'s your name?"', next: 'name' },
         ],
+        choiceMode: 'topics',
+        convergeTo: 'drifter_intro_after',
       },
       {
         id: 'motel',
@@ -43,6 +45,7 @@ export const drifterScenes: Scene[] = [
         text: "\"Just passing through. That's all you need to know.\"",
       },
       {
+        id: 'drifter_intro_after',
         speaker: 'narration',
         text: 'He looks past you, checking the door.',
       },

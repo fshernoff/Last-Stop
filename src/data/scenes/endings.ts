@@ -140,6 +140,7 @@ export const endingScenes: Scene[] = [
           { text: '"I know how to end this."', next: 'know_how' },
           { text: '"I\'m not ready to leave."', next: 'not_ready' },
         ],
+        convergeTo: 'ending_d_pattern',
       },
       {
         id: 'know_how',
@@ -164,6 +165,7 @@ export const endingScenes: Scene[] = [
         text: 'You both stand in silence.',
       },
       {
+        id: 'ending_d_pattern',
         speaker: 'npc',
         text: '"There\'s something about knowing everyone. Every conversation. Every pattern."',
       },
