@@ -1,0 +1,16 @@
+{
+  "name": "Last Stop",
+  "short_name": "Last Stop",
+  "description": "A time loop idle mystery game.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
