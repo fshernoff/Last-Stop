@@ -230,19 +230,6 @@ export const useGameStore = create<GameState & GameActions>()(
             (PERSISTENT_ITEMS as readonly string[]).includes(item)
           )
 
-          const nextFlags = [...state.flags]
-          if (state.currentLoop === 1) {
-            for (const flag of [
-              'knows_loop_exists',
-              'knows_memory_persists',
-              'knows_trust_decay',
-            ]) {
-              if (!nextFlags.includes(flag)) {
-                nextFlags.push(flag)
-              }
-            }
-          }
-
           return {
             currentLoop: state.currentLoop + 1,
             currentTime: 0,
@@ -251,7 +238,6 @@ export const useGameStore = create<GameState & GameActions>()(
               currentLocation: 'room_player',
             },
             trust: decayedTrust,
-            flags: nextFlags,
             scenesSeenThisLoop: [],
             inventory: persistentItems,
             activeObservations: [],

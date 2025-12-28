@@ -15,11 +15,60 @@ export interface InvestigationResult {
 }
 
 export const INVESTIGATIONS: InvestigationResult[] = [
-  // Player's room
+  // Player's room - Loop 2+ awakening (first realization something is wrong)
+  {
+    id: 'room_player_loop2_awakening',
+    location: 'room_player',
+    text: "Your room. The same room. The light through the blinds hits the wall at exactly the same angle as yesterday. The clock reads 6:00 AM. Didn't you just fall asleep? Your head is pounding, but not from tiredness - from something else. A feeling like you've forgotten something important.",
+    requiresFlags: ['explored_room_once'],
+    notFlags: ['noticed_loop_start'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['noticed_loop_start'],
+    },
+  },
+
+  // Player's room - Loop 3+ (player knows something is very wrong)
+  {
+    id: 'room_player_loop3_dread',
+    location: 'room_player',
+    text: "The same room. The same morning light. The same 6:00 AM. It's happening again. You remember yesterday - every moment of it - but was it really yesterday? Or was it the same day, playing out again?",
+    requiresFlags: ['noticed_loop_start', 'knows_memory_persists'],
+    notFlags: ['knows_loop_exists'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['knows_loop_exists'],
+    },
+  },
+
+  // Player's room - after knowing about loop
+  {
+    id: 'room_player_loop_aware',
+    location: 'room_player',
+    text: "6:00 AM. The loop has reset again. Everything is back to where it started - except you. You remember. You always remember.",
+    requiresFlags: ['knows_loop_exists'],
+    oncePer: 'loop',
+  },
+
+  // Player's room - first time (Loop 1 only)
   {
     id: 'room_player_look',
     location: 'room_player',
-    text: "Your room. Bed, TV, bathroom. The usual motel fare. A Bible in the nightstand drawer. You've seen it all before.",
+    text: "Your room. Bed, TV, bathroom. The usual motel fare. A Bible in the nightstand drawer. Nothing special.",
+    notFlags: ['explored_room_once'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['explored_room_once'],
+    },
+  },
+
+  // Player's room - Loop 1 repeat
+  {
+    id: 'room_player_repeat',
+    location: 'room_player',
+    text: "Your room. Nothing's changed since you left.",
+    requiresFlags: ['explored_room_once'],
+    notFlags: ['noticed_loop_start'],
     oncePer: 'loop',
   },
 
@@ -76,12 +125,12 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'office_ledger',
     location: 'office',
-    text: 'Earl\'s ledger is a maze of check-ins and check-outs. The same names repeat, loop after loop.',
+    text: "Earl's ledger is a maze of check-ins and check-outs. Some of the same names appear again and again. Regulars, maybe. Or people who never quite manage to leave.",
     requiresFlags: ['met_earl'],
     notFlags: ['read_ledger'],
     oncePer: 'ever',
     effects: {
-      setFlags: ['read_ledger', 'knows_loop_exists'],
+      setFlags: ['read_ledger'],
     },
   },
 
