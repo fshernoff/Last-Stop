@@ -97,6 +97,44 @@ export const dianeScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIER 1: White sedan contact
+  // ============================================================================
+  {
+    id: 'diane_tier1_sedan',
+    character: 'diane',
+    requirements: {
+      trust: 1,
+      flags: ['met_diane', 'observed_white_sedan'],
+      notFlags: ['diane_cover_blown'],
+    },
+    priority: 60,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You were outside when the white sedan pulled in."',
+        choices: [
+          { text: '"I saw it."', next: 'continue' },
+          { text: '"Just a random car."', next: 'continue' },
+        ],
+      },
+      {
+        id: 'continue',
+        speaker: 'npc',
+        text: '"It was a delivery. Case files. Sealed stuff."',
+      },
+      {
+        speaker: 'npc',
+        text: '"If anyone asks, you didn\'t see it."',
+      },
+    ],
+    effects: {
+      setFlags: ['knows_diane_files'],
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 1: Cover blown (requires observing her talk to Earl)
   // ============================================================================
   {
@@ -145,7 +183,7 @@ export const dianeScenes: Scene[] = [
       {
         id: 'how_many',
         speaker: 'npc',
-        text: '"Fifteen in the last forty years. All vanished within a few miles of this motel. No bodies. No evidence. Just gone."',
+        text: '"Fifteen in the last forty years. All vanished within a few miles of this motel. The first was in 1984. No bodies. No evidence. Just gone."',
       },
       {
         speaker: 'narration',
@@ -193,7 +231,7 @@ export const dianeScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"This one stands out. Thomas Earl. Died in a car accident forty-one years ago. Except..."',
+        text: '"This one stands out. Thomas Earl. Died in a car accident in 1984. Except..."',
         choices: [
           { text: '"Except what?"', next: 'except' },
           { text: '"That\'s Earl\'s son."', next: 'except' },
@@ -202,7 +240,11 @@ export const dianeScenes: Scene[] = [
       {
         id: 'except',
         speaker: 'npc',
-        text: "\"Except the accident report is sealed. And his employer was a government research facility that doesn't exist in any records.\"",
+        text: "\"Except the accident report is sealed. And his employer was a government research facility that doesn't exist in any records. The file mentions temporal field research.\"",
+      },
+      {
+        speaker: 'narration',
+        text: 'She taps a folder thick with redactions.',
       },
       {
         speaker: 'narration',

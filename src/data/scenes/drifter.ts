@@ -120,7 +120,7 @@ export const drifterScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"My father worked at a facility near here. Forty years ago. He died there."',
+        text: '"My father worked at a facility near here. In 1984. He died there."',
         choices: [
           { text: '"What kind of facility?"', next: 'facility' },
           { text: '"How did he die?"', next: 'facility' },
@@ -140,22 +140,23 @@ export const drifterScenes: Scene[] = [
         text: '"But I found his notes. He was working on something. Something about time."',
         choices: [
           { text: '"Temporal fields."', next: 'temporal' },
-          { text: '"Keep talking."', next: 'temporal' },
+          { text: '"Keep talking."', next: 'keep_talking' },
         ],
       },
       {
         id: 'temporal',
         speaker: 'npc',
         text: '"How do you know that term?"',
-        choices: [
-          { text: '"I\'ve learned things."', next: 'learned' },
-          { text: '"Does it matter?"', next: 'learned' },
-        ],
       },
       {
         id: 'learned',
         speaker: 'npc',
         text: "\"It matters because nobody's supposed to know that. Nobody.\"",
+      },
+      {
+        id: 'keep_talking',
+        speaker: 'npc',
+        text: '"He called them temporal fields. Government jargon. He wasn\'t supposed to write it down."',
       },
       {
         speaker: 'narration',
@@ -167,7 +168,7 @@ export const drifterScenes: Scene[] = [
       },
     ],
     effects: {
-      setFlags: ['drifter_told_father', 'knows_drifter_truth', 'knows_1984_incident'],
+      setFlags: ['drifter_told_father', 'knows_1984_incident'],
       advanceTime: 20,
     },
   },
@@ -241,7 +242,13 @@ export const drifterScenes: Scene[] = [
       },
     ],
     effects: {
-      setFlags: ['drifter_told_facility_location', 'has_facility_map', 'knows_drifter_identity', 'knows_facility_location'],
+      setFlags: [
+        'drifter_told_facility_location',
+        'has_facility_map',
+        'knows_drifter_identity',
+        'knows_drifter_truth',
+        'knows_facility_location',
+      ],
       giveItem: 'facility_map',
       advanceTime: 20,
     },

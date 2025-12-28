@@ -24,15 +24,15 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   // Earl
   { flag: 'met_earl', text: 'Met Earl, the motel owner', category: 'people', character: 'earl' },
   { flag: 'knows_earl_son', text: 'Earl had a son named Thomas', category: 'people', character: 'earl' },
-  { flag: 'knows_thomas_died', text: 'Thomas died in 1984', category: 'people', character: 'earl' },
+  { flag: 'knows_thomas_died', text: 'Thomas died in a car accident forty years ago', category: 'people', character: 'earl' },
   { flag: 'knows_earl_guilt', text: 'Earl blames himself for what happened', category: 'people', character: 'earl' },
-  { flag: 'knows_earl_built_device', text: 'Earl built the device to bring Thomas back', category: 'people', character: 'earl' },
+  { flag: 'knows_earl_built_device', text: 'Earl activated the device to bring Thomas back', category: 'people', character: 'earl' },
   { flag: 'has_master_key', text: 'Earl gave you the master key', category: 'people', character: 'earl' },
 
   // Marge
   { flag: 'met_marge', text: "Met Marge, Earl's sister", category: 'people', character: 'marge' },
   { flag: 'knows_marge_worried', text: 'Marge is worried about Earl', category: 'people', character: 'marge' },
-  { flag: 'knows_marge_knows', text: 'Marge suspects something supernatural', category: 'people', character: 'marge' },
+  { flag: 'knows_marge_knows', text: 'Marge knows you and Earl share a secret', category: 'people', character: 'marge' },
 
   // Karen Chen
   { flag: 'met_karen', text: 'Met Karen Chen, staying with her husband', category: 'people', character: 'karen' },
@@ -41,17 +41,17 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_karen_saw_something', text: 'Karen saw something strange in the desert', category: 'people', character: 'karen' },
 
   // David Chen
-  { flag: 'met_david', text: 'Met David Chen, a workaholic on vacation', category: 'people', character: 'david' },
-  { flag: 'knows_david_secret', text: 'David is hiding something from Karen', category: 'people', character: 'david' },
+  { flag: 'met_david', text: 'Met David Chen, another motel guest', category: 'people', character: 'david' },
+  { flag: 'knows_david_secret', text: 'David is hiding work trouble from Karen', category: 'people', character: 'david' },
 
   // Diane
-  { flag: 'met_diane', text: 'Met Diane Mercer, a journalist', category: 'people', character: 'diane' },
+  { flag: 'met_diane', text: 'Met Diane Mercer, who says she\'s in sales', category: 'people', character: 'diane' },
   { flag: 'knows_diane_investigating', text: 'Diane is investigating the 1984 incident', category: 'people', character: 'diane' },
-  { flag: 'knows_diane_files', text: 'Diane has classified documents', category: 'people', character: 'diane' },
+  { flag: 'knows_diane_files', text: 'Diane has sealed case files', category: 'people', character: 'diane' },
 
   // Mo
   { flag: 'met_mo', text: 'Met Big Mo, a long-haul trucker', category: 'people', character: 'mo' },
-  { flag: 'knows_mo_route', text: 'Mo drives the same route every week', category: 'people', character: 'mo' },
+  { flag: 'knows_mo_route', text: 'Mo drives this route twice a month', category: 'people', character: 'mo' },
   { flag: 'knows_mo_deja_vu', text: 'Mo feels like he\'s lived this day before', category: 'people', character: 'mo' },
 
   // Drifter
@@ -76,7 +76,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_1984_incident', text: 'Something happened here in 1984', category: 'mystery' },
   { flag: 'knows_government_involved', text: 'The government covered something up', category: 'mystery' },
   { flag: 'knows_device_purpose', text: 'The device manipulates time itself', category: 'mystery' },
-  { flag: 'knows_thomas_role', text: "Thomas was involved in the device's creation", category: 'mystery' },
+  { flag: 'knows_thomas_role', text: 'Thomas worked on temporal field research', category: 'mystery' },
   { flag: 'knows_facility_location', text: 'The facility lies beyond mile marker 7', category: 'mystery' },
   { flag: 'knows_missing_persons_pattern', text: 'Missing persons cluster around this motel', category: 'mystery' },
 ]

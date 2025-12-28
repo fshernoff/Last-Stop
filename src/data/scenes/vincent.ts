@@ -215,6 +215,48 @@ export const vincentScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIER 1: Patterns (loop 10+)
+  // ============================================================================
+  {
+    id: 'vincent_tier1_patterns',
+    character: 'vincent',
+    requirements: {
+      trust: 1,
+      flags: ['earl_told_about_vincent'],
+      loop: { min: 10 },
+      notFlags: ['vincent_opened_door'],
+    },
+    priority: 90,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You\'re still out there."',
+        choices: [
+          { text: '"So are you."', next: 'continue' },
+          { text: '"I\'m not quitting."', next: 'continue' },
+        ],
+      },
+      {
+        id: 'continue',
+        speaker: 'npc',
+        text: '"I mapped the day. The loop snaps at the edges."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Every time someone pushes past mile marker 20, they wake up back here."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Whatever\'s out there, it\'s the anchor. Everything bends around it."',
+      },
+    ],
+    effects: {
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
   // TIER 1: Door opens (after many loops)
   // ============================================================================
   {
@@ -360,12 +402,12 @@ export const vincentScenes: Scene[] = [
         speaker: 'npc',
         text: '"Thomas died in a car accident. But the research didn\'t. Someone took the device when the facility shut down."',
         choices: [
-          { text: '"Earl found it."', next: 'earl_found' },
-          { text: '"How do we turn it off?"', next: 'turn_off' },
+          { text: '"Earl found it."', next: 'device_story' },
+          { text: '"What happened next?"', next: 'device_story' },
         ],
       },
       {
-        id: 'earl_found',
+        id: 'device_story',
         speaker: 'npc',
         text: '"Earl found it. And when he touched it, all that grief, all that wanting... it activated."',
       },
@@ -382,7 +424,6 @@ export const vincentScenes: Scene[] = [
         text: '"How do we turn it off?"',
       },
       {
-        id: 'turn_off',
         speaker: 'npc',
         text: '"That\'s the thing. I figured it out. Months ago."',
       },

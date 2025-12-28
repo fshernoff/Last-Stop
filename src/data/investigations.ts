@@ -54,7 +54,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'office_look',
     location: 'office',
-    text: "Wood paneling. Tourist brochures for places that probably don't exist anymore. Earl's ledger sits on the desk. A door to the back room is always closed.",
+    text: "Wood paneling. Old photos line the walls. Tourist brochures for places that probably don't exist anymore. Earl's ledger sits on the desk. A door to the back room is always closed.",
     notFlags: ['earl_revealed'],
     oncePer: 'loop',
     effects: {
@@ -66,7 +66,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'office_look_revealed',
     location: 'office',
-    text: "The office looks different now that you know what's really going on. The back room door seems to pulse with faint light, if you stare long enough.",
+    text: "The office looks different now that you know what's really going on. The old photos seem to watch you. The back room door seems to pulse with faint light, if you stare long enough.",
     requiresFlags: ['earl_revealed'],
     oncePer: 'loop',
     effects: {
@@ -89,7 +89,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'diner_look',
     location: 'diner',
-    text: "Formica counters, vinyl booths, the smell of coffee that's been on the burner too long. Marge keeps it running like clockwork.",
+    text: "Formica counters, vinyl booths, the smell of coffee that's been on the burner too long. A faded sign says the diner has been here since the 1960s. Marge keeps it running like clockwork.",
     oncePer: 'loop',
     effects: {
       setFlags: ['explored_diner'],
@@ -128,7 +128,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'back_area_clipping',
     location: 'back_area',
-    text: 'Half-buried under trash, you find a yellowed newspaper clipping about a "mysterious incident" at a nearby facility.',
+    text: 'Half-buried under trash, you find a yellowed newspaper clipping about a "mysterious incident" at a nearby facility in 1984.',
     notFlags: ['found_newspaper_clipping'],
     oncePer: 'ever',
     effects: {
@@ -165,7 +165,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'back_room_look',
     location: 'back_room',
-    text: "Earl's private space. A cot, boxes of old belongings, photos on every wall. One face appears in almost all of them - a young man with Earl's eyes.",
+    text: "Earl's private space. A cot, boxes of old belongings, a workbench cluttered with tools under a dust sheet. Photos on every wall. One face appears in almost all of them - a young man with Earl's eyes.",
     notFlags: ['seen_device', 'investigated_back_room'],
     oncePer: 'ever',
     effects: {

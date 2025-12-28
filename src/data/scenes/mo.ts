@@ -159,6 +159,42 @@ export const moScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIER 1: Asking about the facility
+  // ============================================================================
+  {
+    id: 'mo_tier1_facility',
+    character: 'mo',
+    requirements: {
+      trust: 1,
+      flags: ['met_mo', 'observed_mo_asks_facility'],
+    },
+    priority: 55,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"I asked Marge about old research places in the area. You ever hear anything?"',
+        choices: [
+          { text: '"Just rumors."', next: 'continue' },
+          { text: '"Why ask?"', next: 'continue' },
+        ],
+      },
+      {
+        id: 'continue',
+        speaker: 'npc',
+        text: '"There\'s a dead spot on the highway. Mile marker 20. Everything goes fuzzy for a second."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Felt like the road folded back on itself. I can\'t shake that feeling."',
+      },
+    ],
+    effects: {
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 2: Remembers the loop
   // ============================================================================
   {

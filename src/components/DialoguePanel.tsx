@@ -176,7 +176,7 @@ export function DialoguePanel({ scene, onComplete, onCancel }: DialoguePanelProp
       // No choices, advance to next line
       advanceToNextLine()
     }
-  }, [hasChoices, showChoices, advanceToNextLine])
+  }, [hasChoices, showChoices, isTopicHub, advanceToNextLine])
 
   // Handle selecting a choice
   const handleChoice = useCallback(

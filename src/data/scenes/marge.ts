@@ -141,8 +141,9 @@ export const margeScenes: Scene[] = [
         text: '"You settling in okay? This place grows on you. Or it doesn\'t. One or the other."',
         choices: [
           { text: '"Tell me about the other guests."', next: 'guests' },
-          { text: '"I\'m just passing through."', next: 'passing' },
+          { text: '"I\'m just passing through."', next: 'marge_gossip_close' },
         ],
+        convergeTo: 'marge_gossip_close',
       },
       {
         id: 'guests',
@@ -161,9 +162,16 @@ export const margeScenes: Scene[] = [
         speaker: 'npc',
         text: '"And there\'s a nervous fella in 11. Don\'t know his name. He gives me the creeps, if I\'m honest."',
         choices: [
-          { text: '"What about Room 6?"', next: 'room6' },
+          {
+            text: '"What about Room 6?"',
+            next: 'room6',
+            effects: {
+              setFlags: ['marge_mentioned_room6', 'knows_room6_occupied', 'knows_vincent_exists'],
+            },
+          },
           { text: '"Thanks for the rundown."', next: 'thanks' },
         ],
+        convergeTo: 'marge_gossip_close',
       },
       {
         id: 'room6',
@@ -184,13 +192,12 @@ export const margeScenes: Scene[] = [
         text: '"Happy to help. I like knowing who\'s under my roof. Even if it\'s Earl\'s roof, technically."',
       },
       {
-        id: 'passing',
+        id: 'marge_gossip_close',
         speaker: 'narration',
         text: 'She winks and moves on to another customer.',
       },
     ],
     effects: {
-      setFlags: ['marge_mentioned_room6', 'knows_room6_occupied', 'knows_vincent_exists'],
       advanceTime: 20,
     },
   },
@@ -220,6 +227,10 @@ export const margeScenes: Scene[] = [
       {
         speaker: 'npc',
         text: '"He bought it after his boy died. Thomas. Car accident, out on the highway. Earl never really got over it."',
+      },
+      {
+        speaker: 'npc',
+        text: '"He blames himself for letting Thomas take that job in the first place. Says if he\'d kept him close, none of this would\'ve happened."',
       },
       {
         speaker: 'narration',
@@ -291,6 +302,7 @@ export const margeScenes: Scene[] = [
           { text: '"Maybe he\'s just getting older."', next: 'older' },
           { text: '"Something is wrong. I don\'t know what."', next: 'wrong' },
         ],
+        convergeTo: 'marge_worried_close',
       },
       {
         id: 'tired',
@@ -334,6 +346,11 @@ export const margeScenes: Scene[] = [
       {
         speaker: 'narration',
         text: 'You nod. She seems relieved just to have said it out loud.',
+      },
+      {
+        id: 'marge_worried_close',
+        speaker: 'narration',
+        text: 'She returns to her coffee, quieter than before.',
       },
     ],
     effects: {
@@ -380,6 +397,7 @@ export const margeScenes: Scene[] = [
           { text: '"I don\'t know yet."', next: 'dontknow' },
           { text: '"He\'s been through something I can\'t explain."', next: 'cantexplain' },
         ],
+        convergeTo: 'marge_confession_close',
       },
       {
         id: 'help',
@@ -428,6 +446,11 @@ export const margeScenes: Scene[] = [
         id: 'try',
         speaker: 'npc',
         text: '"That\'ll have to be good enough."',
+      },
+      {
+        id: 'marge_confession_close',
+        speaker: 'narration',
+        text: 'She pats your hand and turns back to the counter.',
       },
     ],
     effects: {

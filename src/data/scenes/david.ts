@@ -117,6 +117,7 @@ export const davidScenes: Scene[] = [
           { text: '"What if she really saw something?"', next: 'really_saw' },
           { text: '"You don\'t believe her."', next: 'dont_believe' },
         ],
+        convergeTo: 'david_concerns_after',
       },
       {
         id: 'really_saw',
@@ -124,29 +125,63 @@ export const davidScenes: Scene[] = [
         text: "\"Then I'd want to know what. But there's nothing out there. It's desert. Just desert.\"",
       },
       {
-        speaker: 'narration',
-        text: 'He sighs.',
-      },
-      {
-        speaker: 'npc',
-        text: "\"I don't know what to do. She keeps walking out there every afternoon, looking for something that isn't real.\"",
-      },
-      {
         id: 'dont_believe',
         speaker: 'npc',
         text: "\"I believe she thinks she saw something. There's a difference.\"",
       },
       {
+        id: 'david_concerns_after',
         speaker: 'narration',
         text: 'He sighs.',
       },
       {
         speaker: 'npc',
-        text: "\"I don't know what to do. She keeps walking out there every afternoon, looking for something that isn't real.\"",
+        text: "\"I don't know what to do. She keeps talking about heading out there this afternoon, looking for something that isn't real.\"",
       },
     ],
     effects: {
-      setFlags: ['david_expressed_concern', 'knows_david_secret'],
+      setFlags: ['david_expressed_concern'],
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
+  // TIER 1: Work secret
+  // ============================================================================
+  {
+    id: 'david_tier1_work_secret',
+    character: 'david',
+    requirements: {
+      trust: 1,
+      flags: ['met_david', 'david_expressed_concern'],
+    },
+    priority: 55,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You seem like you can keep a secret."',
+        choices: [
+          { text: '"Try me."', next: 'continue' },
+          { text: '"Depends."', next: 'continue' },
+        ],
+      },
+      {
+        id: 'continue',
+        speaker: 'npc',
+        text: '"I told Karen I was unplugging on this trip. I wasn\'t honest."',
+      },
+      {
+        speaker: 'npc',
+        text: '"My boss put me on a final warning. If I don\'t answer, I lose my job."',
+      },
+      {
+        speaker: 'npc',
+        text: '"So I keep checking my phone. She thinks I\'m just shutting her out."',
+      },
+    ],
+    effects: {
+      setFlags: ['knows_david_secret'],
       advanceTime: 15,
     },
   },
@@ -174,7 +209,7 @@ export const davidScenes: Scene[] = [
       },
       {
         speaker: 'player',
-        text: "\"An old research facility. I've seen the records. What Karen saw was real.\"",
+        text: "\"An old research facility. I've seen enough to know it's real. What Karen saw was real.\"",
       },
       {
         speaker: 'narration',

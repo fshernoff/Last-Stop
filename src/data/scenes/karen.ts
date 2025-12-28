@@ -26,6 +26,7 @@ export const karenScenes: Scene[] = [
           { text: '"Just being friendly."', next: 'friendly' },
           { text: '"You look like you\'ve got something on your mind."', next: 'mind' },
         ],
+        convergeTo: 'karen_intro_close',
       },
       {
         id: 'room',
@@ -37,10 +38,6 @@ export const karenScenes: Scene[] = [
         text: "She offers a polite smile that doesn't reach her eyes.",
       },
       {
-        speaker: 'npc',
-        text: "\"I'm Karen. This is... well, this is supposed to be my honeymoon road trip. Not exactly the Ritz.\"",
-      },
-      {
         id: 'friendly',
         speaker: 'npc',
         text: "\"Friendly's good. I could use friendly.\"",
@@ -48,10 +45,6 @@ export const karenScenes: Scene[] = [
       {
         speaker: 'narration',
         text: 'She glances toward Room 2.',
-      },
-      {
-        speaker: 'npc',
-        text: "\"I'm Karen.\"",
       },
       {
         id: 'mind',
@@ -63,8 +56,9 @@ export const karenScenes: Scene[] = [
         text: 'She laughs without humor.',
       },
       {
+        id: 'karen_intro_close',
         speaker: 'npc',
-        text: "\"I'm Karen. And yes. I do.\"",
+        text: "\"I'm Karen. This is... well, this is supposed to be my honeymoon road trip. Not exactly the Ritz.\"",
       },
     ],
     effects: {
@@ -134,6 +128,7 @@ export const karenScenes: Scene[] = [
           { text: '"Where?"', next: 'where' },
           { text: '"What did David think?"', next: 'david' },
         ],
+        convergeTo: 'karen_light_after',
       },
       {
         id: 'kind',
@@ -141,23 +136,9 @@ export const karenScenes: Scene[] = [
         text: "\"Not headlights. Not a plane. Something else. It was... wrong. Like it was there and not there at the same time.\"",
       },
       {
-        speaker: 'npc',
-        text: '"I marked the direction. I\'ve been walking toward it every afternoon."',
-        choices: [
-          { text: '"I believe you."', next: 'believe' },
-          { text: '"Do you know what it was?"', next: 'find' },
-          { text: '"Can you show me where?"', next: 'find' },
-        ],
-      },
-      {
         id: 'where',
         speaker: 'npc',
-        text: "\"Out past the highway. Maybe a mile? Two? I couldn't tell. But I marked the direction.\"",
-        choices: [
-          { text: '"I believe you."', next: 'believe' },
-          { text: '"Do you know what it was?"', next: 'find' },
-          { text: '"Can you show me where?"', next: 'find' },
-        ],
+        text: "\"Out past the highway. Maybe a mile? Two? I couldn't tell.\"",
       },
       {
         id: 'david',
@@ -171,6 +152,11 @@ export const karenScenes: Scene[] = [
       {
         speaker: 'npc',
         text: "\"I didn't imagine it.\"",
+      },
+      {
+        id: 'karen_light_after',
+        speaker: 'npc',
+        text: '"I marked the direction. This afternoon I\'m going to walk toward it."',
         choices: [
           { text: '"I believe you."', next: 'believe' },
           { text: '"Do you know what it was?"', next: 'find' },
@@ -185,7 +171,7 @@ export const karenScenes: Scene[] = [
       {
         id: 'find',
         speaker: 'npc',
-        text: "\"I don't know what it was. But I've been walking toward it. Every afternoon. Each day I go a little further.\"",
+        text: "\"I don't know what it was. But I'm not letting it go. Not until I know.\"",
       },
       {
         speaker: 'narration',
@@ -199,6 +185,42 @@ export const karenScenes: Scene[] = [
     effects: {
       setFlags: ['karen_mentioned_light', 'knows_karen_saw_something', 'knows_karen_desert'],
       advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // TIER 1: Marriage strain
+  // ============================================================================
+  {
+    id: 'karen_tier1_marriage',
+    character: 'karen',
+    requirements: {
+      trust: 1,
+      flags: ['karen_mentioned_light'],
+    },
+    priority: 55,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"Can I be honest? The light isn\'t the only thing bothering me."',
+        choices: [
+          { text: '"What is, then?"', next: 'continue' },
+          { text: '"You don\'t have to say."', next: 'continue' },
+        ],
+      },
+      {
+        id: 'continue',
+        speaker: 'npc',
+        text: '"This trip was supposed to fix things. David promised he\'d unplug. He hasn\'t."',
+      },
+      {
+        speaker: 'npc',
+        text: '"He keeps stepping outside to check his phone. It makes me feel like I\'m on this trip alone."',
+      },
+    ],
+    effects: {
+      advanceTime: 15,
     },
   },
 

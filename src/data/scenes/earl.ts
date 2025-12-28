@@ -26,15 +26,12 @@ export const earlScenes: Scene[] = [
           { text: '"I\'m staying here. Room 7."', next: 'staying' },
           { text: '"Quiet place."', next: 'quiet' },
         ],
+        convergeTo: 'earl_intro_close',
       },
       {
         id: 'looking',
         speaker: 'npc',
         text: '"Not much to look at. Twelve rooms, a diner, and a whole lot of desert."',
-      },
-      {
-        speaker: 'npc',
-        text: '"You need anything, I\'m here till ten."',
       },
       {
         id: 'staying',
@@ -50,10 +47,6 @@ export const earlScenes: Scene[] = [
         text: '"You look like you\'ve been here longer."',
       },
       {
-        speaker: 'npc',
-        text: '"You need anything, I\'m here till ten."',
-      },
-      {
         id: 'quiet',
         speaker: 'npc',
         text: '"That\'s what people come here for. Quiet. Some find it peaceful. Others find it..."',
@@ -61,6 +54,11 @@ export const earlScenes: Scene[] = [
       {
         speaker: 'narration',
         text: 'He trails off.',
+      },
+      {
+        id: 'earl_intro_close',
+        speaker: 'npc',
+        text: '"You need anything, I\'m here till ten."',
       },
       {
         speaker: 'npc',
@@ -158,6 +156,7 @@ export const earlScenes: Scene[] = [
           { text: '"Something about this place."', next: 'something' },
           { text: '"Aren\'t you always here too?"', next: 'always' },
         ],
+        convergeTo: 'earl_probing_close',
       },
       {
         id: 'car',
@@ -197,6 +196,11 @@ export const earlScenes: Scene[] = [
       {
         speaker: 'npc',
         text: '"Someone has to keep the lights on."',
+      },
+      {
+        id: 'earl_probing_close',
+        speaker: 'narration',
+        text: 'He returns to his ledger.',
       },
     ],
     effects: {
@@ -347,6 +351,7 @@ export const earlScenes: Scene[] = [
           { text: '"How is this possible?"', next: 'how' },
           { text: '"How do we stop it?"', next: 'stop' },
         ],
+        convergeTo: 'earl_reveal_after_questions',
       },
       {
         id: 'thousand',
@@ -354,25 +359,9 @@ export const earlScenes: Scene[] = [
         text: '"More. I stopped counting around day hundred. Didn\'t see the point."',
       },
       {
-        speaker: 'narration',
-        text: 'He sighs.',
-      },
-      {
-        speaker: 'npc',
-        text: '"But I\'ll tell you what I know."',
-      },
-      {
         id: 'how',
         speaker: 'npc',
         text: '"You want the short version or the long one?"',
-      },
-      {
-        speaker: 'narration',
-        text: 'He sighs.',
-      },
-      {
-        speaker: 'npc',
-        text: '"But I\'ll tell you what I know."',
       },
       {
         id: 'stop',
@@ -380,6 +369,7 @@ export const earlScenes: Scene[] = [
         text: '"If I knew that, do you think we\'d still be here?"',
       },
       {
+        id: 'earl_reveal_after_questions',
         speaker: 'narration',
         text: 'He sighs.',
       },
