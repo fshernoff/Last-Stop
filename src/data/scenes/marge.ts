@@ -2,6 +2,77 @@ import type { Scene } from '../../types'
 
 export const margeScenes: Scene[] = [
   // ============================================================================
+  // LOOP 2+: First contact after reset - she doesn't remember you
+  // ============================================================================
+  {
+    id: 'marge_loop2_no_memory',
+    character: 'marge',
+    requirements: {
+      trust: 0,
+      flags: ['met_marge', 'noticed_loop_start'],
+      notFlags: ['knows_memory_persists'],
+    },
+    priority: 150,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"Well, look who\'s up! Coffee\'s fresh. You look like you could use about three cups."',
+      },
+      {
+        speaker: 'narration',
+        text: "The exact same words. The exact same tone. You've heard this before. Yesterday. You're certain of it.",
+      },
+      {
+        speaker: 'player',
+        text: '"Marge, we talked yesterday. Don\'t you remember?"',
+      },
+      {
+        speaker: 'npc',
+        text: '"Yesterday?"',
+      },
+      {
+        speaker: 'narration',
+        text: "She looks at you the way you'd look at a stranger claiming to know you. Polite confusion. No recognition whatsoever.",
+      },
+      {
+        speaker: 'npc',
+        text: '"Honey, I think I\'d remember. You just checked in last night. This is the first time we\'ve spoken."',
+      },
+      {
+        speaker: 'narration',
+        text: "She's not lying. She genuinely doesn't remember. But you do. Every word, every gesture from yesterday is crystal clear in your mind.",
+      },
+      {
+        speaker: 'npc',
+        text: '"You feeling alright? Desert sun can do strange things to people."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She pours you a cup of coffee with the exact same motion as before. The coffee tastes exactly the same. Burnt. Strong. Familiar.',
+        choices: [
+          { text: '"I\'m fine. Sorry, must be tired."', next: 'dismiss' },
+          { text: '[Say nothing - you need to think]', next: 'silent' },
+        ],
+      },
+      {
+        id: 'dismiss',
+        speaker: 'npc',
+        text: '"Get some rest. And drink that coffee. It\'ll wake you right up."',
+      },
+      {
+        id: 'silent',
+        speaker: 'npc',
+        text: '"Strong, silent type. I get it. Just holler if you need anything."',
+      },
+    ],
+    effects: {
+      setFlags: ['knows_memory_persists'],
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 0: First meeting
   // ============================================================================
   {

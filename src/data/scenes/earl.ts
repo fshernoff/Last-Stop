@@ -2,6 +2,93 @@ import type { Scene } from '../../types'
 
 export const earlScenes: Scene[] = [
   // ============================================================================
+  // LOOP 2+: Trust decay realization - Earl has forgotten the closeness
+  // ============================================================================
+  {
+    id: 'earl_trust_decay_realization',
+    character: 'earl',
+    requirements: {
+      trust: 1,
+      flags: ['earl_revealed', 'knows_memory_persists'],
+      notFlags: ['knows_trust_decay'],
+    },
+    priority: 120,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'player',
+        text: '"Earl, it\'s me. We talked about Thomas. The device. Everything."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks at you carefully. Not with recognition - with suspicion.',
+      },
+      {
+        speaker: 'npc',
+        text: '"How do you know about Thomas?"',
+      },
+      {
+        speaker: 'narration',
+        text: "There's no warmth in his voice. No trust. Yesterday you were confidants. Today you're a stranger who knows too much.",
+      },
+      {
+        speaker: 'player',
+        text: '"You told me. Yesterday. In the back room."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I don\'t know what kind of game you\'re playing, but I never-"',
+      },
+      {
+        speaker: 'narration',
+        text: 'He stops. Something flickers in his eyes.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Wait. You remember. From before the reset."',
+      },
+      {
+        speaker: 'narration',
+        text: "It's not a question. He's figured it out - but his guard is still up. The trust you built is gone. You'll have to rebuild it, loop after loop.",
+        choices: [
+          { text: '"Does this happen every time?"', next: 'every_time' },
+          { text: '"You don\'t trust me anymore."', next: 'no_trust' },
+        ],
+      },
+      {
+        id: 'every_time',
+        speaker: 'npc',
+        text: '"Every time. The loop takes everything. Memories. Feelings. Trust."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He sighs heavily.',
+      },
+      {
+        speaker: 'npc',
+        text: '"For me, it\'s like meeting you for the first time. Every morning."',
+      },
+      {
+        id: 'no_trust',
+        speaker: 'npc',
+        text: '"I don\'t know you. Not today. Whatever we had yesterday - that was yesterday\'s Earl."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He studies you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You want my trust? You\'ll have to earn it again."',
+      },
+    ],
+    effects: {
+      setFlags: ['knows_trust_decay', 'knows_earl_remembers'],
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
   // TIER 0: First meeting
   // ============================================================================
   {
