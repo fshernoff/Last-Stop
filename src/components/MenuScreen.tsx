@@ -1,23 +1,17 @@
 import { useState } from 'react'
 import { useGameStore } from '../store/gameStore'
+import { getBeatDefinition } from '../story/chapters'
+import { getChapterNumber } from '../story/schema'
 
 export function MenuScreen() {
-  const { resetGame, currentLoop, totalPlayTime, insightPoints } = useGameStore()
+  const { resetGame, storyBeatId, insightPoints } = useGameStore()
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const beatDefinition = getBeatDefinition(storyBeatId as never)
+  const chapterNumber = getChapterNumber(beatDefinition.chapterId)
 
   const handleReset = () => {
     resetGame()
     setShowResetConfirm(false)
-  }
-
-  // Format play time
-  const formatPlayTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    if (hours > 0) {
-      return `${hours}h ${mins}m`
-    }
-    return `${mins}m`
   }
 
   return (
@@ -59,15 +53,15 @@ export function MenuScreen() {
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-sm">
             <span className="text-slate-400">Current Chapter</span>
-            <span className="text-slate-100">{currentLoop}</span>
+            <span className="text-slate-100">{chapterNumber}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">Current Beat</span>
+            <span className="text-slate-100">{beatDefinition.title}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-slate-400">Insight Points</span>
             <span className="text-slate-100">{insightPoints}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Total Play Time</span>
-            <span className="text-slate-100">{formatPlayTime(totalPlayTime)}</span>
           </div>
         </div>
 
@@ -89,11 +83,15 @@ export function MenuScreen() {
         <div className="text-sm text-slate-300 space-y-3 leading-relaxed">
           <p>
             <strong className="text-amber-400">Last Stop</strong> is a time-shift mystery.
-            You're caught in a day that keeps rewinding at a roadside motel in the desert.
+            You're unraveling a story at a roadside motel in the desert.
           </p>
           <p>
             Talk to the other guests. Explore. Watch. Learn their secrets.
-            Figure out why the day keeps resetting—and how to break free.
+            Move forward through chapters and uncover what Earl is hiding.
+          </p>
+          <p>
+            The place is haunted by a repeating day from months ago. You move forward,
+            but the echoes are everywhere.
           </p>
           <p className="text-slate-500 text-xs">
             Your progress is automatically saved to your browser.
@@ -123,10 +121,6 @@ export function MenuScreen() {
             <span className="text-amber-400 font-semibold w-16">Known</span>
             <span>Review what you've discovered about people and places</span>
           </div>
-          <div className="flex gap-2">
-            <span className="text-amber-400 font-semibold w-16">Observe</span>
-            <span>Set up observations to watch while you're away</span>
-          </div>
         </div>
       </div>
 
@@ -136,12 +130,10 @@ export function MenuScreen() {
           Tips
         </h3>
         <ul className="text-xs text-slate-400 space-y-2 list-disc list-inside">
-          <li>Each action takes time. Plan your day carefully.</li>
+          <li>Each beat unlocks the next step of the story.</li>
           <li>Building trust with characters unlocks new conversations.</li>
-          <li>Deep trust (level 2) can soften after each reset.</li>
-          <li>Some items persist across resets. Most don't.</li>
-          <li>Pay attention to where people are at different times.</li>
-          <li>The day always ends at midnight.</li>
+          <li>Some locations and options change by beat.</li>
+          <li>Use the map to move quickly between key locations.</li>
           <li>Spend Insight in the Known tab to reveal hints.</li>
         </ul>
       </div>

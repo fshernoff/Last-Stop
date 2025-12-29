@@ -48,7 +48,7 @@ export interface Location {
 export interface ScheduleEntry {
   startTime: number // Minutes since 6AM (0-1080)
   endTime: number
-  location: LocationId | 'gone' | 'erratic'
+  location: LocationId | 'gone'
 }
 
 export interface Character {
@@ -66,6 +66,7 @@ export interface SceneRequirements {
   trust?: TrustTier
   flags?: string[]
   notFlags?: string[]
+  beat?: string | string[]
   chapter?: { min?: number; max?: number }
 }
 
@@ -73,11 +74,12 @@ export interface SceneEffects {
   setFlags?: string[]
   clearFlags?: string[]
   setTrust?: { character: CharacterId; tier: TrustTier }
-  addRapport?: { character: CharacterId; amount: number }
-  giveItem?: string
-  unlockLocation?: LocationId
+  // Legacy fields kept for transitional content; ignored by beat-gated runtime.
   advanceTime?: number
   advanceChapter?: number
+  giveItem?: string
+  unlockLocation?: LocationId
+  advanceBeat?: string
 }
 
 export interface DialogueChoice {
@@ -101,26 +103,9 @@ export interface Scene {
   character: CharacterId
   requirements: SceneRequirements
   priority: number // 0-100, higher = chosen first
-  oncePer: 'ever' | 'loop' | 'none'
+  oncePer: 'ever' | 'loop' | 'chapter' | 'beat' | 'none'
   lines: DialogueLine[]
   effects: SceneEffects
-}
-
-// ============================================================================
-// OBSERVATION SYSTEM
-// ============================================================================
-
-export interface Observation {
-  location: LocationId
-  startTime: number
-  endTime: number
-}
-
-export interface ObservationEntry {
-  time: number
-  location: LocationId
-  text: string
-  setsFlag?: string
 }
 
 // ============================================================================
@@ -134,12 +119,11 @@ export interface PlayerState {
 
 export interface GameState {
   // Meta
-  currentLoop: number // Chapter index (pseudo-loop progression)
+  storyBeatId: string
+  beatHistory: string[]
+  lastBeatTransition: { from: string; to: string; reason: string; at: number } | null
   totalPlayTime: number
-  lastPlayedAt: number | null // Timestamp for idle calculations
-
-  // Time
-  currentTime: number // Minutes since 6AM (0-1080)
+  timeOfDay: 'morning' | 'afternoon' | 'evening' | 'night'
 
   // Player
   player: PlayerState
@@ -153,14 +137,10 @@ export interface GameState {
 
   // Scenes seen
   scenesSeenEver: string[]
-  scenesSeenThisLoop: string[]
+  scenesSeenThisChapter: string[]
 
   // Items
   inventory: string[]
-
-  // Observations
-  activeObservations: Observation[]
-  observationLog: ObservationEntry[]
 
   // Insights
   insightPoints: number
@@ -177,9 +157,6 @@ export interface GameState {
 // ============================================================================
 
 export interface GameActions {
-  // Time
-  advanceTime: (minutes: number) => void
-
   // Location
   moveTo: (location: LocationId) => void
 
@@ -202,18 +179,8 @@ export interface GameActions {
   removeItem: (item: string) => void
   hasItem: (item: string) => boolean
 
-  // Day/Chapter management
-  resetDay: () => void
-  advanceChapter: (chapter?: number) => void
-
-  // Observations
-  setObservations: (observations: Observation[]) => void
-  addObservationEntry: (entry: ObservationEntry) => void
-  clearObservationLog: () => void
-  startObservation: (location: LocationId, startTime?: number, endTime?: number) => void
-  stopObservation: (location: LocationId) => void
-  updateLastPlayedAt: () => void
-  setLastPlayedAt: (timestamp: number | null) => void
+  // Story progression
+  advanceBeat: (nextBeatId: string, reason?: string) => void
 
   // Insights
   addInsight: (points: number) => void
@@ -225,13 +192,3 @@ export interface GameActions {
   acknowledgeEnding: () => void
   setEndingAcknowledged: (value: boolean) => void
 }
-
-// Items that persist across day resets
-export const PERSISTENT_ITEMS = [
-  'master_key',
-  'thomas_journal',
-  'facility_map',
-  'facility_keycard',
-] as const
-
-export type PersistentItem = typeof PERSISTENT_ITEMS[number]

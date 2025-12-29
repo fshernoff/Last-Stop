@@ -22,17 +22,9 @@ function mergeEffects(base: SceneEffects, incoming?: SceneEffects): SceneEffects
     setFlags: [...new Set([...(base.setFlags || []), ...(incoming.setFlags || [])])],
     clearFlags: [...new Set([...(base.clearFlags || []), ...(incoming.clearFlags || [])])],
     setTrust: incoming.setTrust || base.setTrust,
-    addRapport: incoming.addRapport || base.addRapport,
     giveItem: incoming.giveItem || base.giveItem,
     unlockLocation: incoming.unlockLocation || base.unlockLocation,
-    advanceTime:
-      base.advanceTime || incoming.advanceTime
-        ? (base.advanceTime || 0) + (incoming.advanceTime || 0)
-        : undefined,
-    advanceChapter:
-      incoming.advanceChapter !== undefined || base.advanceChapter !== undefined
-        ? Math.max(base.advanceChapter || 0, incoming.advanceChapter || 0)
-        : undefined,
+    advanceBeat: incoming.advanceBeat || base.advanceBeat,
   }
 }
 
@@ -62,6 +54,7 @@ export function DialoguePanel({ scene, onComplete, onCancel }: DialoguePanelProp
   const isTopicHub = choiceMode === 'topics'
   const character = CHARACTERS[scene.character]
   const trustDots = ['○○○', '●○○', '●●○'][trust[scene.character]]
+  const isLastLine = currentLineIndex >= lines.length - 1
 
   // Check if current line has choices
   const hasChoices = useMemo(() => {
@@ -387,7 +380,7 @@ export function DialoguePanel({ scene, onComplete, onCancel }: DialoguePanelProp
             onClick={handleContinue}
             className="w-full py-3 bg-amber-600 hover:bg-amber-500 rounded font-semibold transition-colors text-white"
           >
-            {hasChoices ? 'Choose Response' : 'Continue'}
+            {hasChoices ? 'Choose Response' : isLastLine ? 'End Conversation' : 'Continue'}
           </button>
         )}
       </main>

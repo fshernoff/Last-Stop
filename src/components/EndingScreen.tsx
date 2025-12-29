@@ -8,12 +8,12 @@ const ENDING_CONTENT: Record<EndingScreenProps['endingId'], { title: string; sum
   ending_a: {
     title: 'Ending A: Release',
     summary:
-      'Earl lets go. The cycle breaks. Morning comes for the first time in months.',
+      'Earl lets go. A new morning finally arrives.',
   },
   ending_d: {
     title: 'Ending D: Stay',
     summary:
-      'You choose the reset. The day rewinds, but now it feels like a choice.',
+      'You decide to stay at the motel, at least for now.',
   },
 }
 
@@ -26,7 +26,7 @@ export function EndingScreen({ endingId, onContinue, onReset }: EndingScreenProp
         <h2 className="text-2xl font-bold text-amber-400">{content.title}</h2>
         <p className="text-slate-300 text-sm leading-relaxed">{content.summary}</p>
         <p className="text-slate-500 text-xs">
-          You can keep exploring for other endings, or reset to start fresh.
+          You can keep exploring or start a new game.
         </p>
         <div className="flex gap-3">
           <button

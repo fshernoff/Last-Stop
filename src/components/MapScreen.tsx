@@ -1,9 +1,8 @@
 import { useGameStore } from '../store/gameStore'
 import { LOCATIONS, canEnterLocation } from '../data/locations'
-import { CHARACTERS, getCharacterLocation, getDrifterLocation } from '../data/characters'
+import { CHARACTERS, getCharacterLocation } from '../data/characters'
+import { timeOfDayToMinutes } from '../story/timeOfDay'
 import type { LocationId, CharacterId } from '../types'
-
-const TIME_COST_MOVE = 15
 
 // Map layout positions (x, y coordinates for visual placement)
 const MAP_LAYOUT: Record<LocationId, { x: number; y: number; label: string }> = {
@@ -35,21 +34,17 @@ const NPC_CODES: Record<CharacterId, string> = {
 }
 
 export function MapScreen() {
-  const { player, currentTime, currentLoop, flags, advanceTime, moveTo } = useGameStore()
+  const { player, timeOfDay, flags, moveTo } = useGameStore()
   const currentLocation = player.currentLocation
+  const timeMarker = timeOfDayToMinutes(timeOfDay)
 
   // Get NPC positions
   const getNPCsAtLocation = (locationId: LocationId): CharacterId[] => {
     const npcs: CharacterId[] = []
     for (const [id] of Object.entries(CHARACTERS)) {
       const charId = id as CharacterId
-      if (charId === 'drifter') {
-        const drifterLoc = getDrifterLocation(currentLoop, currentTime)
-        if (drifterLoc === locationId) npcs.push(charId)
-      } else {
-        const loc = getCharacterLocation(charId, currentTime)
-        if (loc === locationId) npcs.push(charId)
-      }
+      const loc = getCharacterLocation(charId, timeMarker)
+      if (loc === locationId) npcs.push(charId)
     }
     return npcs
   }
@@ -72,7 +67,6 @@ export function MapScreen() {
     if (!canEnterLocation(locationId, flags)) return
 
     moveTo(locationId)
-    advanceTime(TIME_COST_MOVE)
   }
 
   // Render a location cell
@@ -192,7 +186,7 @@ export function MapScreen() {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-slate-400">Tap</span>
-            <span>to move ({TIME_COST_MOVE}min)</span>
+            <span>to move</span>
           </div>
         </div>
         <div className="mt-3 pt-3 border-t border-slate-700 text-xs text-slate-500">

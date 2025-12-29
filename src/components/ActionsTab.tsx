@@ -1,94 +1,70 @@
 import { useCallback, useState } from 'react'
 import { useGameStore } from '../store/gameStore'
 import { LOCATIONS, getAdjacentLocations, canEnterLocation } from '../data/locations'
-import { CHARACTERS, getCharactersAtLocation, getDrifterLocation } from '../data/characters'
+import { CHARACTERS, getCharactersAtLocation } from '../data/characters'
 import { getTimePeriod } from '../utils/time'
 import { selectScene } from '../utils/scenes'
-import { getInvestigationResult } from '../data/investigations'
 import { DialoguePanel } from './DialoguePanel'
+import { getInvestigationResult } from '../data/investigations'
+import { timeOfDayToMinutes } from '../story/timeOfDay'
+import { getChapterEntryBeat } from '../story/chapters'
 import type { LocationId, Character, Scene, CharacterId, SceneEffects } from '../types'
-
-const TIME_COSTS = {
-  move: 15,
-  investigate: 15,
-  wait: 30,
-} as const
 
 export function ActionsTab() {
   const {
-    currentLoop,
-    currentTime,
+    storyBeatId,
+    timeOfDay,
     player,
     flags,
     trust,
     scenesSeenEver,
-    scenesSeenThisLoop,
-    advanceTime,
+    scenesSeenThisChapter,
     moveTo,
     setFlag,
     clearFlag,
     setTrust,
     incrementRapport,
     addItem,
-    addInsight,
     setEndingAcknowledged,
     markSceneSeen,
-    advanceChapter,
+    advanceBeat,
   } = useGameStore()
-
-  const [investigationMessage, setInvestigationMessage] = useState<string | null>(null)
 
   const [activeScene, setActiveScene] = useState<Scene | null>(null)
   const [noSceneMessage, setNoSceneMessage] = useState<string | null>(null)
+  const [investigationMessage, setInvestigationMessage] = useState<string | null>(null)
 
   const currentLocation = LOCATIONS[player.currentLocation]
   const adjacentLocations = getAdjacentLocations(player.currentLocation)
 
   // Get NPCs at current location
   const getNPCsHere = useCallback((): Character[] => {
-    const npcs = getCharactersAtLocation(player.currentLocation, currentTime)
+    const timeMarker = timeOfDayToMinutes(timeOfDay)
+    return getCharactersAtLocation(player.currentLocation, timeMarker)
+  }, [player.currentLocation, timeOfDay])
 
-    // Handle drifter specially
-    const drifterLocation = getDrifterLocation(currentLoop, currentTime)
-    if (drifterLocation === player.currentLocation) {
-      const drifterChar = npcs.find((c) => c.id === 'drifter')
-      if (!drifterChar) {
-        return [...npcs, CHARACTERS.drifter]
-      }
+  const npcsHere = (() => {
+    const npcs = getNPCsHere()
+    if (storyBeatId === 'ch1_b1_wake') {
+      return npcs.filter((npc) => npc.id === 'earl')
     }
-
-    return npcs.filter((c) => {
-      if (c.id === 'drifter') {
-        return drifterLocation === player.currentLocation
-      }
-      return true
-    })
-  }, [player.currentLocation, currentTime, currentLoop])
-
-  const npcsHere = getNPCsHere()
+    if (storyBeatId === 'ch1_b2_meet_staff') {
+      return npcs.filter((npc) => npc.id === 'marge')
+    }
+    return npcs
+  })()
 
   // Handle movement
   const handleMove = (locationId: LocationId) => {
     if (!canEnterLocation(locationId, flags)) return
     moveTo(locationId)
-    advanceTime(TIME_COSTS.move)
   }
 
-  // Handle wait action
-  const handleWait = (minutes: number) => {
-    advanceTime(minutes)
-  }
-
-  // Handle investigate
   const handleInvestigate = () => {
-    advanceTime(TIME_COSTS.investigate)
-
-    // Combine ever and this-loop seen for investigation check
-    const investigationsSeen = [...scenesSeenEver, ...scenesSeenThisLoop]
+    const investigationsSeen = [...scenesSeenEver, ...scenesSeenThisChapter]
     const result = getInvestigationResult(player.currentLocation, flags, investigationsSeen)
 
     if (result) {
-      // Apply effects
       if (result.effects?.setFlags) {
         for (const flag of result.effects.setFlags) {
           setFlag(flag)
@@ -100,16 +76,17 @@ export function ActionsTab() {
       if (result.effects?.setTrust) {
         setTrust(result.effects.setTrust.character, result.effects.setTrust.tier)
       }
+      if (result.effects?.advanceBeat) {
+        advanceBeat(result.effects.advanceBeat, result.id)
+      }
       if (result.effects?.advanceChapter) {
-        advanceChapter(result.effects.advanceChapter)
+        const nextBeat = getChapterEntryBeat(result.effects.advanceChapter)
+        advanceBeat(nextBeat, `${result.id}:advanceChapter`)
       }
 
-      // Mark investigation as seen
-      markSceneSeen(result.id, result.oncePer)
-
-      // Show the investigation text
+      markSceneSeen(result.id, result.oncePer === 'chapter' ? 'chapter' : result.oncePer)
       setInvestigationMessage(result.text)
-      setTimeout(() => setInvestigationMessage(null), 5000)
+      setTimeout(() => setInvestigationMessage(null), 4000)
     } else {
       setInvestigationMessage("You don't notice anything new.")
       setTimeout(() => setInvestigationMessage(null), 2000)
@@ -120,11 +97,11 @@ export function ActionsTab() {
   const handleTalk = useCallback(
     (characterId: CharacterId) => {
       const gameState = {
-        currentLoop,
+        storyBeatId,
         flags,
         trust,
         scenesSeenEver,
-        scenesSeenThisLoop,
+        scenesSeenThisChapter,
       }
 
       const scene = selectScene(characterId, gameState)
@@ -134,11 +111,11 @@ export function ActionsTab() {
         setNoSceneMessage(null)
       } else {
         const character = CHARACTERS[characterId]
-        setNoSceneMessage(`${character.name} has nothing new to say right now.`)
+        setNoSceneMessage(`${character.name} has nothing new to say. Check your objective or look around.`)
         setTimeout(() => setNoSceneMessage(null), 2000)
       }
     },
-    [currentLoop, flags, trust, scenesSeenEver, scenesSeenThisLoop]
+    [storyBeatId, flags, trust, scenesSeenEver, scenesSeenThisChapter]
   )
 
   // Apply scene effects
@@ -165,26 +142,22 @@ export function ActionsTab() {
         setTrust(effects.setTrust.character, effects.setTrust.tier)
       }
 
-      if (effects.addRapport) {
-        incrementRapport(effects.addRapport.character, effects.addRapport.amount)
-      }
-
       if (effects.giveItem) {
         addItem(effects.giveItem)
       }
 
-      if (effects.advanceTime) {
-        advanceTime(effects.advanceTime)
-      }
-
       incrementRapport(activeScene.character)
       markSceneSeen(activeScene.id, activeScene.oncePer)
+      if (effects.advanceBeat) {
+        advanceBeat(effects.advanceBeat, activeScene.id)
+      }
       if (effects.advanceChapter) {
-        advanceChapter(effects.advanceChapter)
+        const nextBeat = getChapterEntryBeat(effects.advanceChapter)
+        advanceBeat(nextBeat, `${activeScene.id}:advanceChapter`)
       }
       setActiveScene(null)
     },
-    [activeScene, setFlag, clearFlag, setTrust, incrementRapport, addItem, advanceTime, setEndingAcknowledged, markSceneSeen, advanceChapter]
+    [activeScene, setFlag, clearFlag, setTrust, incrementRapport, addItem, setEndingAcknowledged, markSceneSeen, advanceBeat]
   )
 
   const handleDialogueCancel = useCallback(() => {
@@ -193,7 +166,7 @@ export function ActionsTab() {
 
   // Get time-appropriate atmosphere
   const getAtmosphere = () => {
-    const period = getTimePeriod(currentTime)
+    const period = getTimePeriod(timeOfDay)
     switch (period) {
       case 'morning':
         return 'The morning sun casts long shadows across the motel.'
@@ -203,6 +176,34 @@ export function ActionsTab() {
         return 'The sky burns orange as the sun descends toward the desert horizon.'
       case 'night':
         return 'Stars emerge overhead. The neon signs hum louder in the darkness.'
+    }
+  }
+
+  const canStakeOutOffice = storyBeatId === 'ch1_b3_stakeout' && player.currentLocation === 'office'
+  const showStakeoutAction = storyBeatId === 'ch1_b3_stakeout'
+
+  const getObjective = () => {
+    switch (storyBeatId) {
+      case 'ch1_b1_wake':
+        return 'Go to the office and meet Earl.'
+      case 'ch1_b2_meet_staff':
+        return 'Stop by the diner and meet Marge.'
+      case 'ch1_b3_stakeout':
+        return flags.includes('marge_hint_back_room')
+          ? 'Marge mentioned Earl locking up late. Stake out the office.'
+          : 'Stake out the office.'
+      case 'ch1_b4_confront':
+        return 'Confront Earl in the office.'
+      case 'ch2_b1_aftermath':
+        return 'Keep talking to Earl. He is hiding something.'
+      case 'ch3_b1_reveal':
+        return 'Follow Earl’s lead and learn what’s in the back room.'
+      case 'ch4_b1_journal':
+        return 'Search the back room for Thomas’s journal.'
+      case 'ch5_b1_endgame':
+        return 'Return to Earl and decide how this ends.'
+      default:
+        return 'Continue the story.'
     }
   }
 
@@ -227,6 +228,20 @@ export function ActionsTab() {
         <p className="text-slate-500 text-xs italic">
           {getAtmosphere()}
         </p>
+      </div>
+
+      {/* Objective */}
+      <div className="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+        <h3 className="text-sm font-semibold mb-2 text-slate-400 uppercase tracking-wide">
+          Current Objective
+        </h3>
+        <p className="text-sm text-slate-200">{getObjective()}</p>
+        {(showStakeoutAction && !canStakeOutOffice) ||
+        (storyBeatId === 'ch1_b1_wake' && player.currentLocation !== 'office') ? (
+          <p className="text-xs text-slate-500 mt-2">
+            The office is past the courtyard.
+          </p>
+        ) : null}
       </div>
 
       {/* NPCs Present */}
@@ -264,32 +279,27 @@ export function ActionsTab() {
             className="w-full text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded transition-colors"
           >
             Look around
-            <span className="float-right text-slate-500">{TIME_COSTS.investigate} min</span>
+            <span className="float-right text-slate-500">Inspect</span>
           </button>
-          <button
-            onClick={() => handleWait(30)}
-            className="w-full text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded transition-colors"
-          >
-            Wait...
-            <span className="float-right text-slate-500">30 min</span>
-          </button>
-          <button
-            onClick={() => handleWait(60)}
-            className="w-full text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded transition-colors"
-          >
-            Wait longer...
-            <span className="float-right text-slate-500">60 min</span>
-          </button>
-          <button
-            onClick={() => {
-              advanceTime(60)
-              addInsight(1)
-            }}
-            className="w-full text-left px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded transition-colors"
-          >
-            Rest and reflect
-            <span className="float-right text-slate-500">+1 insight · 60 min</span>
-          </button>
+          {showStakeoutAction && (
+            <button
+              onClick={() => {
+                setFlag('observed_earl_anomaly')
+                advanceBeat('ch1_b4_confront', 'stakeout')
+              }}
+              disabled={!canStakeOutOffice}
+              className={`w-full text-left px-3 py-2 rounded transition-colors ${
+                canStakeOutOffice
+                  ? 'bg-slate-700 hover:bg-slate-600'
+                  : 'bg-slate-800 text-slate-600 cursor-not-allowed'
+              }`}
+            >
+              Stake out the office
+              <span className="float-right text-slate-500">
+                {canStakeOutOffice ? 'Begin' : 'Go to Office'}
+              </span>
+            </button>
+          )}
         </div>
         {investigationMessage && (
           <div className="mt-3 p-3 bg-slate-900 rounded border border-slate-600">
@@ -319,7 +329,7 @@ export function ActionsTab() {
               >
                 {loc.name}
                 <span className="float-right text-slate-500">
-                  {canEnter ? `${TIME_COSTS.move} min` : '🔒'}
+                  {canEnter ? 'Go' : '🔒'}
                 </span>
               </button>
             )

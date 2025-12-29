@@ -76,8 +76,10 @@ export const CHARACTERS: Record<CharacterId, Character> = {
     name: 'The Drifter',
     room: 'room_11',
     schedule: [
-      // Erratic schedule - handled specially
-      { startTime: 0, endTime: 1080, location: 'erratic' },
+      { startTime: 0, endTime: 180, location: 'parking_lot' }, // 6-9AM
+      { startTime: 180, endTime: 540, location: 'back_area' }, // 9AM-3PM
+      { startTime: 540, endTime: 840, location: 'diner' }, // 3PM-8PM
+      { startTime: 840, endTime: 1080, location: 'room_11' }, // 8PM-12AM
     ],
   },
   vincent: {
@@ -99,7 +101,7 @@ export const getCharacter = (id: CharacterId): Character => CHARACTERS[id]
 export const getCharacterLocation = (
   characterId: CharacterId,
   time: number
-): LocationId | 'gone' | 'erratic' => {
+): LocationId | 'gone' => {
   const character = CHARACTERS[characterId]
 
   for (const entry of character.schedule) {
@@ -123,28 +125,4 @@ export const getCharactersAtLocation = (
     const charLocation = getCharacterLocation(character.id, time)
     return charLocation === locationId
   })
-}
-
-/**
- * Get drifter's location based on loop number and time
- * Pseudo-random but deterministic per loop
- */
-export const getDrifterLocation = (
-  loopNumber: number,
-  time: number
-): LocationId | 'gone' => {
-  // Simple deterministic pattern based on loop and time
-  const seed = (loopNumber * 17 + Math.floor(time / 60)) % 7
-
-  const drifterLocations: (LocationId | 'gone')[] = [
-    'parking_lot',
-    'diner',
-    'courtyard',
-    'gone',
-    'back_area',
-    'parking_lot',
-    'room_11',
-  ]
-
-  return drifterLocations[seed]
 }
