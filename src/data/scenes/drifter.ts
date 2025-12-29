@@ -226,7 +226,7 @@ export const drifterScenes: Scene[] = [
       },
       {
         speaker: 'player',
-        text: '"You know about the loop."',
+        text: '"You know about the reset."',
       },
       {
         speaker: 'npc',

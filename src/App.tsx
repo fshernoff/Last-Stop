@@ -32,7 +32,7 @@ function App() {
     activeObservations,
     flags,
     endingAcknowledged,
-    resetLoop,
+    resetDay,
     advanceTime,
     addObservationEntry,
     setObservations,
@@ -43,11 +43,14 @@ function App() {
   } = useGameStore()
 
   // UI state
-  const [showLoopReset, setShowLoopReset] = useState(false)
+  const [showDayReset, setShowDayReset] = useState(false)
+  const [showChapterTransition, setShowChapterTransition] = useState<number | null>(null)
   const [selectedTab, setSelectedTab] = useState<TabId>('actions')
 
   // Track if we've processed idle time this session
   const hasProcessedIdle = useRef(false)
+  const hasInitializedChapter = useRef(false)
+  const prevChapter = useRef(currentLoop)
 
   // Process idle time and observations on app load
   useEffect(() => {
@@ -128,17 +131,37 @@ function App() {
     }
   }, [updateLastPlayedAt])
 
-  // Check for midnight and trigger loop reset
+  // Check for midnight and trigger day reset
   useEffect(() => {
-    if (isMidnight(currentTime) && !showLoopReset) {
-      setShowLoopReset(true)
+    if (isMidnight(currentTime) && !showDayReset) {
+      setShowDayReset(true)
     }
-  }, [currentTime, showLoopReset])
+  }, [currentTime, showDayReset])
 
-  // Handle loop reset
-  const handleLoopReset = () => {
-    resetLoop()
-    setShowLoopReset(false)
+  // Show chapter transition modal when chapter advances (skip initial hydration)
+  useEffect(() => {
+    if (!hasInitializedChapter.current) {
+      hasInitializedChapter.current = true
+      prevChapter.current = currentLoop
+      return
+    }
+
+    if (currentLoop < prevChapter.current) {
+      setShowChapterTransition(null)
+    }
+
+    if (currentLoop > prevChapter.current) {
+      setShowDayReset(false)
+      setShowChapterTransition(currentLoop)
+    }
+
+    prevChapter.current = currentLoop
+  }, [currentLoop])
+
+  // Handle day reset
+  const handleDayReset = () => {
+    resetDay()
+    setShowDayReset(false)
     setSelectedTab('actions') // Return to actions tab after reset
   }
 
@@ -183,8 +206,27 @@ function App() {
           }}
         />
       )}
-      {/* Loop Reset Modal */}
-      {showLoopReset && (
+      {/* Chapter Transition Modal */}
+      {showChapterTransition !== null && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 max-w-md text-center">
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">
+              CHAPTER {showChapterTransition}
+            </h2>
+            <p className="text-slate-300 mb-6">
+              The day rewinds. New threads are waiting.
+            </p>
+            <button
+              onClick={() => setShowChapterTransition(null)}
+              className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded font-semibold transition-colors"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Day Reset Modal */}
+      {showDayReset && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
           <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 max-w-md text-center">
             <h2 className="text-2xl font-bold text-red-400 mb-4">MIDNIGHT</h2>
@@ -192,10 +234,10 @@ function App() {
               The world stutters. Rewinds. You're back in bed.
             </p>
             <p className="text-slate-400 text-sm mb-6">
-              Loop {currentLoop} complete. Beginning Loop {currentLoop + 1}...
+              The day starts over. Chapter {currentLoop} continues.
             </p>
             <button
-              onClick={handleLoopReset}
+              onClick={handleDayReset}
               className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded font-semibold transition-colors"
             >
               Wake Up
@@ -208,9 +250,7 @@ function App() {
       <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center shrink-0">
         <h1 className="text-lg font-bold tracking-wide">LAST STOP</h1>
         <div className="flex gap-4 text-sm text-slate-400">
-          <span>Loop {currentLoop}</span>
-          <span className="text-slate-600">|</span>
-          <span>Day 1</span>
+          <span>Chapter {currentLoop}</span>
           <span className="text-slate-600">|</span>
           <span>{formatTime(currentTime)}</span>
         </div>

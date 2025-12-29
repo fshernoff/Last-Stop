@@ -19,7 +19,7 @@ export const endingScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"I\'ve been reading this all night. Every loop. Every word."',
+        text: '"I\'ve been reading this all night. Every reset. Every word."',
         choices: [
           { text: '"What does it say?"', next: 'continue' },
           { text: '"Are you ready?"', next: 'continue' },
@@ -117,14 +117,14 @@ export const endingScenes: Scene[] = [
   },
 
   // ============================================================================
-  // ENDING D: The Loop Ending - Player chooses to stay
+  // ENDING D: The Reset Ending - Player chooses to stay
   // ============================================================================
   {
     id: 'ending_d_stay',
     character: 'earl',
     requirements: {
       flags: ['ready_for_ending'],
-      loop: { min: 100 },
+      chapter: { min: 5 },
     },
     priority: 900,
     oncePer: 'ever',
@@ -184,7 +184,7 @@ export const endingScenes: Scene[] = [
       {
         id: 'ending',
         speaker: 'narration',
-        text: 'The day ends. The loop resets.',
+        text: 'The day ends. It resets.',
       },
       {
         speaker: 'narration',

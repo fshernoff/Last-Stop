@@ -8,12 +8,12 @@ const ENDING_CONTENT: Record<EndingScreenProps['endingId'], { title: string; sum
   ending_a: {
     title: 'Ending A: Release',
     summary:
-      'Earl lets go. The loop breaks. Morning comes for the first time in months.',
+      'Earl lets go. The cycle breaks. Morning comes for the first time in months.',
   },
   ending_d: {
     title: 'Ending D: Stay',
     summary:
-      'You choose the loop. The day resets, but now it feels like a choice.',
+      'You choose the reset. The day rewinds, but now it feels like a choice.',
   },
 }
 

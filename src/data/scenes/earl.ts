@@ -2,7 +2,7 @@ import type { Scene } from '../../types'
 
 export const earlScenes: Scene[] = [
   // ============================================================================
-  // LOOP 2+: Trust decay realization - Earl has forgotten the closeness
+  // RESET 2+: Trust decay realization - Earl has forgotten the closeness
   // ============================================================================
   {
     id: 'earl_trust_decay_realization',
@@ -29,11 +29,11 @@ export const earlScenes: Scene[] = [
       },
       {
         speaker: 'narration',
-        text: "There's no warmth in his voice. No trust. Yesterday you were confidants. Today you're a stranger who knows too much.",
+        text: "There's no warmth in his voice. No trust. Before the reset you were confidants. Now you're a stranger who knows too much.",
       },
       {
         speaker: 'player',
-        text: '"You told me. Yesterday. In the back room."',
+        text: '"You told me. Before the reset. In the back room."',
       },
       {
         speaker: 'npc',
@@ -49,7 +49,7 @@ export const earlScenes: Scene[] = [
       },
       {
         speaker: 'narration',
-        text: "It's not a question. He's figured it out - but his guard is still up. The trust you built is gone. You'll have to rebuild it, loop after loop.",
+        text: "It's not a question. He's figured it out - but his guard is still up. The trust you built is gone. You'll have to rebuild it, reset after reset.",
         choices: [
           { text: '"Does this happen every time?"', next: 'every_time' },
           { text: '"You don\'t trust me anymore."', next: 'no_trust' },
@@ -58,7 +58,7 @@ export const earlScenes: Scene[] = [
       {
         id: 'every_time',
         speaker: 'npc',
-        text: '"Every time. The loop takes everything. Memories. Feelings. Trust."',
+        text: '"Every time. The reset strips the feelings. I remember, but the trust doesn\'t carry."',
       },
       {
         speaker: 'narration',
@@ -66,12 +66,12 @@ export const earlScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"For me, it\'s like meeting you for the first time. Every morning."',
+        text: '"For everyone else, it\'s the first time. For me, it\'s like meeting someone I remember but don\'t yet trust."',
       },
       {
         id: 'no_trust',
         speaker: 'npc',
-        text: '"I don\'t know you. Not today. Whatever we had yesterday - that was yesterday\'s Earl."',
+        text: '"I don\'t know you. Not today. Whatever we had before the reset - that was before."',
       },
       {
         speaker: 'narration',
@@ -147,10 +147,6 @@ export const earlScenes: Scene[] = [
         speaker: 'npc',
         text: '"You need anything, I\'m here till ten."',
       },
-      {
-        speaker: 'npc',
-        text: '"You need anything, I\'m here till ten."',
-      },
     ],
     effects: {
       setFlags: ['met_earl'],
@@ -222,7 +218,7 @@ export const earlScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIER 1: Probing (loop 3+)
+  // TIER 1: Probing (chapter 2+)
   // ============================================================================
   {
     id: 'earl_tier1_probing',
@@ -230,7 +226,7 @@ export const earlScenes: Scene[] = [
     requirements: {
       trust: 1,
       flags: ['met_earl'],
-      loop: { min: 3 },
+      chapter: { min: 2 },
     },
     priority: 50,
     oncePer: 'loop',
@@ -303,7 +299,7 @@ export const earlScenes: Scene[] = [
     character: 'earl',
     requirements: {
       trust: 1,
-      flags: ['observed_earl_anomaly'],
+      flags: ['observed_earl_anomaly', 'noticed_loop_start'],
     },
     priority: 70,
     oncePer: 'ever',
@@ -362,7 +358,7 @@ export const earlScenes: Scene[] = [
         choices: [
           { text: '"Days?"', next: 'pretend' },
           { text: '"More than I can count."', next: 'reveal' },
-          { text: '"You know about the loop."', next: 'reveal' },
+          { text: '"You know about the reset."', next: 'reveal' },
         ],
       },
       {
@@ -378,12 +374,13 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['earl_knows_you_know'],
+      advanceChapter: 3,
       advanceTime: 20,
     },
   },
 
   // ============================================================================
-  // TIER 1: The big reveal (loop 10+, after earl_knows_you_know)
+  // TIER 1: The big reveal (chapter 3+, after earl_knows_you_know)
   // ============================================================================
   {
     id: 'earl_reveal',
@@ -391,14 +388,14 @@ export const earlScenes: Scene[] = [
     requirements: {
       trust: 1,
       flags: ['earl_knows_you_know'],
-      loop: { min: 10 },
+      chapter: { min: 3 },
     },
     priority: 100,
     oncePer: 'ever',
     lines: [
       {
         speaker: 'npc',
-        text: '"How many loops?"',
+        text: '"How many resets?"',
         choices: [
           { text: '"Twelve. Maybe more."', next: 'continue' },
           { text: '"I stopped counting."', next: 'continue' },
@@ -432,9 +429,9 @@ export const earlScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"I\'ve been in this loop for six months. Give or take. Hard to keep track after the first thousand."',
+        text: '"I\'ve been in this cycle for six months. Give or take. Hard to keep track after the first thousand resets."',
         choices: [
-          { text: '"A thousand loops?"', next: 'thousand' },
+          { text: '"A thousand resets?"', next: 'thousand' },
           { text: '"How is this possible?"', next: 'how' },
           { text: '"How do we stop it?"', next: 'stop' },
         ],
@@ -668,6 +665,7 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['earl_read_journal', 'knows_thomas_role'],
+      advanceChapter: 4,
       advanceTime: 25,
     },
   },

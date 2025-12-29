@@ -2,7 +2,7 @@ import type { Scene, CharacterId, GameState, TrustTier } from '../types'
 import { getScenesForCharacter } from '../data/scenes'
 
 interface SceneSelectionContext {
-  currentLoop: number
+  currentChapter: number
   flags: string[]
   trust: Record<CharacterId, TrustTier>
   scenesSeenEver: string[]
@@ -39,12 +39,12 @@ function meetsRequirements(scene: Scene, ctx: SceneSelectionContext): boolean {
     }
   }
 
-  // Loop requirements
-  if (requirements.loop) {
-    if (requirements.loop.min !== undefined && ctx.currentLoop < requirements.loop.min) {
+  // Chapter requirements
+  if (requirements.chapter) {
+    if (requirements.chapter.min !== undefined && ctx.currentChapter < requirements.chapter.min) {
       return false
     }
-    if (requirements.loop.max !== undefined && ctx.currentLoop > requirements.loop.max) {
+    if (requirements.chapter.max !== undefined && ctx.currentChapter > requirements.chapter.max) {
       return false
     }
   }
@@ -81,7 +81,7 @@ export function selectScene(
   gameState: Pick<GameState, 'currentLoop' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisLoop'>
 ): Scene | null {
   const ctx: SceneSelectionContext = {
-    currentLoop: gameState.currentLoop,
+    currentChapter: gameState.currentLoop,
     flags: gameState.flags,
     trust: gameState.trust,
     scenesSeenEver: gameState.scenesSeenEver,
@@ -126,7 +126,7 @@ export function debugSceneSelection(
   unavailable: Array<{ scene: Scene; reason: string }>
 } {
   const ctx: SceneSelectionContext = {
-    currentLoop: gameState.currentLoop,
+    currentChapter: gameState.currentLoop,
     flags: gameState.flags,
     trust: gameState.trust,
     scenesSeenEver: gameState.scenesSeenEver,
@@ -163,13 +163,13 @@ export function debugSceneSelection(
       }
     }
 
-    if (requirements.loop) {
-      if (requirements.loop.min !== undefined && ctx.currentLoop < requirements.loop.min) {
-        unavailable.push({ scene, reason: `Loop ${ctx.currentLoop} < min ${requirements.loop.min}` })
+    if (requirements.chapter) {
+      if (requirements.chapter.min !== undefined && ctx.currentChapter < requirements.chapter.min) {
+        unavailable.push({ scene, reason: `Chapter ${ctx.currentChapter} < min ${requirements.chapter.min}` })
         continue
       }
-      if (requirements.loop.max !== undefined && ctx.currentLoop > requirements.loop.max) {
-        unavailable.push({ scene, reason: `Loop ${ctx.currentLoop} > max ${requirements.loop.max}` })
+      if (requirements.chapter.max !== undefined && ctx.currentChapter > requirements.chapter.max) {
+        unavailable.push({ scene, reason: `Chapter ${ctx.currentChapter} > max ${requirements.chapter.max}` })
         continue
       }
     }

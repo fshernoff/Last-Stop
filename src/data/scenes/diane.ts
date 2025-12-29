@@ -149,7 +149,7 @@ export const dianeScenes: Scene[] = [
     lines: [
       {
         speaker: 'player',
-        text: '"I saw you talking to Earl yesterday. You were asking him about people who\'ve gone missing."',
+        text: '"I saw you talking to Earl earlier. You were asking him about people who\'ve gone missing."',
       },
       {
         speaker: 'narration',
@@ -254,7 +254,7 @@ export const dianeScenes: Scene[] = [
         speaker: 'npc',
         text: '"You know something. I can tell."',
         choices: [
-          { text: '[Tell her about the loop]', next: 'tell_loop' },
+          { text: '[Tell her about the repeating day]', next: 'tell_loop' },
           { text: '[Tell her about Earl]', next: 'tell_earl' },
           { text: '[Say nothing]', next: 'nothing' },
         ],
@@ -266,7 +266,7 @@ export const dianeScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: "\"A time loop. That's... that's insane.\"",
+        text: "\"A repeating day. That's... that's insane.\"",
       },
       {
         speaker: 'narration',

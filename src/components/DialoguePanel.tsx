@@ -29,6 +29,10 @@ function mergeEffects(base: SceneEffects, incoming?: SceneEffects): SceneEffects
       base.advanceTime || incoming.advanceTime
         ? (base.advanceTime || 0) + (incoming.advanceTime || 0)
         : undefined,
+    advanceChapter:
+      incoming.advanceChapter !== undefined || base.advanceChapter !== undefined
+        ? Math.max(base.advanceChapter || 0, incoming.advanceChapter || 0)
+        : undefined,
   }
 }
 

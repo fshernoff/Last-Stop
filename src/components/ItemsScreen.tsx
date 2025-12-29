@@ -108,7 +108,7 @@ export function ItemsScreen() {
         <p className="text-xs text-slate-500 leading-relaxed">
           Most items are lost when the day resets at midnight. Items marked{' '}
           <span className="text-amber-400">Persists</span> remain in your
-          inventory across loops.
+          inventory across resets.
         </p>
       </div>
     </div>

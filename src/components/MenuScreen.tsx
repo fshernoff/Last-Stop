@@ -29,7 +29,7 @@ export function MenuScreen() {
             <h2 className="text-lg font-bold text-red-400 mb-3">Reset Game?</h2>
             <p className="text-slate-300 text-sm mb-4">
               This will erase all progress, including flags, items, and trust levels.
-              You'll start fresh from Loop 1.
+              You'll start fresh from Chapter 1.
             </p>
             <p className="text-slate-500 text-xs mb-6">
               This action cannot be undone.
@@ -58,7 +58,7 @@ export function MenuScreen() {
 
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Current Loop</span>
+            <span className="text-slate-400">Current Chapter</span>
             <span className="text-slate-100">{currentLoop}</span>
           </div>
           <div className="flex justify-between text-sm">
@@ -88,8 +88,8 @@ export function MenuScreen() {
         </h3>
         <div className="text-sm text-slate-300 space-y-3 leading-relaxed">
           <p>
-            <strong className="text-amber-400">Last Stop</strong> is a time loop mystery game.
-            You're trapped in a repeating day at a roadside motel in the desert.
+            <strong className="text-amber-400">Last Stop</strong> is a time-shift mystery.
+            You're caught in a day that keeps rewinding at a roadside motel in the desert.
           </p>
           <p>
             Talk to the other guests. Explore. Watch. Learn their secrets.
@@ -138,8 +138,8 @@ export function MenuScreen() {
         <ul className="text-xs text-slate-400 space-y-2 list-disc list-inside">
           <li>Each action takes time. Plan your day carefully.</li>
           <li>Building trust with characters unlocks new conversations.</li>
-          <li>Deep trust (level 2) fades after each loop reset.</li>
-          <li>Some items persist across loops. Most don't.</li>
+          <li>Deep trust (level 2) can soften after each reset.</li>
+          <li>Some items persist across resets. Most don't.</li>
           <li>Pay attention to where people are at different times.</li>
           <li>The day always ends at midnight.</li>
           <li>Spend Insight in the Known tab to reveal hints.</li>

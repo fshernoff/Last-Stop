@@ -79,7 +79,7 @@ export const moScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIER 1: Déjà vu (after 5 loops)
+  // TIER 1: Déjà vu (chapter 3+)
   // ============================================================================
   {
     id: 'mo_tier1_deja_vu',
@@ -87,7 +87,7 @@ export const moScenes: Scene[] = [
     requirements: {
       trust: 1,
       flags: ['met_mo'],
-      loop: { min: 5 },
+      chapter: { min: 3 },
     },
     priority: 60,
     oncePer: 'ever',
@@ -195,7 +195,7 @@ export const moScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIER 2: Remembers the loop
+  // TIER 2: Remembers the reset
   // ============================================================================
   {
     id: 'mo_tier2_remember',
@@ -236,13 +236,13 @@ export const moScenes: Scene[] = [
         text: '"How many times have I been here?"',
         choices: [
           { text: '"I don\'t know. Dozens? Hundreds?"', next: 'loop' },
-          { text: '"It\'s a loop. The day keeps repeating."', next: 'loop' },
+          { text: '"It\'s a reset. The day keeps rewinding."', next: 'loop' },
         ],
       },
       {
         id: 'loop',
         speaker: 'npc',
-        text: "\"A loop. That's...\"",
+        text: "\"A reset. That's...\"",
       },
       {
         speaker: 'narration',

@@ -20,14 +20,17 @@
 | `src/components/ActionsTab.tsx` | Main gameplay (talk, investigate, move) |
 
 ### Critical Path (Working)
-1. Observe office at 10PM → `observed_earl_anomaly`
-2. Talk to Earl (trust 1) → `earl_knows_you_know`
-3. Talk to Earl (loop 10+) → `earl_revealed`, `master_key`
-4. Back room + Earl → `seen_device`
-5. Investigate back room twice → `thomas_journal`
-6. Earl trust 2 → `earl_read_journal`
-7. Vincent (loop 20+, trust 2) → `ready_for_ending`
-8. Talk to Earl → **Ending A**
+1. First reset + investigate room → `noticed_loop_start` → Chapter 2
+2. Observe office at 10PM → `observed_earl_anomaly`
+3. Talk to Earl (trust 1) → `earl_knows_you_know` → Chapter 3
+4. Talk to Earl again → `earl_revealed`, `master_key`
+5. Back room + Earl → `seen_device`
+6. Investigate back room twice → `thomas_journal`
+7. Earl trust 2 → `earl_read_journal` → Chapter 4
+8. Vincent patterns → `vincent_shared_patterns`
+9. Vincent opens door → `vincent_opened_door`
+10. Vincent reveal (trust 2) → `ready_for_ending` → Chapter 5
+11. Talk to Earl → **Ending A**
 
 ### Observation Flags
 | Flag | Location | Time | Trigger |
@@ -52,9 +55,9 @@
 ## Known Issues / Testing Needed
 
 1. **Trust progression** - Need to verify players can reach trust tier 2 with Earl and Vincent naturally
-2. **Loop counter** - Verify loop 10 and loop 20 requirements aren't too grindy
+2. **Chapter gating** - Verify chapter transitions feel natural and not blocked
 3. **Observation timing** - Players need to know to observe office at night (10PM)
-4. **Item persistence** - Verify `thomas_journal` persists across loops correctly
+4. **Item persistence** - Verify `thomas_journal` persists across resets correctly
 
 ## Commands
 
@@ -72,8 +75,8 @@ Scenes are selected by priority with requirement filtering:
 - Trust tier must match or exceed requirement
 - All required flags must be set
 - No forbidden flags can be set
-- Loop count must be in range
-- `oncePer` checked against seen lists
+- Chapter must be in range (`requirements.chapter`)
+- `oncePer` checked against seen lists (`'loop'` = once per day reset)
 
 ### Investigation System (`src/data/investigations.ts`)
 - Each location has multiple investigation entries

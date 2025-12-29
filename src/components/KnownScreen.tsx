@@ -13,13 +13,13 @@ interface KnowledgeEntry {
 
 // Flag to narrative text mapping
 const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
-  // The Loop
+  // The Reset
   { flag: 'knows_loop_exists', text: 'The day resets at midnight', category: 'loop' },
-  { flag: 'knows_memory_persists', text: 'You remember everything across loops', category: 'loop' },
-  { flag: 'knows_earl_remembers', text: 'Earl remembers the loops too', category: 'loop' },
+  { flag: 'knows_memory_persists', text: 'You remember everything across resets', category: 'loop' },
+  { flag: 'knows_earl_remembers', text: 'Earl remembers the resets too', category: 'loop' },
   { flag: 'knows_trust_decay', text: 'Deep bonds fade after each reset', category: 'loop' },
   { flag: 'knows_loop_cause', text: 'The device in the back room is causing this', category: 'loop' },
-  { flag: 'knows_how_to_end', text: 'The loop can be broken', category: 'loop' },
+  { flag: 'knows_how_to_end', text: 'The cycle can be broken', category: 'loop' },
 
   // Earl
   { flag: 'met_earl', text: 'Met Earl, the motel owner', category: 'people', character: 'earl' },
@@ -56,7 +56,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
 
   // Drifter
   { flag: 'met_drifter', text: 'Encountered the Drifter', category: 'people', character: 'drifter' },
-  { flag: 'knows_drifter_truth', text: 'The Drifter knows about the loop', category: 'people', character: 'drifter' },
+  { flag: 'knows_drifter_truth', text: 'The Drifter knows about the resets', category: 'people', character: 'drifter' },
   { flag: 'knows_drifter_identity', text: 'The Drifter is not what they seem', category: 'people', character: 'drifter' },
 
   // Vincent
@@ -153,7 +153,7 @@ export function KnownScreen() {
       <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-amber-400">WHAT YOU KNOW</h2>
-          <span className="text-sm text-slate-500">Loop {currentLoop}</span>
+          <span className="text-sm text-slate-500">Chapter {currentLoop}</span>
         </div>
 
         <div className="mb-4 p-3 bg-slate-700/40 rounded border border-slate-600">
@@ -193,11 +193,11 @@ export function KnownScreen() {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* The Loop */}
+            {/* The Reset */}
             {loopEntries.length > 0 && (
               <section>
                 <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">
-                  The Loop
+                  The Reset
                 </h3>
                 <ul className="space-y-1">
                   {loopEntries.map((entry) => (

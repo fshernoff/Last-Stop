@@ -55,19 +55,10 @@ const HINT_RULES: HintRule[] = [
       !state.flags.includes('earl_knows_you_know'),
   },
   {
-    id: 'earl_reveal_loop',
-    text: 'Keep looping. Earl opens up after more time has passed.',
-    when: (state) =>
-      state.flags.includes('earl_knows_you_know') &&
-      state.currentLoop < 10 &&
-      !state.flags.includes('earl_revealed'),
-  },
-  {
     id: 'earl_reveal',
     text: 'Talk to Earl again for the full story.',
     when: (state) =>
       state.flags.includes('earl_knows_you_know') &&
-      state.currentLoop >= 10 &&
       !state.flags.includes('earl_revealed'),
   },
   {
@@ -140,7 +131,7 @@ const HINT_RULES: HintRule[] = [
   },
   {
     id: 'ending',
-    text: 'Return to Earl to decide how the loop ends.',
+    text: 'Return to Earl to decide how the cycle ends.',
     when: (state) => state.flags.includes('ready_for_ending'),
   },
 ]

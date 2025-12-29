@@ -79,7 +79,7 @@ export const useGameStore = create<GameState & GameActions>()(
       advanceTime: (minutes: number) => {
         set((state) => {
           const newTime = state.currentTime + minutes
-          // If past midnight (1080 = 18 hours from 6AM), trigger loop reset
+          // If past midnight (1080 = 18 hours from 6AM), trigger day reset
           if (newTime >= 1080) {
             // Will be handled by game logic checking this
             return {
@@ -214,8 +214,8 @@ export const useGameStore = create<GameState & GameActions>()(
         return get().inventory.includes(item)
       },
 
-      // Loop management
-      resetLoop: () => {
+      // Day/Chapter management
+      resetDay: () => {
         set((state) => {
           // Decay trust: tier 2 -> tier 1
           const decayedTrust = Object.fromEntries(
@@ -230,8 +230,11 @@ export const useGameStore = create<GameState & GameActions>()(
             (PERSISTENT_ITEMS as readonly string[]).includes(item)
           )
 
+          const flags = state.flags.includes('day_reset_occurred')
+            ? state.flags
+            : [...state.flags, 'day_reset_occurred']
+
           return {
-            currentLoop: state.currentLoop + 1,
             currentTime: 0,
             player: {
               ...state.player,
@@ -243,6 +246,46 @@ export const useGameStore = create<GameState & GameActions>()(
             activeObservations: [],
             observationLog: [],
             currentHint: null,
+            flags,
+          }
+        })
+      },
+
+      advanceChapter: (chapter?: number) => {
+        set((state) => {
+          const nextChapter = Math.max(state.currentLoop, chapter ?? state.currentLoop + 1)
+
+          // Decay trust: tier 2 -> tier 1
+          const decayedTrust = Object.fromEntries(
+            Object.entries(state.trust).map(([char, tier]) => [
+              char,
+              tier === 2 ? 1 : tier,
+            ])
+          ) as Record<CharacterId, TrustTier>
+
+          // Keep only persistent items
+          const persistentItems = state.inventory.filter((item) =>
+            (PERSISTENT_ITEMS as readonly string[]).includes(item)
+          )
+
+          const flags = state.flags.includes('day_reset_occurred')
+            ? state.flags
+            : [...state.flags, 'day_reset_occurred']
+
+          return {
+            currentLoop: nextChapter,
+            currentTime: 0,
+            player: {
+              ...state.player,
+              currentLocation: 'room_player',
+            },
+            trust: decayedTrust,
+            scenesSeenThisLoop: [],
+            inventory: persistentItems,
+            activeObservations: [],
+            observationLog: [],
+            currentHint: null,
+            flags,
           }
         })
       },
@@ -333,7 +376,7 @@ export const useGameStore = create<GameState & GameActions>()(
       partialize: (state) => {
         // Don't persist action functions, only state
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { advanceTime, moveTo, setFlag, clearFlag, hasFlag, setTrust, getTrust, incrementRapport, markSceneSeen, hasSeenScene, addItem, removeItem, hasItem, resetLoop, setObservations, addObservationEntry, clearObservationLog, startObservation, stopObservation, updateLastPlayedAt, setLastPlayedAt, addInsight, spendInsight, setCurrentHint, resetGame, acknowledgeEnding, setEndingAcknowledged, ...persistedState } = state
+        const { advanceTime, moveTo, setFlag, clearFlag, hasFlag, setTrust, getTrust, incrementRapport, markSceneSeen, hasSeenScene, addItem, removeItem, hasItem, resetDay, advanceChapter, setObservations, addObservationEntry, clearObservationLog, startObservation, stopObservation, updateLastPlayedAt, setLastPlayedAt, addInsight, spendInsight, setCurrentHint, resetGame, acknowledgeEnding, setEndingAcknowledged, ...persistedState } = state
         return persistedState
       },
     }

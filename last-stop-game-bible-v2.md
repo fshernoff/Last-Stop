@@ -38,7 +38,7 @@
 
 You wake up in a roadside motel. You go about your day. At midnight, you wake up again. Same day. Same people. Same conversations. But you remember everything.
 
-**Last Stop** is an idle mystery game where time is your only resource. Explore, observe, interrogate, and piece together why you're trapped in this loop - and how to escape. When you're not playing, set up surveillance. When you return, review what happened while you were away.
+**Last Stop** is an idle mystery game where time is your only resource. Explore, observe, interrogate, and piece together why you're trapped in this cycle - and how to escape. When you're not playing, set up surveillance. When you return, review what happened while you were away.
 
 ### 1.2 Genre Definition
 
@@ -48,7 +48,7 @@ This is NOT a clicker. There are no numbers going up infinitely. Instead:
 
 - **Idle:** Things happen when you're away. You set up observations, close the game, return to logs of events you missed.
 - **Mystery:** The core engagement is uncovering truth. Who are these people? Why are you here? How do you escape?
-- **Incremental:** Each loop you're more efficient. Knowledge persists. Trust builds. You unlock shortcuts.
+- **Incremental:** Each chapter you're more efficient. Knowledge persists. Trust builds. You unlock shortcuts.
 
 **Closest comparisons:**
 - The narrative depth of a point-and-click adventure
@@ -58,17 +58,17 @@ This is NOT a clicker. There are no numbers going up infinitely. Instead:
 
 ### 1.3 Target Experience
 
-**Early game (Loops 1-10):**
+**Early game (Chapters 1-2):**
 Player feels isolated, confused. Everyone treats them like a stranger. Small discoveries feel significant. "Wait, she does the same thing every day at 3pm..."
 
-**Mid game (Loops 11-30):**
+**Mid game (Chapters 3-4):**
 Player feels like a detective. Patterns emerge. The first major reveal (Earl remembers) recontextualizes everything. New areas and conversations unlock.
 
-**Late game (Loops 31-50+):**
+**Late game (Chapter 5+):**
 Player is racing toward answers. The second major reveal (Vincent) provides the final pieces. Multiple ending paths become clear. Emotional weight builds.
 
-**Final loop:**
-Player makes a choice. The loop ends (or doesn't). Catharsis.
+**Final chapter:**
+Player makes a choice. The cycle ends (or doesn't). Catharsis.
 
 ### 1.4 Core Emotions
 
@@ -480,6 +480,7 @@ Each day runs from 6AM to midnight (18 hours of game time).
 - "6:00 AM" appears
 - You wake up in your room
 - Everything has reset except your knowledge
+- **Implementation note:** The narrative progresses by **chapters**, not by counting resets. Chapters only advance when key story beats fire.
 
 ### 5.2 Actions & Time Costs
 
@@ -537,7 +538,7 @@ Game simulates 3PM-6PM
 1. Review observation log
 2. New knowledge flag set: `observed_diane_earl_talk`
 3. New question: What did they discuss?
-4. Plan next loop: Be at office at 4PM to overhear
+4. Plan next reset: Be at office at 4PM to overhear
 
 ---
 
@@ -595,7 +596,7 @@ When you return, you get a timestamped log:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ OBSERVATION LOG - Loop 7                                │
+│ OBSERVATION LOG - Chapter 2                             │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │ While you were away, you observed:                     │
@@ -721,7 +722,7 @@ Player sees their progress as a simple list:
 
 ```
 WHAT YOU KNOW:
-├── The Loop
+├── The Reset
 │   ├── ✓ The day resets at midnight
 │   ├── ✓ You remember everything
 │   ├── ✓ Earl remembers too
@@ -762,7 +763,7 @@ interface Scene {
     trust?: 0 | 1 | 2;           // Minimum trust tier
     flags?: string[];            // All must be true
     notFlags?: string[];         // All must be false
-    loop?: { min?: number; max?: number };
+    chapter?: { min?: number; max?: number };
   };
   
   // PRIORITY (higher = chosen first when multiple available)
@@ -881,7 +882,7 @@ Both 2 and 3 available. Check priority:
 - marge_tier1_about_earl: priority 40
 
 Winner: marge_tier1_gossip (higher priority)
-Check oncePer: 'loop' - have we seen it this loop? No.
+Check oncePer: 'loop' - have we seen it this reset? No.
 PLAY marge_tier1_gossip
 ```
 
@@ -927,7 +928,7 @@ Each character has a fixed number of scenes:
 
 The mystery unfolds via flags, not complex state:
 
-**ACT 1 FLAGS (Loops 1-10):**
+**ACT 1 FLAGS (Chapters 1-2):**
 ```
 met_marge
 met_earl
@@ -941,7 +942,7 @@ karen_mentioned_light
 observed_earl_anomaly
 ```
 
-**ACT 2 FLAGS (Loops 11-30):**
+**ACT 2 FLAGS (Chapters 3-4):**
 ```
 earl_revealed           <- MAJOR REVEAL 1
 has_master_key
@@ -955,7 +956,7 @@ karen_told_light_location
 mo_felt_deja_vu
 ```
 
-**ACT 3 FLAGS (Loops 31+):**
+**ACT 3 FLAGS (Chapter 5+):**
 ```
 vincent_contacted
 vincent_opened_door
@@ -983,7 +984,7 @@ Scene: earl_reveal
 Requirements:
   - flags: [observed_earl_anomaly]
   - trust: 1
-  - loop: { min: 10 }
+  - chapter: { min: 3 }
 Effects:
   - setFlags: [earl_revealed]
   - unlockLocation: back_room
@@ -1008,7 +1009,7 @@ flags: [ready_for_ending, has_thomas_journal]
 
 **Trigger:** Talk to Earl with these flags set.
 
-**Scene:** `ending_a_release` - Earl turns off the device. Loop ends. Bittersweet.
+**Scene:** `ending_a_release` - Earl turns off the device. The cycle ends. Bittersweet.
 
 ### 10.3 Ending B: Replace (Dark Ending)
 
@@ -1037,12 +1038,12 @@ flags: [ready_for_ending, drifter_told_overload, all_guests_evacuated]
 **Requirements:**
 ```
 flags: [ready_for_ending]
-loop: { min: 100 }
+chapter: { min: 5 }
 ```
 
 **Trigger:** Talk to Earl, choose "I'm not ready."
 
-**Scene:** `ending_d_stay` - You choose the loop. Cyclical.
+**Scene:** `ending_d_stay` - You choose the reset. Cyclical.
 
 ### 10.6 Ending E: Dawn (Secret Ending)
 
@@ -1063,7 +1064,7 @@ flags: [ready_for_ending, found_player_name_in_files]
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ LAST STOP                        Loop 12 │ Day 1 │ 2:30 PM │
+│ LAST STOP                     Chapter 3 │ 2:30 PM │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  ┌─────────────────────────────────────────────────┐   │
@@ -1175,10 +1176,10 @@ flags: [ready_for_ending, found_player_name_in_files]
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ WHAT YOU KNOW                                Loop 12    │
+│ WHAT YOU KNOW                             Chapter 3    │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
-│  THE LOOP                                               │
+│  THE RESET                                              │
 │  ├── ✓ The day resets at midnight                      │
 │  ├── ✓ You remember everything                         │
 │  ├── ✓ Earl remembers too                              │
@@ -1227,7 +1228,7 @@ NO BACKEND FOR MVP
 ```typescript
 interface GameState {
   // Meta
-  currentLoop: number;
+  currentLoop: number; // Chapter index (story progression)
   totalPlayTime: number;
   
   // Time
@@ -1247,7 +1248,7 @@ interface GameState {
   
   // SCENES SEEN
   scenesSeenEver: Set<string>;
-  scenesSeenThisLoop: Set<string>;
+  scenesSeenThisLoop: Set<string>; // Seen since last day reset
   
   // Items
   inventory: string[];
@@ -1291,9 +1292,9 @@ function selectScene(
       }
     }
     
-    // Check loop requirement
-    if (scene.requirements.loop?.min !== undefined) {
-      if (state.currentLoop < scene.requirements.loop.min) return false;
+    // Check chapter requirement
+    if (scene.requirements.chapter?.min !== undefined) {
+      if (state.currentLoop < scene.requirements.chapter.min) return false;
     }
     
     // Check oncePer
@@ -1316,15 +1317,12 @@ function selectScene(
 }
 ```
 
-### 12.4 Loop Reset Function
+### 12.4 Day Reset & Chapter Advance
 
 ```typescript
-function resetLoop(state: GameState): GameState {
+function resetDay(state: GameState): GameState {
   return {
     ...state,
-    
-    // Increment loop
-    currentLoop: state.currentLoop + 1,
     
     // Reset time
     currentTime: 0,
@@ -1358,6 +1356,13 @@ function resetLoop(state: GameState): GameState {
     // Clear observations
     activeObservations: [],
     observationLog: []
+  };
+}
+
+function advanceChapter(state: GameState, nextChapter?: number): GameState {
+  return {
+    ...resetDay(state),
+    currentLoop: Math.max(state.currentLoop, nextChapter ?? state.currentLoop + 1)
   };
 }
 ```
@@ -1423,7 +1428,7 @@ interface Scene {
     trust?: 0 | 1 | 2;
     flags?: string[];
     notFlags?: string[];
-    loop?: { min?: number; max?: number };
+    chapter?: { min?: number; max?: number };
   };
   
   priority: number;
@@ -1438,6 +1443,7 @@ interface Scene {
     giveItem?: string;
     unlockLocation?: LocationId;
     advanceTime?: number;
+    advanceChapter?: number;
   };
 }
 
@@ -1573,6 +1579,8 @@ const OBSERVATION_EVENTS: ObservationEntry[] = [
 ## 15. CONTENT: COMPLETE SCENE SCRIPTS
 
 **CRITICAL: These scenes are the actual game content. They are complete, standalone, and never dynamically modified.**
+
+**Implementation note:** Loop-based thresholds in this document are legacy. The shipped game gates progression by **chapter** (`requirements.chapter`). Refer to the scene files in `src/data/scenes` for authoritative requirements and wording.
 
 ### 15.1 MARGE SCENES
 

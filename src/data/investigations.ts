@@ -15,24 +15,25 @@ export interface InvestigationResult {
 }
 
 export const INVESTIGATIONS: InvestigationResult[] = [
-  // Player's room - Loop 2+ awakening (first realization something is wrong)
+  // Player's room - Reset awakening (first realization something is wrong)
   {
     id: 'room_player_loop2_awakening',
     location: 'room_player',
-    text: "Your room. The same room. The light through the blinds hits the wall at exactly the same angle as yesterday. The clock reads 6:00 AM. Didn't you just fall asleep? Your head is pounding, but not from tiredness - from something else. A feeling like you've forgotten something important.",
-    requiresFlags: ['explored_room_once'],
+    text: "Your room. The same room. The light through the blinds hits the wall at exactly the same angle as before. The clock reads 6:00 AM. Didn't you just fall asleep? Your head is pounding, but not from tiredness - from something else. A feeling like you've forgotten something important.",
+    requiresFlags: ['explored_room_once', 'day_reset_occurred'],
     notFlags: ['noticed_loop_start'],
     oncePer: 'ever',
     effects: {
       setFlags: ['noticed_loop_start'],
+      advanceChapter: 2,
     },
   },
 
-  // Player's room - Loop 3+ (player knows something is very wrong)
+  // Player's room - Repeat dread (player knows something is very wrong)
   {
     id: 'room_player_loop3_dread',
     location: 'room_player',
-    text: "The same room. The same morning light. The same 6:00 AM. It's happening again. You remember yesterday - every moment of it - but was it really yesterday? Or was it the same day, playing out again?",
+    text: "The same room. The same morning light. The same 6:00 AM. It's happening again. You remember the last reset - every moment of it - but was it really another day? Or the same day, playing out again?",
     requiresFlags: ['noticed_loop_start', 'knows_memory_persists'],
     notFlags: ['knows_loop_exists'],
     oncePer: 'ever',
@@ -41,16 +42,16 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     },
   },
 
-  // Player's room - after knowing about loop
+  // Player's room - after knowing about the reset
   {
     id: 'room_player_loop_aware',
     location: 'room_player',
-    text: "6:00 AM. The loop has reset again. Everything is back to where it started - except you. You remember. You always remember.",
+    text: "6:00 AM. The day has reset again. Everything is back to where it started - except you. You remember. You always remember.",
     requiresFlags: ['knows_loop_exists'],
     oncePer: 'loop',
   },
 
-  // Player's room - first time (Loop 1 only)
+  // Player's room - first time (Chapter 1 only)
   {
     id: 'room_player_look',
     location: 'room_player',
@@ -62,7 +63,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     },
   },
 
-  // Player's room - Loop 1 repeat
+  // Player's room - Chapter 1 repeat
   {
     id: 'room_player_repeat',
     location: 'room_player',

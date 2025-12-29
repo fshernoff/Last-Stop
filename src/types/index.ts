@@ -66,7 +66,7 @@ export interface SceneRequirements {
   trust?: TrustTier
   flags?: string[]
   notFlags?: string[]
-  loop?: { min?: number; max?: number }
+  chapter?: { min?: number; max?: number }
 }
 
 export interface SceneEffects {
@@ -77,6 +77,7 @@ export interface SceneEffects {
   giveItem?: string
   unlockLocation?: LocationId
   advanceTime?: number
+  advanceChapter?: number
 }
 
 export interface DialogueChoice {
@@ -133,7 +134,7 @@ export interface PlayerState {
 
 export interface GameState {
   // Meta
-  currentLoop: number
+  currentLoop: number // Chapter index (pseudo-loop progression)
   totalPlayTime: number
   lastPlayedAt: number | null // Timestamp for idle calculations
 
@@ -201,8 +202,9 @@ export interface GameActions {
   removeItem: (item: string) => void
   hasItem: (item: string) => boolean
 
-  // Loop management
-  resetLoop: () => void
+  // Day/Chapter management
+  resetDay: () => void
+  advanceChapter: (chapter?: number) => void
 
   // Observations
   setObservations: (observations: Observation[]) => void
@@ -224,7 +226,7 @@ export interface GameActions {
   setEndingAcknowledged: (value: boolean) => void
 }
 
-// Items that persist across loop resets
+// Items that persist across day resets
 export const PERSISTENT_ITEMS = [
   'master_key',
   'thomas_journal',

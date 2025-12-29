@@ -33,6 +33,7 @@ export function ActionsTab() {
     addInsight,
     setEndingAcknowledged,
     markSceneSeen,
+    advanceChapter,
   } = useGameStore()
 
   const [investigationMessage, setInvestigationMessage] = useState<string | null>(null)
@@ -98,6 +99,9 @@ export function ActionsTab() {
       }
       if (result.effects?.setTrust) {
         setTrust(result.effects.setTrust.character, result.effects.setTrust.tier)
+      }
+      if (result.effects?.advanceChapter) {
+        advanceChapter(result.effects.advanceChapter)
       }
 
       // Mark investigation as seen
@@ -175,9 +179,12 @@ export function ActionsTab() {
 
       incrementRapport(activeScene.character)
       markSceneSeen(activeScene.id, activeScene.oncePer)
+      if (effects.advanceChapter) {
+        advanceChapter(effects.advanceChapter)
+      }
       setActiveScene(null)
     },
-    [activeScene, setFlag, clearFlag, setTrust, incrementRapport, addItem, advanceTime, setEndingAcknowledged, markSceneSeen]
+    [activeScene, setFlag, clearFlag, setTrust, incrementRapport, addItem, advanceTime, setEndingAcknowledged, markSceneSeen, advanceChapter]
   )
 
   const handleDialogueCancel = useCallback(() => {

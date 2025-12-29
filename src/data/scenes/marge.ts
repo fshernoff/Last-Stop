@@ -2,7 +2,7 @@ import type { Scene } from '../../types'
 
 export const margeScenes: Scene[] = [
   // ============================================================================
-  // LOOP 2+: First contact after reset - she doesn't remember you
+  // RESET 2+: First contact after reset - she doesn't remember you
   // ============================================================================
   {
     id: 'marge_loop2_no_memory',
@@ -21,11 +21,11 @@ export const margeScenes: Scene[] = [
       },
       {
         speaker: 'narration',
-        text: "The exact same words. The exact same tone. You've heard this before. Yesterday. You're certain of it.",
+        text: "The exact same words. The exact same tone. You've heard this before. Before the reset. You're certain of it.",
       },
       {
         speaker: 'player',
-        text: '"Marge, we talked yesterday. Don\'t you remember?"',
+        text: '"Marge, we talked earlier. Don\'t you remember?"',
       },
       {
         speaker: 'npc',
@@ -41,7 +41,7 @@ export const margeScenes: Scene[] = [
       },
       {
         speaker: 'narration',
-        text: "She's not lying. She genuinely doesn't remember. But you do. Every word, every gesture from yesterday is crystal clear in your mind.",
+        text: "She's not lying. She genuinely doesn't remember. But you do. Every word, every gesture from earlier is crystal clear in your mind.",
       },
       {
         speaker: 'npc',
@@ -68,6 +68,7 @@ export const margeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['knows_memory_persists'],
+      advanceChapter: 2,
       advanceTime: 15,
     },
   },
@@ -339,7 +340,7 @@ export const margeScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIER 1: Worried about Earl (requires loop 5+)
+  // TIER 1: Worried about Earl (requires chapter 3+)
   // ============================================================================
   {
     id: 'marge_tier1_worried',
@@ -347,7 +348,7 @@ export const margeScenes: Scene[] = [
     requirements: {
       trust: 1,
       flags: ['met_marge'],
-      loop: { min: 5 },
+      chapter: { min: 3 },
     },
     priority: 45,
     oncePer: 'ever',

@@ -93,7 +93,7 @@ export const vincentScenes: Scene[] = [
       {
         id: 'continue',
         speaker: 'npc',
-        text: '"His name\'s Vincent. He checked in three months ago. Figured out the loop about two weeks in."',
+        text: '"His name\'s Vincent. He checked in three months ago. Figured out the resets about two weeks in."',
       },
       {
         speaker: 'narration',
@@ -215,7 +215,7 @@ export const vincentScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIER 1: Patterns (loop 10+)
+  // TIER 1: Patterns (chapter 4+)
   // ============================================================================
   {
     id: 'vincent_tier1_patterns',
@@ -223,7 +223,7 @@ export const vincentScenes: Scene[] = [
     requirements: {
       trust: 1,
       flags: ['earl_told_about_vincent'],
-      loop: { min: 10 },
+      chapter: { min: 4 },
       notFlags: ['vincent_opened_door'],
     },
     priority: 90,
@@ -240,7 +240,7 @@ export const vincentScenes: Scene[] = [
       {
         id: 'continue',
         speaker: 'npc',
-        text: '"I mapped the day. The loop snaps at the edges."',
+        text: '"I mapped the day. The reset snaps at the edges."',
       },
       {
         speaker: 'npc',
@@ -252,27 +252,28 @@ export const vincentScenes: Scene[] = [
       },
     ],
     effects: {
+      setFlags: ['vincent_shared_patterns'],
       advanceTime: 20,
     },
   },
 
   // ============================================================================
-  // TIER 1: Door opens (after many loops)
+  // TIER 1: Door opens (after many resets)
   // ============================================================================
   {
     id: 'vincent_tier1_door_opens',
     character: 'vincent',
     requirements: {
       trust: 1,
-      flags: ['earl_told_about_vincent'],
-      loop: { min: 20 },
+      flags: ['earl_told_about_vincent', 'vincent_shared_patterns'],
+      chapter: { min: 4 },
     },
     priority: 95,
     oncePer: 'ever',
     lines: [
       {
         speaker: 'narration',
-        text: "You've been talking through the door for... how many loops now? You've lost count.",
+        text: "You've been talking through the door for a while now. You've lost count.",
       },
       {
         speaker: 'player',
@@ -280,7 +281,7 @@ export const vincentScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: "\"I know. I've been listening. Every loop, you come back. Every loop, you're still trying.\"",
+        text: "\"I know. I've been listening. You keep coming back. You keep trying.\"",
       },
       {
         speaker: 'narration',
@@ -387,7 +388,7 @@ export const vincentScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"The loop started six months ago. Earl activated the device. But the device was built for something else. Something that happened here forty years ago."',
+        text: '"The resets started six months ago. Earl activated the device. But the device was built for something else. Something that happened here forty years ago."',
         choices: [
           { text: '"Thomas."', next: 'thomas' },
           { text: '"The facility."', next: 'thomas' },
@@ -482,6 +483,7 @@ export const vincentScenes: Scene[] = [
         'knows_device_purpose',
         'knows_thomas_role',
       ],
+      advanceChapter: 5,
       advanceTime: 30,
     },
   },
