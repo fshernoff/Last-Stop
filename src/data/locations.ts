@@ -1,4 +1,5 @@
 import type { Location, LocationId } from '../types'
+import { getCharactersAtLocation } from './characters'
 
 export const LOCATIONS: Record<LocationId, Location> = {
   room_player: {
@@ -103,6 +104,15 @@ export const LOCATIONS: Record<LocationId, Location> = {
   },
 }
 
+export const ROOM_LOCATION_IDS: LocationId[] = [
+  'room_player',
+  'room_2',
+  'room_4',
+  'room_6',
+  'room_9',
+  'room_11',
+]
+
 export const getLocation = (id: LocationId): Location => LOCATIONS[id]
 
 export const getAdjacentLocations = (id: LocationId): Location[] =>
@@ -110,9 +120,14 @@ export const getAdjacentLocations = (id: LocationId): Location[] =>
 
 export const canEnterLocation = (
   id: LocationId,
-  flags: string[]
+  flags: string[],
+  timeMarker?: number
 ): boolean => {
   const location = LOCATIONS[id]
-  if (!location.requiresFlag) return true
-  return flags.includes(location.requiresFlag)
+  if (location.requiresFlag && !flags.includes(location.requiresFlag)) return false
+  if (timeMarker === undefined) return true
+  if (!ROOM_LOCATION_IDS.includes(id) || id === 'room_player') return true
+  if (location.requiresFlag && flags.includes(location.requiresFlag)) return true
+  const occupants = getCharactersAtLocation(id, timeMarker)
+  return occupants.length === 0
 }

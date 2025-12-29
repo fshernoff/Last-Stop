@@ -29,7 +29,7 @@ const HINT_RULES: HintRule[] = [
   },
   {
     id: 'after_confront',
-    text: 'Talk to Earl again. He is holding back.',
+    text: 'Go to the diner and test your memory of yesterday.',
     when: (state) =>
       state.storyBeatId === 'ch2_b1_aftermath' &&
       !state.flags.includes('earl_revealed'),

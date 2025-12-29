@@ -1,6 +1,6 @@
 import { useGameStore } from '../store/gameStore'
 import { LOCATIONS, canEnterLocation } from '../data/locations'
-import { CHARACTERS, getCharacterLocation } from '../data/characters'
+import { CHARACTERS, getCharacterLocation, getCharactersAtLocation } from '../data/characters'
 import { timeOfDayToMinutes } from '../story/timeOfDay'
 import type { LocationId, CharacterId } from '../types'
 
@@ -64,7 +64,7 @@ export function MapScreen() {
   const handleLocationClick = (locationId: LocationId) => {
     if (locationId === currentLocation) return
     if (!isAdjacent(locationId)) return
-    if (!canEnterLocation(locationId, flags)) return
+    if (!canEnterLocation(locationId, flags, timeMarker)) return
 
     moveTo(locationId)
   }
@@ -75,12 +75,16 @@ export function MapScreen() {
     const location = LOCATIONS[locationId]
     const isHere = currentLocation === locationId
     const canMove = isAdjacent(locationId)
-    const canEnter = canEnterLocation(locationId, flags)
-    const isLocked = !canEnter && location.requiresFlag
+    const canEnter = canEnterLocation(locationId, flags, timeMarker)
+    const isLocked = !canEnter && location.requiresFlag && !flags.includes(location.requiresFlag)
     const npcsHere = getNPCsAtLocation(locationId)
 
     // Determine if it's a room (numbered location)
     const isRoom = ['room_player', 'room_2', 'room_4', 'room_6', 'room_9', 'room_11'].includes(locationId)
+    const isGuestRoom = isRoom && locationId !== 'room_player'
+    const occupants = getCharactersAtLocation(locationId, timeMarker)
+    const hasRoomPermission = location.requiresFlag ? flags.includes(location.requiresFlag) : false
+    const isOccupied = isGuestRoom && occupants.length > 0 && !hasRoomPermission
 
     return (
       <button
@@ -93,7 +97,7 @@ export function MapScreen() {
             ? 'bg-amber-600 border-amber-400 text-white'
             : canMove && canEnter
               ? 'bg-slate-700 border-slate-600 hover:bg-slate-600 hover:border-slate-500 cursor-pointer'
-              : isLocked
+              : isLocked || isOccupied
                 ? 'bg-slate-800 border-slate-700 text-slate-600'
                 : 'bg-slate-800 border-slate-700 text-slate-500'
           }
@@ -103,6 +107,7 @@ export function MapScreen() {
         <div className="font-semibold">{layout.label}</div>
         {isHere && <div className="text-[10px] text-amber-200">YOU</div>}
         {isLocked && <div className="text-[10px]">🔒</div>}
+        {isOccupied && !isLocked && <div className="text-[10px]">Occupied</div>}
         {npcsHere.length > 0 && !isHere && (
           <div className="text-[10px] text-amber-400 mt-0.5">
             {npcsHere.map((id) => (isCharacterKnown(id) ? NPC_CODES[id] : '?')).join(' ')}

@@ -27,6 +27,6 @@ export const CH1_BEATS: StoryBeatDef[] = [
     chapterId: 'ch1',
     title: 'Confront Earl',
     nextBeatId: 'ch2_b1_aftermath',
-    timeOfDay: 'night',
+    timeOfDay: 'evening',
   },
 ]

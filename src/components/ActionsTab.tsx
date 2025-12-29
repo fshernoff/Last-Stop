@@ -36,12 +36,12 @@ export function ActionsTab() {
 
   const currentLocation = LOCATIONS[player.currentLocation]
   const adjacentLocations = getAdjacentLocations(player.currentLocation)
+  const timeMarker = timeOfDayToMinutes(timeOfDay)
 
   // Get NPCs at current location
   const getNPCsHere = useCallback((): Character[] => {
-    const timeMarker = timeOfDayToMinutes(timeOfDay)
     return getCharactersAtLocation(player.currentLocation, timeMarker)
-  }, [player.currentLocation, timeOfDay])
+  }, [player.currentLocation, timeMarker])
 
   const npcsHere = (() => {
     const npcs = getNPCsHere()
@@ -56,7 +56,7 @@ export function ActionsTab() {
 
   // Handle movement
   const handleMove = (locationId: LocationId) => {
-    if (!canEnterLocation(locationId, flags)) return
+    if (!canEnterLocation(locationId, flags, timeMarker)) return
     moveTo(locationId)
   }
 
@@ -193,9 +193,9 @@ export function ActionsTab() {
           ? 'Marge mentioned Earl locking up late. Stake out the office.'
           : 'Stake out the office.'
       case 'ch1_b4_confront':
-        return 'Confront Earl in the office.'
+        return 'Confront Earl in the office before he locks up.'
       case 'ch2_b1_aftermath':
-        return 'Keep talking to Earl. He is hiding something.'
+        return 'Go to the diner and see if anyone remembers yesterday.'
       case 'ch3_b1_reveal':
         return 'Follow Earl’s lead and learn what’s in the back room.'
       case 'ch4_b1_journal':
@@ -315,7 +315,12 @@ export function ActionsTab() {
         </h3>
         <div className="space-y-2">
           {adjacentLocations.map((loc) => {
-            const canEnter = canEnterLocation(loc.id, flags)
+            const canEnter = canEnterLocation(loc.id, flags, timeMarker)
+            const occupants = getCharactersAtLocation(loc.id, timeMarker)
+            const isGuestRoom = loc.id.startsWith('room_') && loc.id !== 'room_player'
+            const isLocked = !!loc.requiresFlag && !flags.includes(loc.requiresFlag)
+            const hasRoomPermission = loc.requiresFlag ? flags.includes(loc.requiresFlag) : false
+            const isOccupied = !isLocked && isGuestRoom && occupants.length > 0 && !hasRoomPermission
             return (
               <button
                 key={loc.id}
@@ -329,7 +334,7 @@ export function ActionsTab() {
               >
                 {loc.name}
                 <span className="float-right text-slate-500">
-                  {canEnter ? 'Go' : '🔒'}
+                  {canEnter ? 'Go' : isLocked ? '🔒' : isOccupied ? 'Occupied' : '🔒'}
                 </span>
               </button>
             )

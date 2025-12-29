@@ -85,7 +85,7 @@ export const chapter1Scenes: Scene[] = [
       { speaker: 'player', text: 'I saw you go into the back room last night.' },
       { speaker: 'npc', text: 'You shouldn’t be watching my office.' },
       { speaker: 'player', text: 'Something’s wrong here.' },
-      { speaker: 'npc', text: 'If you’re going to dig, do it quietly. Meet me after closing.' },
+      { speaker: 'npc', text: 'If you’re going to dig, do it quietly. I lock up soon.' },
     ],
     effects: {
       setFlags: ['noticed_loop_start'],

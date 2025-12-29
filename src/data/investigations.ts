@@ -206,7 +206,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
   {
     id: 'room_2_look',
     location: 'room_2',
-    text: "Karen and David's room. You shouldn't be snooping through their things.",
+    text: "Karen and David's room. It's empty right now. You slip in, heart thumping, and take a quick look around.",
     oncePer: 'chapter',
   },
   {
