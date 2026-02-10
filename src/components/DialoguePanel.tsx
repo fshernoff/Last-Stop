@@ -49,7 +49,7 @@ type BranchContext = {
 type RenderedChoice = DialogueChoice & { isEnd?: boolean }
 
 export function DialoguePanel({ scene, onComplete, onCancel }: DialoguePanelProps) {
-  const { trust } = useGameStore()
+  const { trust, flags, inventory } = useGameStore()
   const [currentLineIndex, setCurrentLineIndex] = useState(0)
   const [showChoices, setShowChoices] = useState(false)
   const branchContextRef = useRef<BranchContext | null>(null)
@@ -78,13 +78,21 @@ export function DialoguePanel({ scene, onComplete, onCancel }: DialoguePanelProp
 
   const renderedChoices = useMemo<RenderedChoice[]>(() => {
     if (!currentLine?.choices) return []
-    if (choiceMode !== 'topics') return currentLine.choices
+
+    // Filter choices by flags/items requirements
+    const available = currentLine.choices.filter((choice) => {
+      if (choice.requiresFlags && !choice.requiresFlags.every((f) => flags.includes(f))) return false
+      if (choice.requiresItems && !choice.requiresItems.every((i) => inventory.includes(i))) return false
+      return true
+    })
+
+    if (choiceMode !== 'topics') return available
     const endText = currentLine.endChoiceText || '[End conversation]'
     return [
-      ...currentLine.choices,
+      ...available,
       { text: endText, next: '__end__', isEnd: true },
     ]
-  }, [currentLine, choiceMode])
+  }, [currentLine, choiceMode, flags, inventory])
 
   const getConvergenceIndex = useCallback(
     (targets: Set<string>, fromIndex: number) => {

@@ -26,7 +26,6 @@ export const LOCATIONS: Record<LocationId, Location> = {
     description:
       'The door is closed. The DO NOT DISTURB sign looks permanent. You hear nothing from inside, but something tells you someone is there.',
     adjacentTo: ['courtyard'],
-    requiresFlag: 'can_enter_room6',
   },
   room_9: {
     id: 'room_9',

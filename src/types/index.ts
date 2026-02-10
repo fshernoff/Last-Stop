@@ -67,6 +67,8 @@ export interface SceneRequirements {
   flags?: string[]
   notFlags?: string[]
   chapter?: { min?: number; max?: number }
+  location?: LocationId
+  timeWindow?: { min: number; max: number }
 }
 
 export interface SceneEffects {
@@ -84,6 +86,8 @@ export interface DialogueChoice {
   text: string
   next: string // ID of line to jump to
   effects?: SceneEffects
+  requiresFlags?: string[]
+  requiresItems?: string[]
 }
 
 export interface DialogueLine {
@@ -234,6 +238,9 @@ export const PERSISTENT_ITEMS = [
   'thomas_journal',
   'facility_map',
   'facility_keycard',
+  'sealed_case_files',
+  'newspaper_clipping',
+  'photograph',
 ] as const
 
 export type PersistentItem = typeof PERSISTENT_ITEMS[number]

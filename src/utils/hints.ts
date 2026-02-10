@@ -69,11 +69,20 @@ const HINT_RULES: HintRule[] = [
       !state.flags.includes('karen_mentioned_light'),
   },
   {
+    id: 'follow_karen_desert',
+    text: 'Karen walks to the desert between 3-5PM. Follow her there.',
+    when: (state) =>
+      state.flags.includes('karen_mentioned_light') &&
+      !state.flags.includes('karen_followed_to_desert') &&
+      !state.flags.includes('knows_facility_location'),
+  },
+  {
     id: 'karen_location',
     text: 'Keep talking to Karen to learn where the light came from.',
     when: (state) =>
       state.flags.includes('karen_mentioned_light') &&
-      !state.flags.includes('karen_told_location'),
+      !state.flags.includes('karen_told_location') &&
+      !state.flags.includes('knows_facility_location'),
   },
   {
     id: 'diane_observe',
@@ -100,6 +109,37 @@ const HINT_RULES: HintRule[] = [
     when: (state) =>
       state.flags.includes('drifter_told_father') &&
       !state.flags.includes('drifter_told_facility_location'),
+  },
+  {
+    id: 'mo_dawn',
+    text: 'Mo is at the diner at dawn (6:00-6:30AM). Try catching him early.',
+    when: (state) =>
+      state.flags.includes('met_mo') &&
+      state.flags.includes('knows_loop_exists') &&
+      !state.flags.includes('mo_dawn_clarity'),
+  },
+  {
+    id: 'intercept_diane',
+    text: 'Diane leaves every morning around 8AM. Watch the parking lot.',
+    when: (state) =>
+      state.flags.includes('diane_cover_blown') &&
+      !state.flags.includes('intercepted_diane_sedan'),
+  },
+  {
+    id: 'earl_night',
+    text: "Earl goes to the back room late at night. Wait in the office after 9PM.",
+    when: (state) =>
+      state.flags.includes('earl_revealed') &&
+      state.flags.includes('has_thomas_journal') &&
+      !state.flags.includes('caught_earl_with_device'),
+  },
+  {
+    id: 'show_items',
+    text: 'Try showing the items you have found to different people.',
+    when: (state) =>
+      (state.flags.includes('found_newspaper_clipping') || state.flags.includes('found_photograph')) &&
+      !state.flags.includes('diane_seen_clipping') &&
+      !state.flags.includes('marge_seen_photo'),
   },
   {
     id: 'back_room_search',

@@ -99,6 +99,153 @@ export const dianeScenes: Scene[] = [
   },
 
   // ============================================================================
+  // ITEM: Show newspaper clipping to Diane
+  // ============================================================================
+  {
+    id: 'diane_shown_clipping',
+    character: 'diane',
+    requirements: {
+      trust: 1,
+      flags: ['met_diane', 'found_newspaper_clipping'],
+      notFlags: ['diane_seen_clipping'],
+    },
+    priority: 75,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You look like you have something to say."',
+        choices: [
+          {
+            text: '"I found something you should see."',
+            next: 'show_clipping',
+            requiresItems: ['newspaper_clipping'],
+            effects: { setFlags: ['diane_seen_clipping', 'diane_revealed_incident_details', 'knows_government_involved'] },
+          },
+          {
+            text: '"Just checking in."',
+            next: 'small_talk',
+          },
+        ],
+        convergeTo: 'diane_clipping_end',
+      },
+      {
+        id: 'show_clipping',
+        speaker: 'narration',
+        text: 'You hand her the newspaper clipping. She unfolds it carefully, her expression sharpening.',
+      },
+      {
+        speaker: 'npc',
+        text: '"This is from 1984. \'Research Facility Incident — Three Missing.\' This matches my case files exactly."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She reads it again, more slowly.',
+      },
+      {
+        speaker: 'npc',
+        text: '"The \'incident\' was a temporal field test that went wrong. Three researchers disappeared. The government sealed everything."',
+        choices: [
+          { text: '"Temporal field?"', next: 'temporal' },
+          { text: '"Who were the researchers?"', next: 'temporal' },
+        ],
+      },
+      {
+        id: 'temporal',
+        speaker: 'npc',
+        text: '"They were experimenting with freezing moments in time. Something went catastrophically wrong. And someone covered it up."',
+      },
+      {
+        id: 'small_talk',
+        speaker: 'npc',
+        text: '"Checking in. That\'s nice. I\'m fine. Busy. You know how it is."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She turns back to her laptop.',
+      },
+      {
+        id: 'diane_clipping_end',
+        speaker: 'narration',
+        text: 'Diane returns to her work, but her mind is clearly elsewhere.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'diane', amount: 1 },
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
+  // ITEM: Show photograph to Diane
+  // ============================================================================
+  {
+    id: 'diane_shown_photograph',
+    character: 'diane',
+    requirements: {
+      trust: 1,
+      flags: ['met_diane', 'diane_cover_blown'],
+      notFlags: ['diane_seen_photograph'],
+    },
+    priority: 75,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"Any progress?"',
+        choices: [
+          {
+            text: '"Does this face match anyone in your case files?"',
+            next: 'show_photo',
+            requiresItems: ['photograph'],
+            effects: { setFlags: ['diane_seen_photograph', 'diane_confirmed_thomas', 'knows_thomas_role'] },
+          },
+          {
+            text: '"Find anything new?"',
+            next: 'nothing_new',
+          },
+        ],
+        convergeTo: 'diane_photo_end',
+      },
+      {
+        id: 'show_photo',
+        speaker: 'narration',
+        text: 'Diane takes the photograph, then flips open a folder on her desk. She compares the face to a redacted document.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Thomas Hoskins. One of the three researchers who disappeared. He was the youngest."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She holds up the redacted file. Thomas\'s name is circled in faded ink.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Official cause of death: car accident. But the accident report is sealed, and his employer doesn\'t exist in any records."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Wherever you found this photo, keep digging."',
+      },
+      {
+        id: 'nothing_new',
+        speaker: 'npc',
+        text: '"Dead ends. Every lead circles back to the same empty lot in the desert. I\'m missing something."',
+      },
+      {
+        id: 'diane_photo_end',
+        speaker: 'narration',
+        text: 'She makes a note in her file.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'diane', amount: 1 },
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 1: White sedan contact
   // ============================================================================
   {
@@ -107,7 +254,6 @@ export const dianeScenes: Scene[] = [
     requirements: {
       trust: 1,
       flags: ['met_diane', 'observed_white_sedan'],
-      notFlags: ['diane_cover_blown'],
     },
     priority: 60,
     oncePer: 'ever',
@@ -201,6 +347,188 @@ export const dianeScenes: Scene[] = [
       setFlags: ['diane_cover_blown', 'knows_diane_investigating', 'knows_1984_incident'],
       addRapport: { character: 'diane', amount: 1 },
       advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
+  // TIMED: Intercept Diane's sedan meeting (8-9AM)
+  // ============================================================================
+  {
+    id: 'diane_timed_sedan_intercept',
+    character: 'diane',
+    requirements: {
+      flags: ['diane_cover_blown'],
+      notFlags: ['intercepted_diane_sedan'],
+      location: 'parking_lot',
+      timeWindow: { min: 120, max: 180 },
+    },
+    priority: 90,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'A white sedan pulls into the parking lot. Diane walks out of her room carrying a folder. She doesn\'t expect to see you here.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What are you doing here?"',
+      },
+      {
+        speaker: 'player',
+        text: '"You leave every morning at this time. I wanted to know why."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She glances at the sedan, then back at you. Making a calculation.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Fine. My contact has sealed government files about the 1984 incident. Real files. The kind that don\'t officially exist."',
+        choices: [
+          {
+            text: '"I\'ll tell you what I know about Earl."',
+            next: 'share_earl',
+            effects: { setFlags: ['diane_shared_earl_info'], giveItem: 'sealed_case_files' },
+          },
+          {
+            text: '"I can\'t betray Earl\'s trust."',
+            next: 'refuse',
+            effects: { setFlags: ['diane_refused_deal'] },
+          },
+          {
+            text: '"I found this. Take it — but leave Earl out of it."',
+            next: 'offer_clipping',
+            requiresItems: ['newspaper_clipping'],
+            effects: { setFlags: ['diane_has_clipping'], giveItem: 'sealed_case_files' },
+          },
+        ],
+        convergeTo: 'sedan_after',
+      },
+      {
+        id: 'share_earl',
+        speaker: 'narration',
+        text: 'You tell her about Earl and the back room. She listens intently, taking notes.',
+      },
+      {
+        speaker: 'npc',
+        text: '"That confirms what the files suggest. Here — you\'ve earned these."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She hands you a thick envelope of sealed case files.',
+      },
+      {
+        id: 'refuse',
+        speaker: 'npc',
+        text: '"Loyalty. I respect that. But it won\'t get you answers."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She gets in the sedan without another word.',
+      },
+      {
+        id: 'offer_clipping',
+        speaker: 'narration',
+        text: 'She takes the newspaper clipping, examines it. Her eyes widen.',
+      },
+      {
+        speaker: 'npc',
+        text: '"This is from 1984. This matches my case files exactly. Where did you find this?"',
+      },
+      {
+        speaker: 'narration',
+        text: 'She hands you the sealed case files in exchange.',
+      },
+      {
+        id: 'sedan_after',
+        speaker: 'narration',
+        text: 'The white sedan pulls away. Whatever just happened, you\'re deeper in this now.',
+      },
+    ],
+    effects: {
+      setFlags: ['intercepted_diane_sedan'],
+      addRapport: { character: 'diane', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // CROSS-CHARACTER: Tell Diane about Vincent
+  // ============================================================================
+  {
+    id: 'diane_told_vincent_theory',
+    character: 'diane',
+    requirements: {
+      flags: ['met_diane', 'diane_cover_blown', 'knows_vincent_is_researcher'],
+      notFlags: ['diane_knows_vincent'],
+    },
+    priority: 80,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You have that look. Like you know something."',
+        choices: [
+          {
+            text: '"One of your missing researchers is staying in Room 6."',
+            next: 'tell_vincent',
+            requiresFlags: ['knows_vincent_is_researcher'],
+            effects: { setFlags: ['diane_knows_vincent', 'knows_loop_duration'] },
+          },
+          {
+            text: '"How\'s the investigation going?"',
+            next: 'standard_update',
+          },
+        ],
+        convergeTo: 'diane_vincent_end',
+      },
+      {
+        id: 'tell_vincent',
+        speaker: 'narration',
+        text: 'Diane stares at you. For the first time, she looks genuinely stunned.',
+      },
+      {
+        speaker: 'npc',
+        text: '"That\'s impossible. They were all declared dead in \'85."',
+      },
+      {
+        speaker: 'player',
+        text: '"He\'s been here the whole time. Forty years. In the loop."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She sits down heavily.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Forty years. That means the loop has been active since..."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Since the incident. My God."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She\'s putting it together. If the loop has been running for forty years, someone has been keeping it going. Someone who had a reason to never let go.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Earl. It\'s been Earl this whole time."',
+      },
+      {
+        id: 'standard_update',
+        speaker: 'npc',
+        text: '"Slow. Every thread leads to a dead end or a sealed file. This place doesn\'t want to be understood."',
+      },
+      {
+        id: 'diane_vincent_end',
+        speaker: 'narration',
+        text: 'Diane stares at her notes, rewriting everything she thought she knew.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'diane', amount: 2 },
+      advanceTime: 20,
     },
   },
 

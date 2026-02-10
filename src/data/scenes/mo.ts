@@ -53,6 +53,70 @@ export const moScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIMED: Catch Mo at dawn (6:00-6:30AM)
+  // ============================================================================
+  {
+    id: 'mo_timed_morning_clarity',
+    character: 'mo',
+    requirements: {
+      flags: ['met_mo', 'knows_loop_exists'],
+      notFlags: ['mo_dawn_clarity'],
+      location: 'diner',
+      timeWindow: { min: 0, max: 60 },
+    },
+    priority: 90,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: "The diner is empty except for Mo. He's sitting perfectly still, staring at his coffee. Something is different about him this morning.",
+      },
+      {
+        speaker: 'npc',
+        text: '"Sit down."',
+      },
+      {
+        speaker: 'narration',
+        text: "His voice is quiet. Clear. Not the jovial trucker you've met before.",
+      },
+      {
+        speaker: 'npc',
+        text: '"The route feels wrong today. Like I\'ve driven it before. Like the road remembers me."',
+        choices: [
+          { text: '"What do you mean?"', next: 'explain' },
+          { text: '"You have driven it before."', next: 'explain' },
+        ],
+      },
+      {
+        id: 'explain',
+        speaker: 'npc',
+        text: '"The mile markers. I\'ve driven 47 miles to get here. I counted. But the markers only count 12."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He taps the table.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Thirty-five miles just... gone. Folded up. Like the road is shorter than it should be."',
+      },
+      {
+        speaker: 'narration',
+        text: "His clarity is startling. In a few hours he'll be back to his usual self, the fog rolling in again. But right now, at dawn, Mo sees it all.",
+      },
+      {
+        speaker: 'npc',
+        text: '"Something\'s wrong with this place. I can feel it in the road."',
+      },
+    ],
+    effects: {
+      setFlags: ['mo_dawn_clarity', 'knows_mo_mile_discrepancy'],
+      addRapport: { character: 'mo', amount: 2 },
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 0: Ambient small talk
   // ============================================================================
   {
@@ -77,6 +141,91 @@ export const moScenes: Scene[] = [
     effects: {
       addRapport: { character: 'mo', amount: 1 },
       advanceTime: 10,
+    },
+  },
+
+  // ============================================================================
+  // ITEM: Show newspaper clipping to Mo
+  // ============================================================================
+  {
+    id: 'mo_shown_clipping',
+    character: 'mo',
+    requirements: {
+      trust: 1,
+      flags: ['met_mo', 'mo_dawn_clarity'],
+      notFlags: ['mo_seen_clipping'],
+    },
+    priority: 75,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'Mo is nursing his coffee, staring out the window at the highway.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Pull up a seat."',
+        choices: [
+          {
+            text: '"Have you seen this article?"',
+            next: 'show_clipping',
+            requiresItems: ['newspaper_clipping'],
+            effects: { setFlags: ['mo_seen_clipping', 'mo_remembers_roadblock'] },
+          },
+          {
+            text: '"Long day?"',
+            next: 'small_talk',
+          },
+        ],
+        convergeTo: 'mo_clipping_end',
+      },
+      {
+        id: 'show_clipping',
+        speaker: 'narration',
+        text: 'Mo squints at the newspaper clipping, holding it close.',
+      },
+      {
+        speaker: 'npc',
+        text: '"1984? I was driving this route in \'84."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He taps the article.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I remember a roadblock. Right here, on this stretch. Men in suits. Government plates."',
+      },
+      {
+        speaker: 'npc',
+        text: '"They told us to take the long way around. I always wondered what they were hiding."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He hands the clipping back.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Guess now I know."',
+      },
+      {
+        id: 'small_talk',
+        speaker: 'npc',
+        text: '"Every day\'s a long day on the road. But some are longer than others."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He sips his coffee.',
+      },
+      {
+        id: 'mo_clipping_end',
+        speaker: 'narration',
+        text: 'Mo goes back to watching the highway.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'mo', amount: 1 },
+      advanceTime: 15,
     },
   },
 

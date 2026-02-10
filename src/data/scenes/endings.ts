@@ -2,10 +2,10 @@ import type { Scene } from '../../types'
 
 export const endingScenes: Scene[] = [
   // ============================================================================
-  // ENDING A: The Good Ending - Earl lets go
+  // THE ENDING: Player chooses whether Earl lets go or they both stay
   // ============================================================================
   {
-    id: 'ending_a_release',
+    id: 'ending_confrontation',
     character: 'earl',
     requirements: {
       flags: ['ready_for_ending', 'earl_read_journal'],
@@ -20,13 +20,8 @@ export const endingScenes: Scene[] = [
       {
         speaker: 'npc',
         text: '"I\'ve been reading this all night. Every reset. Every word."',
-        choices: [
-          { text: '"What does it say?"', next: 'continue' },
-          { text: '"Are you ready?"', next: 'continue' },
-        ],
       },
       {
-        id: 'continue',
         speaker: 'npc',
         text: '"Thomas. My boy. He knew I\'d find this someday. He knew I\'d be tempted."',
       },
@@ -39,8 +34,8 @@ export const endingScenes: Scene[] = [
         text: '"He asked me to let go. Forty years ago, in a letter I never read."',
       },
       {
-        speaker: 'player',
-        text: '"Earl..."',
+        speaker: 'narration',
+        text: 'Earl stands motionless. His hand hovers near the device. The hum fills the silence between you.',
       },
       {
         speaker: 'npc',
@@ -48,7 +43,30 @@ export const endingScenes: Scene[] = [
       },
       {
         speaker: 'narration',
-        text: 'He reaches toward the device.',
+        text: 'He looks at you. Really looks at you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What do we do?"',
+        choices: [
+          {
+            text: '"It\'s time to let him go, Earl."',
+            next: 'ending_a_path',
+            effects: { setFlags: ['ending_a'] },
+          },
+          {
+            text: '"I\'m not ready to leave this place."',
+            next: 'ending_d_path',
+            effects: { setFlags: ['ending_d'] },
+          },
+        ],
+      },
+
+      // ── ENDING A: Release ───────────────────────────────────────────────
+      {
+        id: 'ending_a_path',
+        speaker: 'narration',
+        text: 'Something shifts in his face. Not surprise. Relief.',
       },
       {
         speaker: 'npc',
@@ -100,7 +118,7 @@ export const endingScenes: Scene[] = [
       },
       {
         speaker: 'narration',
-        text: 'The camera pulls back. The motel sits in the desert, no longer a trap. Just a place.',
+        text: 'The motel sits in the desert, no longer a trap. Just a place.',
       },
       {
         speaker: 'narration',
@@ -110,62 +128,22 @@ export const endingScenes: Scene[] = [
         speaker: 'narration',
         text: '[THE END]',
       },
-    ],
-    effects: {
-      setFlags: ['ending_complete', 'ending_a'],
-    },
-  },
 
-  // ============================================================================
-  // ENDING D: The Reset Ending - Player chooses to stay
-  // ============================================================================
-  {
-    id: 'ending_d_stay',
-    character: 'earl',
-    requirements: {
-      flags: ['ready_for_ending'],
-      chapter: { min: 5 },
-    },
-    priority: 900,
-    oncePer: 'ever',
-    lines: [
+      // ── ENDING D: Stay ──────────────────────────────────────────────────
       {
+        id: 'ending_d_path',
         speaker: 'narration',
-        text: 'Earl looks at you across the desk. The device hums in the back room.',
+        text: 'Earl stares at you for a long time.',
       },
       {
-        speaker: 'npc',
-        text: '"You\'ve been here a long time. Longer than most."',
-        choices: [
-          { text: '"I know how to end this."', next: 'know_how' },
-          { text: '"I\'m not ready to leave."', next: 'not_ready' },
-        ],
-        convergeTo: 'ending_d_pattern',
-      },
-      {
-        id: 'know_how',
-        speaker: 'npc',
-        text: '"But?"',
-      },
-      {
-        speaker: 'player',
-        text: '"But I\'m not sure I want to."',
-      },
-      {
-        speaker: 'narration',
-        text: 'You both stand in silence.',
-      },
-      {
-        id: 'not_ready',
         speaker: 'npc',
         text: '"Neither am I. Even now."',
       },
       {
         speaker: 'narration',
-        text: 'You both stand in silence.',
+        text: 'You both stand in silence. The device hums between you like a heartbeat.',
       },
       {
-        id: 'ending_d_pattern',
         speaker: 'npc',
         text: '"There\'s something about knowing everyone. Every conversation. Every pattern."',
       },
@@ -176,13 +154,16 @@ export const endingScenes: Scene[] = [
       {
         speaker: 'npc',
         text: '"That\'s what I told myself. For a long time."',
-        choices: [
-          { text: '"Maybe we stay."', next: 'ending' },
-          { text: '"Maybe that\'s okay."', next: 'ending' },
-        ],
       },
       {
-        id: 'ending',
+        speaker: 'narration',
+        text: 'He lowers his hand from the device. Steps back.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Maybe that\'s enough."',
+      },
+      {
         speaker: 'narration',
         text: 'The day ends. It resets.',
       },
@@ -216,7 +197,7 @@ export const endingScenes: Scene[] = [
       },
     ],
     effects: {
-      setFlags: ['ending_complete', 'ending_d'],
+      setFlags: ['ending_complete'],
     },
   },
 ]

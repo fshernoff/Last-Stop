@@ -20,6 +20,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_trust_decay', text: 'Deep bonds fade after each reset', category: 'loop' },
   { flag: 'knows_loop_cause', text: 'The device in the back room is causing this', category: 'loop' },
   { flag: 'knows_how_to_end', text: 'The cycle can be broken', category: 'loop' },
+  { flag: 'knows_loop_duration', text: 'The loop has been active for forty years', category: 'loop' },
 
   // Earl
   { flag: 'met_earl', text: 'Met Earl, the motel owner', category: 'people', character: 'earl' },
@@ -28,11 +29,13 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_earl_guilt', text: 'Earl blames himself for what happened', category: 'people', character: 'earl' },
   { flag: 'knows_earl_built_device', text: 'Earl activated the device to bring Thomas back', category: 'people', character: 'earl' },
   { flag: 'has_master_key', text: 'Earl gave you the master key', category: 'people', character: 'earl' },
+  { flag: 'knows_earl_talks_to_thomas', text: 'Earl talks to the device as if Thomas can hear him', category: 'people', character: 'earl' },
 
   // Marge
   { flag: 'met_marge', text: "Met Marge, Earl's sister", category: 'people', character: 'marge' },
   { flag: 'knows_marge_worried', text: 'Marge is worried about Earl', category: 'people', character: 'marge' },
   { flag: 'knows_marge_knows', text: 'Marge knows you and Earl share a secret', category: 'people', character: 'marge' },
+  { flag: 'marge_confirmed_thomas', text: 'Marge confirmed Thomas was brilliant but reckless', category: 'people', character: 'marge' },
 
   // Karen Chen
   { flag: 'met_karen', text: 'Met Karen Chen, staying with her husband', category: 'people', character: 'karen' },
@@ -53,6 +56,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'met_mo', text: 'Met Big Mo, a long-haul trucker', category: 'people', character: 'mo' },
   { flag: 'knows_mo_route', text: 'Mo drives this route twice a month', category: 'people', character: 'mo' },
   { flag: 'knows_mo_deja_vu', text: 'Mo feels like he\'s lived this day before', category: 'people', character: 'mo' },
+  { flag: 'mo_remembers_roadblock', text: 'Mo remembers a government roadblock here in 1984', category: 'people', character: 'mo' },
 
   // Drifter
   { flag: 'met_drifter', text: 'Encountered the Drifter', category: 'people', character: 'drifter' },
@@ -63,6 +67,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_vincent_exists', text: 'Someone is staying in Room 6', category: 'people', character: 'vincent' },
   { flag: 'met_vincent', text: 'Met Vincent, the mysterious guest', category: 'people', character: 'vincent' },
   { flag: 'knows_vincent_connection', text: 'Vincent has a connection to Thomas', category: 'people', character: 'vincent' },
+  { flag: 'vincent_was_partner', text: "Vincent was Thomas's research partner", category: 'people', character: 'vincent' },
   { flag: 'can_enter_room6', text: 'Gained access to Room 6', category: 'places' },
 
   // Places
@@ -79,6 +84,9 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_thomas_role', text: 'Thomas worked on temporal field research', category: 'mystery' },
   { flag: 'knows_facility_location', text: 'The facility lies beyond mile marker 7', category: 'mystery' },
   { flag: 'knows_missing_persons_pattern', text: 'Missing persons cluster around this motel', category: 'mystery' },
+  { flag: 'knows_vincent_is_researcher', text: 'Vincent is one of the three researchers who "disappeared" in 1984', category: 'mystery' },
+  { flag: 'diane_revealed_incident_details', text: 'The 1984 incident was a temporal field test that went wrong', category: 'mystery' },
+  { flag: 'knows_mo_mile_discrepancy', text: "Mo's mile markers don't add up — the loop warps distance", category: 'mystery' },
 ]
 
 // Trust tier labels

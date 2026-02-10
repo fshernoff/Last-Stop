@@ -15,7 +15,30 @@ export interface InvestigationResult {
 }
 
 export const INVESTIGATIONS: InvestigationResult[] = [
+  // Player's room - first time (Chapter 1 only)
+  {
+    id: 'room_player_look',
+    location: 'room_player',
+    text: "Your room. Bed, TV, bathroom. The usual motel fare. A Bible in the nightstand drawer. Nothing special.",
+    notFlags: ['explored_room_once'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['explored_room_once'],
+    },
+  },
+
+  // Player's room - Chapter 1 repeat
+  {
+    id: 'room_player_repeat',
+    location: 'room_player',
+    text: "Your room. Nothing's changed since you left.",
+    requiresFlags: ['explored_room_once'],
+    notFlags: ['noticed_loop_start'],
+    oncePer: 'loop',
+  },
+
   // Player's room - Reset awakening (first realization something is wrong)
+  // NOTE: Must come after room_player_repeat so "last matching wins" picks this
   {
     id: 'room_player_loop2_awakening',
     location: 'room_player',
@@ -48,28 +71,6 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     location: 'room_player',
     text: "6:00 AM. The day has reset again. Everything is back to where it started - except you. You remember. You always remember.",
     requiresFlags: ['knows_loop_exists'],
-    oncePer: 'loop',
-  },
-
-  // Player's room - first time (Chapter 1 only)
-  {
-    id: 'room_player_look',
-    location: 'room_player',
-    text: "Your room. Bed, TV, bathroom. The usual motel fare. A Bible in the nightstand drawer. Nothing special.",
-    notFlags: ['explored_room_once'],
-    oncePer: 'ever',
-    effects: {
-      setFlags: ['explored_room_once'],
-    },
-  },
-
-  // Player's room - Chapter 1 repeat
-  {
-    id: 'room_player_repeat',
-    location: 'room_player',
-    text: "Your room. Nothing's changed since you left.",
-    requiresFlags: ['explored_room_once'],
-    notFlags: ['noticed_loop_start'],
     oncePer: 'loop',
   },
 
@@ -211,12 +212,22 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     },
   },
 
+  // Back room - device (flavor — placed first so progression entries override it)
+  {
+    id: 'back_room_device',
+    location: 'back_room',
+    text: "The device sits on Earl's workbench. A small metal cylinder, softly humming. Blue light pulses within. This is what's keeping everyone trapped.",
+    requiresFlags: ['seen_device'],
+    notFlags: ['has_thomas_journal'],
+    oncePer: 'loop',
+  },
+
   // Back room - first look
   {
     id: 'back_room_look',
     location: 'back_room',
     text: "Earl's private space. A cot, boxes of old belongings, a workbench cluttered with tools under a dust sheet. Photos on every wall. One face appears in almost all of them - a young man with Earl's eyes.",
-    notFlags: ['seen_device', 'investigated_back_room'],
+    notFlags: ['investigated_back_room'],
     oncePer: 'ever',
     effects: {
       setFlags: ['investigated_back_room', 'entered_back_room', 'knows_earl_son'],
@@ -235,28 +246,18 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     },
   },
 
-  // Back room - find journal (requires multiple visits/deeper investigation)
+  // Back room - find journal (requires photo found first + knowing about device)
   {
     id: 'back_room_find_journal',
     location: 'back_room',
     text: "Searching through the boxes, you find an old journal. The name inside reads 'Thomas Hoskins'. It's filled with notes about temporal field experiments and theories about 'capturing moments'.",
-    requiresFlags: ['investigated_back_room', 'seen_device'],
+    requiresFlags: ['investigated_back_room', 'seen_device', 'found_photograph'],
     notFlags: ['has_thomas_journal'],
     oncePer: 'ever',
     effects: {
       setFlags: ['has_thomas_journal'],
       giveItem: 'thomas_journal',
     },
-  },
-
-  // Back room - device
-  {
-    id: 'back_room_device',
-    location: 'back_room',
-    text: "The device sits on Earl's workbench. A small metal cylinder, softly humming. Blue light pulses within. This is what's keeping everyone trapped.",
-    requiresFlags: ['seen_device'],
-    notFlags: ['has_thomas_journal'],
-    oncePer: 'loop',
   },
 
   // Back room - after journal

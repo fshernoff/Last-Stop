@@ -233,7 +233,7 @@ export const earlScenes: Scene[] = [
       chapter: { min: 2 },
     },
     priority: 50,
-    oncePer: 'loop',
+    oncePer: 'ever',
     lines: [
       {
         speaker: 'npc',
@@ -578,6 +578,161 @@ export const earlScenes: Scene[] = [
       setFlags: ['seen_device', 'knows_device_purpose', 'knows_loop_cause'],
       addRapport: { character: 'earl', amount: 1 },
       advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // ITEM: Show Diane's case files to Earl
+  // ============================================================================
+  {
+    id: 'earl_confronted_with_files',
+    character: 'earl',
+    requirements: {
+      flags: ['earl_revealed'],
+      notFlags: ['earl_seen_files'],
+    },
+    priority: 180,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'Earl is behind the desk, sorting keys.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What is it?"',
+        choices: [
+          {
+            text: '"Earl, I found government files about the facility."',
+            next: 'show_files',
+            requiresItems: ['sealed_case_files'],
+            effects: { setFlags: ['earl_seen_files', 'earl_confirmed_government', 'knows_device_purpose'] },
+          },
+          {
+            text: '"How are you feeling?"',
+            next: 'feeling',
+          },
+        ],
+        convergeTo: 'earl_files_end',
+      },
+      {
+        id: 'show_files',
+        speaker: 'narration',
+        text: "Earl's face drains of color. He takes the files, hands trembling.",
+      },
+      {
+        speaker: 'npc',
+        text: '"Where did you get these?"',
+      },
+      {
+        speaker: 'narration',
+        text: 'He flips through the pages. Redacted names. Classified stamps. A familiar one: Thomas Hoskins.',
+      },
+      {
+        speaker: 'npc',
+        text: '"They knew. The government knew the device worked. They shut it down and sealed everything."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But Thomas kept a copy of the research. Rebuilt it from memory."',
+        choices: [
+          { text: '"He outsmarted them."', next: 'outsmarted' },
+          { text: '"Why?"', next: 'outsmarted' },
+        ],
+      },
+      {
+        id: 'outsmarted',
+        speaker: 'npc',
+        text: '"My boy outsmarted the whole damn government. And I\'m the fool who turned it back on."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He sets the files down carefully.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Now you know everything I know. More, probably."',
+      },
+      {
+        id: 'feeling',
+        speaker: 'npc',
+        text: '"Same as always. Tired. Old. Still here."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He manages a thin smile.',
+      },
+      {
+        id: 'earl_files_end',
+        speaker: 'narration',
+        text: 'Earl goes back to sorting keys, slower than before.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'earl', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // TIMED: Stake out Earl's office at night (9-11PM)
+  // ============================================================================
+  {
+    id: 'earl_timed_office_night',
+    character: 'earl',
+    requirements: {
+      flags: ['earl_revealed', 'has_thomas_journal'],
+      notFlags: ['caught_earl_with_device'],
+      location: 'office',
+      timeWindow: { min: 900, max: 1020 },
+    },
+    priority: 200,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'The office is dark. You wait in the shadows. After a while, Earl emerges from the back hallway.',
+      },
+      {
+        speaker: 'narration',
+        text: "He doesn't see you. He's carrying the device — the cylinder — cradled against his chest like something precious.",
+      },
+      {
+        speaker: 'narration',
+        text: 'He sits at his desk and holds the device close. And then he speaks.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Hey, Tommy. It\'s Dad."',
+      },
+      {
+        speaker: 'narration',
+        text: 'His voice cracks.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I read your journal today. Someone found it. Someone who\'s trying to help."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He pauses, as if listening to a response that never comes.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I know you told me to let go. I know, son. I just... I can\'t yet. Not yet."',
+      },
+      {
+        speaker: 'narration',
+        text: "His shoulders shake. The device hums softly in the dark. You realize Earl isn't just maintaining a machine — he's visiting his son.",
+      },
+      {
+        speaker: 'narration',
+        text: 'You step back quietly. Some grief is too private to witness. But now you understand what holds him here.',
+      },
+    ],
+    effects: {
+      setFlags: ['caught_earl_with_device', 'knows_earl_talks_to_thomas'],
+      advanceTime: 25,
     },
   },
 

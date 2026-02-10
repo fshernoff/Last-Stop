@@ -200,6 +200,100 @@ export const margeScenes: Scene[] = [
   },
 
   // ============================================================================
+  // ITEM: Show Thomas's photograph to Marge
+  // ============================================================================
+  {
+    id: 'marge_shown_photograph',
+    character: 'marge',
+    requirements: {
+      trust: 1,
+      flags: ['met_marge'],
+      notFlags: ['marge_seen_photo'],
+    },
+    priority: 75,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'Marge is wiping down the counter, humming to herself.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What can I do you for?"',
+        choices: [
+          {
+            text: '"Marge, do you recognize this man?"',
+            next: 'show_photo',
+            requiresItems: ['photograph'],
+            effects: { setFlags: ['marge_seen_photo', 'marge_confirmed_thomas', 'knows_earl_built_device'] },
+          },
+          {
+            text: '"How long have you worked here?"',
+            next: 'generic',
+          },
+        ],
+        convergeTo: 'marge_photo_end',
+      },
+      {
+        id: 'show_photo',
+        speaker: 'narration',
+        text: 'She takes the photograph. The cloth stops moving.',
+      },
+      {
+        speaker: 'npc',
+        text: '"That\'s Tommy. Earl\'s boy."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She stares at the photo for a long moment.',
+      },
+      {
+        speaker: 'npc',
+        text: '"He was brilliant. Too brilliant for his own good. Always tinkering, always pushing. Earl used to say Tommy had more ideas than sense."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Earl hasn\'t been the same since the accident. Not even close."',
+        choices: [
+          { text: '"What changed?"', next: 'changed' },
+          { text: '"I\'m sorry."', next: 'changed' },
+        ],
+      },
+      {
+        id: 'changed',
+        speaker: 'npc',
+        text: '"He started building things. In that back room. I stopped asking what."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She hands the photograph back.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Whatever you\'re looking into — be careful. Earl\'s got wounds that never healed."',
+      },
+      {
+        id: 'generic',
+        speaker: 'npc',
+        text: '"Twenty years, give or take. Long enough to know everyone\'s coffee order and nobody\'s secrets."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She grins.',
+      },
+      {
+        id: 'marge_photo_end',
+        speaker: 'narration',
+        text: 'She picks up the cloth and goes back to wiping.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'marge', amount: 1 },
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 1: Gossip about guests
   // ============================================================================
   {
@@ -210,7 +304,7 @@ export const margeScenes: Scene[] = [
       flags: ['met_marge'],
     },
     priority: 50,
-    oncePer: 'loop',
+    oncePer: 'ever',
     lines: [
       {
         speaker: 'npc',

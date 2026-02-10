@@ -229,6 +229,62 @@ export const karenScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIMED: Follow Karen to the desert (3-5PM)
+  // ============================================================================
+  {
+    id: 'karen_timed_desert_walk',
+    character: 'karen',
+    requirements: {
+      flags: ['karen_mentioned_light'],
+      notFlags: ['karen_followed_to_desert'],
+      location: 'desert',
+      timeWindow: { min: 540, max: 660 },
+    },
+    priority: 90,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'You spot Karen ahead on the trail, moving with purpose. She stops at the edge of a concrete structure half-buried in sand.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You followed me."',
+        choices: [
+          { text: '"You said the light came from out here."', next: 'followed' },
+          { text: '"I had to see for myself."', next: 'followed' },
+        ],
+      },
+      {
+        id: 'followed',
+        speaker: 'npc',
+        text: '"Look."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She points at the half-buried structure. A concrete bunker, its entrance sealed with rust and sand. Government markings, faded but visible.',
+      },
+      {
+        speaker: 'npc',
+        text: '"This is where the light was coming from. I\'m sure of it."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She steps back, wrapping her arms around herself.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I\'m not going any closer. But you can. If you want answers, they\'re in there."',
+      },
+    ],
+    effects: {
+      setFlags: ['karen_followed_to_desert', 'knows_facility_location'],
+      addRapport: { character: 'karen', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
   // TIER 2: Found the location
   // ============================================================================
   {

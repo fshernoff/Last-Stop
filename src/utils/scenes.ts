@@ -1,4 +1,4 @@
-import type { Scene, CharacterId, GameState, TrustTier } from '../types'
+import type { Scene, CharacterId, GameState, TrustTier, LocationId } from '../types'
 import { getScenesForCharacter } from '../data/scenes'
 
 interface SceneSelectionContext {
@@ -7,6 +7,8 @@ interface SceneSelectionContext {
   trust: Record<CharacterId, TrustTier>
   scenesSeenEver: string[]
   scenesSeenThisDay: string[]
+  currentTime: number
+  currentLocation: LocationId
 }
 
 /**
@@ -49,6 +51,18 @@ function meetsRequirements(scene: Scene, ctx: SceneSelectionContext): boolean {
     }
   }
 
+  // Location requirement
+  if (requirements.location && ctx.currentLocation !== requirements.location) {
+    return false
+  }
+
+  // Time window requirement
+  if (requirements.timeWindow) {
+    if (ctx.currentTime < requirements.timeWindow.min || ctx.currentTime > requirements.timeWindow.max) {
+      return false
+    }
+  }
+
   return true
 }
 
@@ -78,7 +92,7 @@ function hasBeenSeen(scene: Scene, ctx: SceneSelectionContext): boolean {
  */
 export function selectScene(
   character: CharacterId,
-  gameState: Pick<GameState, 'currentChapter' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisDay'>
+  gameState: Pick<GameState, 'currentChapter' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisDay' | 'currentTime' | 'player'>
 ): Scene | null {
   const ctx: SceneSelectionContext = {
     currentChapter: gameState.currentChapter,
@@ -86,6 +100,8 @@ export function selectScene(
     trust: gameState.trust,
     scenesSeenEver: gameState.scenesSeenEver,
     scenesSeenThisDay: gameState.scenesSeenThisDay,
+    currentTime: gameState.currentTime,
+    currentLocation: gameState.player.currentLocation,
   }
 
   // Get all scenes for this character
@@ -120,7 +136,7 @@ export function selectScene(
  */
 export function debugSceneSelection(
   character: CharacterId,
-  gameState: Pick<GameState, 'currentChapter' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisDay'>
+  gameState: Pick<GameState, 'currentChapter' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisDay' | 'currentTime' | 'player'>
 ): {
   available: Scene[]
   unavailable: Array<{ scene: Scene; reason: string }>
@@ -131,6 +147,8 @@ export function debugSceneSelection(
     trust: gameState.trust,
     scenesSeenEver: gameState.scenesSeenEver,
     scenesSeenThisDay: gameState.scenesSeenThisDay,
+    currentTime: gameState.currentTime,
+    currentLocation: gameState.player.currentLocation,
   }
 
   const characterScenes = getScenesForCharacter(character)
@@ -170,6 +188,18 @@ export function debugSceneSelection(
       }
       if (requirements.chapter.max !== undefined && ctx.currentChapter > requirements.chapter.max) {
         unavailable.push({ scene, reason: `Chapter ${ctx.currentChapter} > max ${requirements.chapter.max}` })
+        continue
+      }
+    }
+
+    if (requirements.location && ctx.currentLocation !== requirements.location) {
+      unavailable.push({ scene, reason: `Location ${ctx.currentLocation} !== required ${requirements.location}` })
+      continue
+    }
+
+    if (requirements.timeWindow) {
+      if (ctx.currentTime < requirements.timeWindow.min || ctx.currentTime > requirements.timeWindow.max) {
+        unavailable.push({ scene, reason: `Time ${ctx.currentTime} outside window ${requirements.timeWindow.min}-${requirements.timeWindow.max}` })
         continue
       }
     }

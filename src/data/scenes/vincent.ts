@@ -9,7 +9,7 @@ export const vincentScenes: Scene[] = [
     character: 'vincent',
     requirements: {
       trust: 0,
-      notFlags: ['vincent_contacted'],
+      notFlags: ['vincent_contacted', 'earl_told_about_vincent'],
       flags: ['knows_room6_occupied'],
     },
     priority: 100,
@@ -340,6 +340,106 @@ export const vincentScenes: Scene[] = [
   },
 
   // ============================================================================
+  // ITEM: Show Thomas's journal to Vincent
+  // ============================================================================
+  {
+    id: 'vincent_shown_journal',
+    character: 'vincent',
+    requirements: {
+      flags: ['met_vincent', 'vincent_opened_door'],
+      notFlags: ['vincent_seen_journal'],
+    },
+    priority: 95,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'Vincent is staring at his wall of notes, tracing lines with his finger.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Back again."',
+        choices: [
+          {
+            text: '"I found Thomas\'s journal. Have you read it?"',
+            next: 'show_journal',
+            requiresItems: ['thomas_journal'],
+            effects: { setFlags: ['vincent_seen_journal', 'vincent_was_partner', 'knows_vincent_connection', 'knows_thomas_role'] },
+          },
+          {
+            text: '"How are you holding up?"',
+            next: 'check_in',
+          },
+        ],
+        convergeTo: 'vincent_journal_end',
+      },
+      {
+        id: 'show_journal',
+        speaker: 'narration',
+        text: "Vincent's hands shake as he takes the journal. He opens it to a specific page, as if he already knew it was there.",
+      },
+      {
+        speaker: 'npc',
+        text: '"I helped write parts of this."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks at you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Thomas was my research partner. We built the device together."',
+        choices: [
+          { text: '"You knew Thomas?"', next: 'knew' },
+          { text: '"What was the device supposed to do?"', next: 'purpose' },
+        ],
+        convergeTo: 'vincent_journal_reveal',
+      },
+      {
+        id: 'knew',
+        speaker: 'npc',
+        text: '"Knew him? I spent three years working beside him. He was the most focused person I ever met."',
+      },
+      {
+        id: 'purpose',
+        speaker: 'npc',
+        text: '"It wasn\'t supposed to trap anyone. It was supposed to preserve a single moment. Like a photograph, but for time itself."',
+      },
+      {
+        id: 'vincent_journal_reveal',
+        speaker: 'npc',
+        text: '"Thomas wanted to save a memory of his father. Of one good day they had together, before everything went wrong."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He closes the journal gently.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Instead, it trapped all of us."',
+      },
+      {
+        id: 'check_in',
+        speaker: 'npc',
+        text: '"Same as yesterday. And the day before. And the day before that."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He almost smiles.',
+      },
+      {
+        id: 'vincent_journal_end',
+        speaker: 'narration',
+        text: 'Vincent turns back to his wall of notes.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'vincent', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
   // TIER 1: Ambient small talk
   // ============================================================================
   {
@@ -364,6 +464,98 @@ export const vincentScenes: Scene[] = [
     effects: {
       addRapport: { character: 'vincent', amount: 1 },
       advanceTime: 10,
+    },
+  },
+
+  // ============================================================================
+  // CROSS-CHARACTER: Tell Vincent about Diane's research
+  // ============================================================================
+  {
+    id: 'vincent_told_diane_findings',
+    character: 'vincent',
+    requirements: {
+      flags: ['met_vincent', 'vincent_opened_door', 'diane_revealed_incident_details'],
+      notFlags: ['vincent_knows_diane'],
+    },
+    priority: 92,
+    oncePer: 'loop',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'Vincent is adjusting his timeline on the wall.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What\'s new?"',
+        choices: [
+          {
+            text: '"There\'s a woman here investigating the 1984 incident."',
+            next: 'tell_diane',
+            requiresFlags: ['diane_revealed_incident_details'],
+            effects: { setFlags: ['vincent_knows_diane', 'knows_vincent_is_researcher'] },
+          },
+          {
+            text: '"Vincent, what do you know about the 1984 incident?"',
+            next: 'vague',
+          },
+        ],
+        convergeTo: 'vincent_diane_end',
+      },
+      {
+        id: 'tell_diane',
+        speaker: 'narration',
+        text: 'Vincent freezes. The color drains from his face.',
+      },
+      {
+        speaker: 'npc',
+        text: '"She can\'t know I\'m here."',
+      },
+      {
+        speaker: 'player',
+        text: '"Why not?"',
+      },
+      {
+        speaker: 'npc',
+        text: '"If the government finds out one of the researchers survived..."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He trails off. And then you understand.',
+      },
+      {
+        speaker: 'player',
+        text: '"You\'re one of the three. The researchers who \'disappeared.\'"',
+      },
+      {
+        speaker: 'npc',
+        text: '"Disappeared. Declared dead. Erased from the records."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks at his hands.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I didn\'t die. I\'ve been here. Hiding. In the loop. For forty years."',
+      },
+      {
+        id: 'vague',
+        speaker: 'npc',
+        text: '"The 1984 incident. That\'s what started all of this. But I\'ve told you what I know."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He seems guarded. Perhaps there\'s something specific you could share.',
+      },
+      {
+        id: 'vincent_diane_end',
+        speaker: 'narration',
+        text: 'Vincent turns back to his wall, but his hands are shaking.',
+      },
+    ],
+    effects: {
+      addRapport: { character: 'vincent', amount: 2 },
+      advanceTime: 20,
     },
   },
 

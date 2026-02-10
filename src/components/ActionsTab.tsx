@@ -126,6 +126,8 @@ export function ActionsTab() {
         trust,
         scenesSeenEver,
         scenesSeenThisDay,
+        currentTime,
+        player,
       }
 
       const scene = selectScene(characterId, gameState)
@@ -139,7 +141,7 @@ export function ActionsTab() {
         setTimeout(() => setNoSceneMessage(null), 2000)
       }
     },
-    [currentChapter, flags, trust, scenesSeenEver, scenesSeenThisDay]
+    [currentChapter, flags, trust, scenesSeenEver, scenesSeenThisDay, currentTime, player]
   )
 
   // Apply scene effects
