@@ -261,8 +261,12 @@ export const margeScenes: Scene[] = [
       },
       {
         id: 'changed',
+        speaker: 'narration',
+        text: 'She goes quiet for a moment.',
+      },
+      {
         speaker: 'npc',
-        text: '"He started building things. In that back room. I stopped asking what."',
+        text: '"He started building things, after. In that back room. I stopped asking what."',
       },
       {
         speaker: 'narration',

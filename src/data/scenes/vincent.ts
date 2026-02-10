@@ -334,6 +334,10 @@ export const vincentScenes: Scene[] = [
         speaker: 'npc',
         text: '"Whatever\'s out there, it\'s the anchor. Everything bends around it."',
       },
+      {
+        speaker: 'narration',
+        text: 'He goes quiet. Through the door, you hear him return to his pacing.',
+      },
     ],
     effects: {
       setFlags: ['vincent_shared_patterns'],

@@ -372,6 +372,10 @@ export const earlScenes: Scene[] = [
         text: '"Come back when you\'re ready to stop pretending."',
       },
       {
+        speaker: 'narration',
+        text: 'He turns back to his ledger. The conversation is over.',
+      },
+      {
         id: 'reveal',
         speaker: 'npc',
         text: '"Sit down. We need to talk."',

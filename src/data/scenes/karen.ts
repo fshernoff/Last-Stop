@@ -220,6 +220,19 @@ export const karenScenes: Scene[] = [
       {
         speaker: 'npc',
         text: '"He keeps stepping outside to check his phone. It makes me feel like I\'m on this trip alone."',
+        choices: [
+          { text: '"That must be hard."', next: 'karen_marriage_close' },
+          { text: '[Say nothing]', next: 'karen_marriage_close' },
+        ],
+      },
+      {
+        id: 'karen_marriage_close',
+        speaker: 'narration',
+        text: 'She picks up her book again, but doesn\'t open it.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Sorry. I don\'t know why I told you all that."',
       },
     ],
     effects: {
