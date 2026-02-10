@@ -77,7 +77,7 @@ export interface SceneEffects {
   giveItem?: string
   unlockLocation?: LocationId
   advanceTime?: number
-  advanceChapter?: number
+  advanceChapter?: number // Deferred — sets pending, applies at midnight
 }
 
 export interface DialogueChoice {
@@ -133,8 +133,10 @@ export interface PlayerState {
 }
 
 export interface GameState {
-  // Meta
-  currentLoop: number // Chapter index (pseudo-loop progression)
+  // Progression
+  currentChapter: number // Story chapter (advances via key scenes)
+  dayCount: number // Total days lived (increments every midnight)
+  pendingChapter: number | null // Chapter to advance to at next midnight
   totalPlayTime: number
   lastPlayedAt: number | null // Timestamp for idle calculations
 
@@ -153,7 +155,7 @@ export interface GameState {
 
   // Scenes seen
   scenesSeenEver: string[]
-  scenesSeenThisLoop: string[]
+  scenesSeenThisDay: string[] // Cleared at each midnight reset
 
   // Items
   inventory: string[]
@@ -204,7 +206,7 @@ export interface GameActions {
 
   // Day/Chapter management
   resetDay: () => void
-  advanceChapter: (chapter?: number) => void
+  setPendingChapter: (chapter: number) => void
 
   // Observations
   setObservations: (observations: Observation[]) => void

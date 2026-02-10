@@ -63,6 +63,7 @@ export const karenScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_karen', 'knows_karen_unhappy'],
+      addRapport: { character: 'karen', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -94,6 +95,7 @@ export const karenScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'karen', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -184,6 +186,7 @@ export const karenScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['karen_mentioned_light', 'knows_karen_saw_something', 'knows_karen_desert'],
+      addRapport: { character: 'karen', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -220,6 +223,7 @@ export const karenScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'karen', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -285,6 +289,7 @@ export const karenScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['karen_told_location', 'knows_facility_location', 'knows_karen_desert'],
+      addRapport: { character: 'karen', amount: 2 },
       advanceTime: 15,
     },
   },

@@ -98,7 +98,7 @@ export function KnownScreen() {
   const {
     flags,
     trust,
-    currentLoop,
+    currentChapter,
     insightPoints,
     spendInsight,
     currentHint,
@@ -144,7 +144,7 @@ export function KnownScreen() {
   const handleGetHint = () => {
     const success = spendInsight(1)
     if (!success) return
-    const hint = getNextHint({ currentLoop, flags, trust })
+    const hint = getNextHint({ currentChapter: currentChapter, flags, trust })
     setCurrentHint(hint)
   }
 
@@ -153,7 +153,7 @@ export function KnownScreen() {
       <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-amber-400">WHAT YOU KNOW</h2>
-          <span className="text-sm text-slate-500">Chapter {currentLoop}</span>
+          <span className="text-sm text-slate-500">Chapter {currentChapter}</span>
         </div>
 
         <div className="mb-4 p-3 bg-slate-700/40 rounded border border-slate-600">

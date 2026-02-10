@@ -49,7 +49,9 @@ const TRUST_BOOST_FLAGS: Record<CharacterId, string[]> = {
 }
 
 const createInitialState = (): GameState => ({
-  currentLoop: 1,
+  currentChapter: 1,
+  dayCount: 1,
+  pendingChapter: null,
   totalPlayTime: 0,
   lastPlayedAt: null,
   currentTime: 0, // 6:00 AM
@@ -61,7 +63,7 @@ const createInitialState = (): GameState => ({
   trust: { ...INITIAL_TRUST },
   rapport: { ...INITIAL_RAPPORT },
   scenesSeenEver: [],
-  scenesSeenThisLoop: [],
+  scenesSeenThisDay: [],
   inventory: [],
   activeObservations: [],
   observationLog: [],
@@ -79,9 +81,7 @@ export const useGameStore = create<GameState & GameActions>()(
       advanceTime: (minutes: number) => {
         set((state) => {
           const newTime = state.currentTime + minutes
-          // If past midnight (1080 = 18 hours from 6AM), trigger day reset
           if (newTime >= 1080) {
-            // Will be handled by game logic checking this
             return {
               currentTime: 1080,
               totalPlayTime: state.totalPlayTime + minutes,
@@ -176,9 +176,9 @@ export const useGameStore = create<GameState & GameActions>()(
 
           if (
             (oncePer === 'loop' || oncePer === 'ever') &&
-            !state.scenesSeenThisLoop.includes(sceneId)
+            !state.scenesSeenThisDay.includes(sceneId)
           ) {
-            updates.scenesSeenThisLoop = [...state.scenesSeenThisLoop, sceneId]
+            updates.scenesSeenThisDay = [...state.scenesSeenThisDay, sceneId]
           }
 
           return updates
@@ -191,7 +191,7 @@ export const useGameStore = create<GameState & GameActions>()(
           return state.scenesSeenEver.includes(sceneId)
         }
         if (oncePer === 'loop') {
-          return state.scenesSeenThisLoop.includes(sceneId)
+          return state.scenesSeenThisDay.includes(sceneId)
         }
         return false // 'none' means can always repeat
       },
@@ -230,18 +230,26 @@ export const useGameStore = create<GameState & GameActions>()(
             (PERSISTENT_ITEMS as readonly string[]).includes(item)
           )
 
+          // Apply pending chapter advancement if any
+          const nextChapter = state.pendingChapter !== null
+            ? Math.max(state.currentChapter, state.pendingChapter)
+            : state.currentChapter
+
           const flags = state.flags.includes('day_reset_occurred')
             ? state.flags
             : [...state.flags, 'day_reset_occurred']
 
           return {
+            currentChapter: nextChapter,
+            dayCount: state.dayCount + 1,
+            pendingChapter: null,
             currentTime: 0,
             player: {
               ...state.player,
               currentLocation: 'room_player',
             },
             trust: decayedTrust,
-            scenesSeenThisLoop: [],
+            scenesSeenThisDay: [],
             inventory: persistentItems,
             activeObservations: [],
             observationLog: [],
@@ -251,42 +259,14 @@ export const useGameStore = create<GameState & GameActions>()(
         })
       },
 
-      advanceChapter: (chapter?: number) => {
+      setPendingChapter: (chapter: number) => {
         set((state) => {
-          const nextChapter = Math.max(state.currentLoop, chapter ?? state.currentLoop + 1)
-
-          // Decay trust: tier 2 -> tier 1
-          const decayedTrust = Object.fromEntries(
-            Object.entries(state.trust).map(([char, tier]) => [
-              char,
-              tier === 2 ? 1 : tier,
-            ])
-          ) as Record<CharacterId, TrustTier>
-
-          // Keep only persistent items
-          const persistentItems = state.inventory.filter((item) =>
-            (PERSISTENT_ITEMS as readonly string[]).includes(item)
-          )
-
-          const flags = state.flags.includes('day_reset_occurred')
-            ? state.flags
-            : [...state.flags, 'day_reset_occurred']
-
-          return {
-            currentLoop: nextChapter,
-            currentTime: 0,
-            player: {
-              ...state.player,
-              currentLocation: 'room_player',
-            },
-            trust: decayedTrust,
-            scenesSeenThisLoop: [],
-            inventory: persistentItems,
-            activeObservations: [],
-            observationLog: [],
-            currentHint: null,
-            flags,
+          // Only set if it would advance (never go backwards)
+          const effective = Math.max(state.currentChapter, chapter)
+          if (effective <= state.currentChapter && state.pendingChapter !== null && effective <= state.pendingChapter) {
+            return state
           }
+          return { pendingChapter: effective }
         })
       },
 
@@ -308,14 +288,13 @@ export const useGameStore = create<GameState & GameActions>()(
       startObservation: (location: LocationId, startTime?: number, endTime?: number) => {
         set((state) => {
           if (state.activeObservations.length >= 3) return state
-          // Don't add duplicate observations for the same location
           if (state.activeObservations.some((obs) => obs.location === location)) {
             return state
           }
           const newObservation: Observation = {
             location,
             startTime: startTime ?? state.currentTime,
-            endTime: endTime ?? 1080, // Until midnight
+            endTime: endTime ?? 1080,
           }
           return {
             activeObservations: [...state.activeObservations, newObservation],
@@ -372,13 +351,13 @@ export const useGameStore = create<GameState & GameActions>()(
     }),
     {
       name: 'last-stop-save',
-      version: 2,
+      version: 3,
       partialize: (state) => {
-        // Don't persist action functions, only state
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { advanceTime, moveTo, setFlag, clearFlag, hasFlag, setTrust, getTrust, incrementRapport, markSceneSeen, hasSeenScene, addItem, removeItem, hasItem, resetDay, advanceChapter, setObservations, addObservationEntry, clearObservationLog, startObservation, stopObservation, updateLastPlayedAt, setLastPlayedAt, addInsight, spendInsight, setCurrentHint, resetGame, acknowledgeEnding, setEndingAcknowledged, ...persistedState } = state
+        const { advanceTime, moveTo, setFlag, clearFlag, hasFlag, setTrust, getTrust, incrementRapport, markSceneSeen, hasSeenScene, addItem, removeItem, hasItem, resetDay, setPendingChapter, setObservations, addObservationEntry, clearObservationLog, startObservation, stopObservation, updateLastPlayedAt, setLastPlayedAt, addInsight, spendInsight, setCurrentHint, resetGame, acknowledgeEnding, setEndingAcknowledged, ...persistedState } = state
         return persistedState
       },
+      migrate: () => createInitialState(),
     }
   )
 )

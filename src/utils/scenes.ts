@@ -6,7 +6,7 @@ interface SceneSelectionContext {
   flags: string[]
   trust: Record<CharacterId, TrustTier>
   scenesSeenEver: string[]
-  scenesSeenThisLoop: string[]
+  scenesSeenThisDay: string[]
 }
 
 /**
@@ -60,7 +60,7 @@ function hasBeenSeen(scene: Scene, ctx: SceneSelectionContext): boolean {
     case 'ever':
       return ctx.scenesSeenEver.includes(scene.id)
     case 'loop':
-      return ctx.scenesSeenThisLoop.includes(scene.id)
+      return ctx.scenesSeenThisDay.includes(scene.id)
     case 'none':
       return false // Can always repeat
   }
@@ -78,14 +78,14 @@ function hasBeenSeen(scene: Scene, ctx: SceneSelectionContext): boolean {
  */
 export function selectScene(
   character: CharacterId,
-  gameState: Pick<GameState, 'currentLoop' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisLoop'>
+  gameState: Pick<GameState, 'currentChapter' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisDay'>
 ): Scene | null {
   const ctx: SceneSelectionContext = {
-    currentChapter: gameState.currentLoop,
+    currentChapter: gameState.currentChapter,
     flags: gameState.flags,
     trust: gameState.trust,
     scenesSeenEver: gameState.scenesSeenEver,
-    scenesSeenThisLoop: gameState.scenesSeenThisLoop,
+    scenesSeenThisDay: gameState.scenesSeenThisDay,
   }
 
   // Get all scenes for this character
@@ -120,17 +120,17 @@ export function selectScene(
  */
 export function debugSceneSelection(
   character: CharacterId,
-  gameState: Pick<GameState, 'currentLoop' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisLoop'>
+  gameState: Pick<GameState, 'currentChapter' | 'flags' | 'trust' | 'scenesSeenEver' | 'scenesSeenThisDay'>
 ): {
   available: Scene[]
   unavailable: Array<{ scene: Scene; reason: string }>
 } {
   const ctx: SceneSelectionContext = {
-    currentChapter: gameState.currentLoop,
+    currentChapter: gameState.currentChapter,
     flags: gameState.flags,
     trust: gameState.trust,
     scenesSeenEver: gameState.scenesSeenEver,
-    scenesSeenThisLoop: gameState.scenesSeenThisLoop,
+    scenesSeenThisDay: gameState.scenesSeenThisDay,
   }
 
   const characterScenes = getScenesForCharacter(character)

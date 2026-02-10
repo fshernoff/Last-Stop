@@ -64,6 +64,7 @@ export const vincentScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['tried_vincent_door', 'knows_vincent_exists'],
+      addRapport: { character: 'vincent', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -136,6 +137,7 @@ export const vincentScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['earl_told_about_vincent', 'knows_vincent_exists', 'can_enter_room6'],
+      addRapport: { character: 'earl', amount: 1 },
       giveItem: 'room6_key',
       advanceTime: 20,
     },
@@ -210,6 +212,7 @@ export const vincentScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'vincent', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -253,6 +256,7 @@ export const vincentScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['vincent_shared_patterns'],
+      addRapport: { character: 'vincent', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -330,6 +334,7 @@ export const vincentScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['vincent_opened_door', 'vincent_contacted', 'met_vincent', 'knows_vincent_exists'],
+      addRapport: { character: 'vincent', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -357,6 +362,7 @@ export const vincentScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'vincent', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -483,6 +489,7 @@ export const vincentScenes: Scene[] = [
         'knows_device_purpose',
         'knows_thomas_role',
       ],
+      addRapport: { character: 'vincent', amount: 2 },
       advanceChapter: 5,
       advanceTime: 30,
     },

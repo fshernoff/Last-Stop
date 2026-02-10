@@ -68,6 +68,7 @@ export const margeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['knows_memory_persists'],
+      addRapport: { character: 'marge', amount: 1 },
       advanceChapter: 2,
       advanceTime: 15,
     },
@@ -120,6 +121,7 @@ export const margeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_marge'],
+      addRapport: { character: 'marge', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -160,6 +162,7 @@ export const margeScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'marge', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -191,6 +194,7 @@ export const margeScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'marge', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -270,6 +274,7 @@ export const margeScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'marge', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -335,6 +340,7 @@ export const margeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['asked_marge_about_earl', 'knows_thomas_died', 'knows_earl_son', 'knows_earl_guilt'],
+      addRapport: { character: 'marge', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -427,6 +433,7 @@ export const margeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['marge_worried_about_earl', 'knows_marge_worried'],
+      addRapport: { character: 'marge', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -527,6 +534,7 @@ export const margeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['marge_knows_you_know', 'knows_marge_knows'],
+      addRapport: { character: 'marge', amount: 2 },
       setTrust: { character: 'marge', tier: 2 },
       advanceTime: 25,
     },

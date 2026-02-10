@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useGameStore } from '../store/gameStore'
 
 export function MenuScreen() {
-  const { resetGame, currentLoop, totalPlayTime, insightPoints } = useGameStore()
+  const { resetGame, currentChapter, dayCount, totalPlayTime, insightPoints } = useGameStore()
   const [showResetConfirm, setShowResetConfirm] = useState(false)
 
   const handleReset = () => {
@@ -59,7 +59,11 @@ export function MenuScreen() {
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-sm">
             <span className="text-slate-400">Current Chapter</span>
-            <span className="text-slate-100">{currentLoop}</span>
+            <span className="text-slate-100">{currentChapter}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">Days Survived</span>
+            <span className="text-slate-100">{dayCount}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-slate-400">Insight Points</span>

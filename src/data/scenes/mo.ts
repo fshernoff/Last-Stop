@@ -47,6 +47,7 @@ export const moScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_mo', 'knows_mo_route'],
+      addRapport: { character: 'mo', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -74,6 +75,7 @@ export const moScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'mo', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -154,6 +156,7 @@ export const moScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['mo_felt_deja_vu', 'knows_mo_deja_vu'],
+      addRapport: { character: 'mo', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -190,6 +193,7 @@ export const moScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'mo', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -271,6 +275,7 @@ export const moScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['mo_remembers'],
+      addRapport: { character: 'mo', amount: 2 },
       advanceTime: 20,
     },
   },

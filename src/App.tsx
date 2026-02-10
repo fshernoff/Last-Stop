@@ -26,7 +26,9 @@ const TAB_LABELS: Record<TabId, string> = {
 
 function App() {
   const {
-    currentLoop,
+    currentChapter,
+    dayCount,
+    pendingChapter,
     currentTime,
     lastPlayedAt,
     activeObservations,
@@ -49,8 +51,6 @@ function App() {
 
   // Track if we've processed idle time this session
   const hasProcessedIdle = useRef(false)
-  const hasInitializedChapter = useRef(false)
-  const prevChapter = useRef(currentLoop)
 
   // Process idle time and observations on app load
   useEffect(() => {
@@ -61,11 +61,11 @@ function App() {
     if (shouldProcess && activeObservations.length > 0) {
       hasProcessedIdle.current = true
 
-      const { entries, newGameTime } = processObservations(
+      const { entries, newGameTime, reachedMidnight } = processObservations(
         activeObservations,
         currentTime,
         elapsedMs,
-        currentLoop
+        dayCount
       )
 
       // Add observation entries to the log
@@ -94,7 +94,11 @@ function App() {
         setSelectedTab('observe')
       }
 
-      // If reached midnight, show reset modal (will be handled by the next effect)
+      // If reached midnight, the time advance above will trigger the midnight effect
+      if (reachedMidnight && entries.length === 0) {
+        // No entries but hit midnight — ensure the reset modal shows
+        // (advanceTime already clamped to 1080, the effect below will catch it)
+      }
     }
 
     // Update lastPlayedAt on load
@@ -106,19 +110,16 @@ function App() {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // User is leaving - update timestamp
         updateLastPlayedAt()
       }
     }
 
-    // Update timestamp periodically while active (every 30 seconds)
     const intervalId = setInterval(() => {
       updateLastPlayedAt()
     }, 30000)
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
-    // Also update on beforeunload for browsers that don't fire visibilitychange
     const handleBeforeUnload = () => {
       updateLastPlayedAt()
     }
@@ -138,31 +139,17 @@ function App() {
     }
   }, [currentTime, showDayReset])
 
-  // Show chapter transition modal when chapter advances (skip initial hydration)
-  useEffect(() => {
-    if (!hasInitializedChapter.current) {
-      hasInitializedChapter.current = true
-      prevChapter.current = currentLoop
-      return
-    }
-
-    if (currentLoop < prevChapter.current) {
-      setShowChapterTransition(null)
-    }
-
-    if (currentLoop > prevChapter.current) {
-      setShowDayReset(false)
-      setShowChapterTransition(currentLoop)
-    }
-
-    prevChapter.current = currentLoop
-  }, [currentLoop])
-
-  // Handle day reset
+  // Handle day reset — chapter advancement is now deferred into resetDay()
   const handleDayReset = () => {
+    const willAdvanceChapter = pendingChapter !== null && pendingChapter > currentChapter
     resetDay()
     setShowDayReset(false)
-    setSelectedTab('actions') // Return to actions tab after reset
+
+    if (willAdvanceChapter) {
+      setShowChapterTransition(pendingChapter)
+    }
+
+    setSelectedTab('actions')
   }
 
   const endingId = flags.includes('ending_a')
@@ -234,7 +221,9 @@ function App() {
               The world stutters. Rewinds. You're back in bed.
             </p>
             <p className="text-slate-400 text-sm mb-6">
-              The day starts over. Chapter {currentLoop} continues.
+              Day {dayCount} ends.{pendingChapter !== null && pendingChapter > currentChapter
+                ? ` Something has shifted...`
+                : ` Chapter ${currentChapter} continues.`}
             </p>
             <button
               onClick={handleDayReset}
@@ -250,7 +239,7 @@ function App() {
       <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center shrink-0">
         <h1 className="text-lg font-bold tracking-wide">LAST STOP</h1>
         <div className="flex gap-4 text-sm text-slate-400">
-          <span>Chapter {currentLoop}</span>
+          <span>Ch. {currentChapter} · Day {dayCount}</span>
           <span className="text-slate-600">|</span>
           <span>{formatTime(currentTime)}</span>
         </div>

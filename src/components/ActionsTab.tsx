@@ -16,13 +16,14 @@ const TIME_COSTS = {
 
 export function ActionsTab() {
   const {
-    currentLoop,
+    currentChapter,
+    dayCount,
     currentTime,
     player,
     flags,
     trust,
     scenesSeenEver,
-    scenesSeenThisLoop,
+    scenesSeenThisDay,
     advanceTime,
     moveTo,
     setFlag,
@@ -33,7 +34,7 @@ export function ActionsTab() {
     addInsight,
     setEndingAcknowledged,
     markSceneSeen,
-    advanceChapter,
+    setPendingChapter,
   } = useGameStore()
 
   const [investigationMessage, setInvestigationMessage] = useState<string | null>(null)
@@ -49,7 +50,7 @@ export function ActionsTab() {
     const npcs = getCharactersAtLocation(player.currentLocation, currentTime)
 
     // Handle drifter specially
-    const drifterLocation = getDrifterLocation(currentLoop, currentTime)
+    const drifterLocation = getDrifterLocation(dayCount, currentTime)
     if (drifterLocation === player.currentLocation) {
       const drifterChar = npcs.find((c) => c.id === 'drifter')
       if (!drifterChar) {
@@ -63,7 +64,7 @@ export function ActionsTab() {
       }
       return true
     })
-  }, [player.currentLocation, currentTime, currentLoop])
+  }, [player.currentLocation, currentTime, currentChapter])
 
   const npcsHere = getNPCsHere()
 
@@ -84,7 +85,7 @@ export function ActionsTab() {
     advanceTime(TIME_COSTS.investigate)
 
     // Combine ever and this-loop seen for investigation check
-    const investigationsSeen = [...scenesSeenEver, ...scenesSeenThisLoop]
+    const investigationsSeen = [...scenesSeenEver, ...scenesSeenThisDay]
     const result = getInvestigationResult(player.currentLocation, flags, investigationsSeen)
 
     if (result) {
@@ -101,7 +102,7 @@ export function ActionsTab() {
         setTrust(result.effects.setTrust.character, result.effects.setTrust.tier)
       }
       if (result.effects?.advanceChapter) {
-        advanceChapter(result.effects.advanceChapter)
+        setPendingChapter(result.effects.advanceChapter)
       }
 
       // Mark investigation as seen
@@ -120,11 +121,11 @@ export function ActionsTab() {
   const handleTalk = useCallback(
     (characterId: CharacterId) => {
       const gameState = {
-        currentLoop,
+        currentChapter,
         flags,
         trust,
         scenesSeenEver,
-        scenesSeenThisLoop,
+        scenesSeenThisDay,
       }
 
       const scene = selectScene(characterId, gameState)
@@ -138,7 +139,7 @@ export function ActionsTab() {
         setTimeout(() => setNoSceneMessage(null), 2000)
       }
     },
-    [currentLoop, flags, trust, scenesSeenEver, scenesSeenThisLoop]
+    [currentChapter, flags, trust, scenesSeenEver, scenesSeenThisDay]
   )
 
   // Apply scene effects
@@ -177,14 +178,13 @@ export function ActionsTab() {
         advanceTime(effects.advanceTime)
       }
 
-      incrementRapport(activeScene.character)
       markSceneSeen(activeScene.id, activeScene.oncePer)
       if (effects.advanceChapter) {
-        advanceChapter(effects.advanceChapter)
+        setPendingChapter(effects.advanceChapter)
       }
       setActiveScene(null)
     },
-    [activeScene, setFlag, clearFlag, setTrust, incrementRapport, addItem, advanceTime, setEndingAcknowledged, markSceneSeen, advanceChapter]
+    [activeScene, setFlag, clearFlag, setTrust, incrementRapport, addItem, advanceTime, setEndingAcknowledged, markSceneSeen, setPendingChapter]
   )
 
   const handleDialogueCancel = useCallback(() => {

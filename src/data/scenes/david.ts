@@ -57,6 +57,7 @@ export const davidScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_david'],
+      addRapport: { character: 'david', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -84,6 +85,7 @@ export const davidScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'david', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -141,6 +143,7 @@ export const davidScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['david_expressed_concern'],
+      addRapport: { character: 'david', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -182,6 +185,7 @@ export const davidScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['knows_david_secret'],
+      addRapport: { character: 'david', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -251,6 +255,7 @@ export const davidScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['david_believes_karen'],
+      addRapport: { character: 'david', amount: 2 },
       advanceTime: 15,
     },
   },

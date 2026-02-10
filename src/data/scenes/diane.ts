@@ -65,6 +65,7 @@ export const dianeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_diane'],
+      addRapport: { character: 'diane', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -92,6 +93,7 @@ export const dianeScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'diane', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -130,6 +132,7 @@ export const dianeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['knows_diane_files'],
+      addRapport: { character: 'diane', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -196,6 +199,7 @@ export const dianeScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['diane_cover_blown', 'knows_diane_investigating', 'knows_1984_incident'],
+      addRapport: { character: 'diane', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -295,6 +299,7 @@ export const dianeScenes: Scene[] = [
         'knows_government_involved',
         'knows_thomas_role',
       ],
+      addRapport: { character: 'diane', amount: 2 },
       advanceTime: 20,
     },
   },

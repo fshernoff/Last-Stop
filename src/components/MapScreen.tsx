@@ -35,7 +35,7 @@ const NPC_CODES: Record<CharacterId, string> = {
 }
 
 export function MapScreen() {
-  const { player, currentTime, currentLoop, flags, advanceTime, moveTo } = useGameStore()
+  const { player, currentTime, dayCount, flags, advanceTime, moveTo } = useGameStore()
   const currentLocation = player.currentLocation
 
   // Get NPC positions
@@ -44,7 +44,7 @@ export function MapScreen() {
     for (const [id] of Object.entries(CHARACTERS)) {
       const charId = id as CharacterId
       if (charId === 'drifter') {
-        const drifterLoc = getDrifterLocation(currentLoop, currentTime)
+        const drifterLoc = getDrifterLocation(dayCount, currentTime)
         if (drifterLoc === locationId) npcs.push(charId)
       } else {
         const loc = getCharacterLocation(charId, currentTime)

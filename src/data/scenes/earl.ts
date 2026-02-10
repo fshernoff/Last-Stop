@@ -84,6 +84,7 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['knows_trust_decay', 'knows_earl_remembers'],
+      addRapport: { character: 'earl', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -150,6 +151,7 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_earl'],
+      addRapport: { character: 'earl', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -186,6 +188,7 @@ export const earlScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'earl', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -213,6 +216,7 @@ export const earlScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'earl', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -287,6 +291,7 @@ export const earlScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'earl', amount: 1 },
       advanceTime: 15,
     },
   },
@@ -374,6 +379,7 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['earl_knows_you_know'],
+      addRapport: { character: 'earl', amount: 1 },
       advanceChapter: 3,
       advanceTime: 20,
     },
@@ -503,6 +509,7 @@ export const earlScenes: Scene[] = [
         'knows_loop_exists',
         'knows_memory_persists',
       ],
+      addRapport: { character: 'earl', amount: 2 },
       giveItem: 'master_key',
       advanceTime: 30,
     },
@@ -569,6 +576,7 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['seen_device', 'knows_device_purpose', 'knows_loop_cause'],
+      addRapport: { character: 'earl', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -665,6 +673,7 @@ export const earlScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['earl_read_journal', 'knows_thomas_role'],
+      addRapport: { character: 'earl', amount: 2 },
       advanceChapter: 4,
       advanceTime: 25,
     },

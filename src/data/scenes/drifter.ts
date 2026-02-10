@@ -56,6 +56,7 @@ export const drifterScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['met_drifter'],
+      addRapport: { character: 'drifter', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -83,6 +84,7 @@ export const drifterScenes: Scene[] = [
       },
     ],
     effects: {
+      addRapport: { character: 'drifter', amount: 1 },
       advanceTime: 10,
     },
   },
@@ -169,6 +171,7 @@ export const drifterScenes: Scene[] = [
     ],
     effects: {
       setFlags: ['drifter_told_father', 'knows_1984_incident'],
+      addRapport: { character: 'drifter', amount: 1 },
       advanceTime: 20,
     },
   },
@@ -249,6 +252,7 @@ export const drifterScenes: Scene[] = [
         'knows_drifter_truth',
         'knows_facility_location',
       ],
+      addRapport: { character: 'drifter', amount: 2 },
       giveItem: 'facility_map',
       advanceTime: 20,
     },

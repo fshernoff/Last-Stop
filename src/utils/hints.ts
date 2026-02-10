@@ -3,7 +3,7 @@ import type { GameState } from '../types'
 interface HintRule {
   id: string
   text: string
-  when: (state: Pick<GameState, 'currentLoop' | 'flags' | 'trust'>) => boolean
+  when: (state: Pick<GameState, 'currentChapter' | 'flags' | 'trust'>) => boolean
 }
 
 const HINT_RULES: HintRule[] = [
@@ -136,7 +136,7 @@ const HINT_RULES: HintRule[] = [
   },
 ]
 
-export function getNextHint(state: Pick<GameState, 'currentLoop' | 'flags' | 'trust'>): string {
+export function getNextHint(state: Pick<GameState, 'currentChapter' | 'flags' | 'trust'>): string {
   for (const rule of HINT_RULES) {
     if (rule.when(state)) {
       return rule.text
