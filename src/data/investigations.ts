@@ -1,8 +1,8 @@
 import type { LocationId, SceneEffects } from '../types'
 
 /**
- * Investigation results by location.
- * Beat-gated via flags and oncePer rules.
+ * Investigation results by location
+ * Each location can have multiple investigation entries with different requirements
  */
 export interface InvestigationResult {
   id: string
@@ -10,11 +10,48 @@ export interface InvestigationResult {
   text: string
   requiresFlags?: string[]
   notFlags?: string[]
-  oncePer: 'ever' | 'chapter' | 'loop' | 'none'
+  oncePer: 'ever' | 'loop' | 'none'
   effects?: SceneEffects
 }
 
 export const INVESTIGATIONS: InvestigationResult[] = [
+  // Player's room - Reset awakening (first realization something is wrong)
+  {
+    id: 'room_player_loop2_awakening',
+    location: 'room_player',
+    text: "Your room. The same room. The light through the blinds hits the wall at exactly the same angle as before. The clock reads 6:00 AM. Didn't you just fall asleep? Your head is pounding, but not from tiredness - from something else. A feeling like you've forgotten something important.",
+    requiresFlags: ['explored_room_once', 'day_reset_occurred'],
+    notFlags: ['noticed_loop_start'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['noticed_loop_start'],
+      advanceChapter: 2,
+    },
+  },
+
+  // Player's room - Repeat dread (player knows something is very wrong)
+  {
+    id: 'room_player_loop3_dread',
+    location: 'room_player',
+    text: "The same room. The same morning light. The same 6:00 AM. It's happening again. You remember the last reset - every moment of it - but was it really another day? Or the same day, playing out again?",
+    requiresFlags: ['noticed_loop_start', 'knows_memory_persists'],
+    notFlags: ['knows_loop_exists'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['knows_loop_exists'],
+    },
+  },
+
+  // Player's room - after knowing about the reset
+  {
+    id: 'room_player_loop_aware',
+    location: 'room_player',
+    text: "6:00 AM. The day has reset again. Everything is back to where it started - except you. You remember. You always remember.",
+    requiresFlags: ['knows_loop_exists'],
+    oncePer: 'loop',
+  },
+
+  // Player's room - first time (Chapter 1 only)
   {
     id: 'room_player_look',
     location: 'room_player',
@@ -25,18 +62,23 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       setFlags: ['explored_room_once'],
     },
   },
+
+  // Player's room - Chapter 1 repeat
   {
     id: 'room_player_repeat',
     location: 'room_player',
     text: "Your room. Nothing's changed since you left.",
     requiresFlags: ['explored_room_once'],
-    oncePer: 'chapter',
+    notFlags: ['noticed_loop_start'],
+    oncePer: 'loop',
   },
+
+  // Parking lot
   {
     id: 'parking_lot_look',
     location: 'parking_lot',
     text: 'A few cars bake in the sun. The highway stretches toward the horizon in both directions. No traffic.',
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
   {
     id: 'parking_lot_brochure',
@@ -49,28 +91,34 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       giveItem: 'motel_brochure',
     },
   },
+
+  // Courtyard
   {
     id: 'courtyard_look',
     location: 'courtyard',
     text: "The pool hasn't been filled in years. Lawn chairs ring the cracked concrete. The neon motel sign buzzes overhead.",
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
+
+  // Office - basic
   {
     id: 'office_look',
     location: 'office',
     text: "Wood paneling. Old photos line the walls. Tourist brochures for places that probably don't exist anymore. Earl's ledger sits on the desk. A door to the back room is always closed.",
     notFlags: ['earl_revealed'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['explored_office', 'found_back_room'],
     },
   },
+
+  // Office - after reveal
   {
     id: 'office_look_revealed',
     location: 'office',
     text: "The office looks different now that you know what's really going on. The old photos seem to watch you. The back room door seems to pulse with faint light, if you stare long enough.",
     requiresFlags: ['earl_revealed'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['explored_office', 'found_back_room'],
     },
@@ -86,11 +134,13 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       setFlags: ['read_ledger'],
     },
   },
+
+  // Diner
   {
     id: 'diner_look',
     location: 'diner',
     text: "Formica counters, vinyl booths, the smell of coffee that's been on the burner too long. A faded sign says the diner has been here since the 1960s. Marge keeps it running like clockwork.",
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['explored_diner'],
     },
@@ -101,7 +151,7 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     text: "Marge pours you a fresh cup. It tastes like burnt hope, but it's hot.",
     requiresFlags: ['met_marge'],
     notFlags: ['got_coffee'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['got_coffee'],
       giveItem: 'coffee_cup',
@@ -117,11 +167,13 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       setFlags: ['checked_jukebox', 'explored_diner'],
     },
   },
+
+  // Back area
   {
     id: 'back_area_look',
     location: 'back_area',
     text: 'Dumpsters, discarded furniture, the back of the motel. The desert stretches endlessly beyond.',
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
   {
     id: 'back_area_clipping',
@@ -134,26 +186,32 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       giveItem: 'newspaper_clipping',
     },
   },
+
+  // Desert
   {
     id: 'desert_look',
     location: 'desert',
     text: 'Sand and scrub brush. The motel is a small oasis in the vast emptiness. Something catches the light in the distance - an old structure, maybe.',
     notFlags: ['knows_facility_location'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['explored_desert'],
     },
   },
+
+  // Desert - after knowing about facility
   {
     id: 'desert_look_facility',
     location: 'desert',
     text: "The abandoned research facility is visible in the distance. It's been closed for decades, but the concrete bunker still stands.",
     requiresFlags: ['knows_facility_location'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['explored_desert'],
     },
   },
+
+  // Back room - first look
   {
     id: 'back_room_look',
     location: 'back_room',
@@ -176,6 +234,8 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       giveItem: 'photograph',
     },
   },
+
+  // Back room - find journal (requires multiple visits/deeper investigation)
   {
     id: 'back_room_find_journal',
     location: 'back_room',
@@ -188,38 +248,44 @@ export const INVESTIGATIONS: InvestigationResult[] = [
       giveItem: 'thomas_journal',
     },
   },
+
+  // Back room - device
   {
     id: 'back_room_device',
     location: 'back_room',
-    text: "The device sits on Earl's workbench. A small metal cylinder, softly humming. Blue light pulses within.",
+    text: "The device sits on Earl's workbench. A small metal cylinder, softly humming. Blue light pulses within. This is what's keeping everyone trapped.",
     requiresFlags: ['seen_device'],
     notFlags: ['has_thomas_journal'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
+
+  // Back room - after journal
   {
     id: 'back_room_complete',
     location: 'back_room',
-    text: "Earl's room. The device hums. Thomas's journal is in your pocket.",
+    text: "Earl's room. The device hums. Thomas's journal is in your pocket. You have everything you need to help Earl - if he'll listen.",
     requiresFlags: ['has_thomas_journal'],
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
+
+  // Guest rooms - locked
   {
     id: 'room_2_look',
     location: 'room_2',
-    text: "Karen and David's room. It's empty right now. You slip in, heart thumping, and take a quick look around.",
-    oncePer: 'chapter',
+    text: "Karen and David's room. You shouldn't be snooping through their things.",
+    oncePer: 'loop',
   },
   {
     id: 'room_4_look',
     location: 'room_4',
     text: "Diane's room. Notebooks are stacked everywhere. She's investigating something.",
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
   {
     id: 'room_6_look',
     location: 'room_6',
     text: "Vincent's room. The walls are covered in writing - schedules, timelines, theories. The work of a man who tried everything.",
-    oncePer: 'chapter',
+    oncePer: 'loop',
     effects: {
       setFlags: ['knows_vincent_exists'],
     },
@@ -228,16 +294,19 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     id: 'room_9_look',
     location: 'room_9',
     text: "Mo's room. Trucker magazines, an empty cooler. Nothing unusual.",
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
   {
     id: 'room_11_look',
     location: 'room_11',
     text: "The Drifter's room. Barely any personal effects. A map of the area is tacked to the wall with several locations circled.",
-    oncePer: 'chapter',
+    oncePer: 'loop',
   },
 ]
 
+/**
+ * Get the best investigation result for a location given the current game state
+ */
 export function getInvestigationResult(
   location: LocationId,
   flags: string[],
@@ -246,18 +315,24 @@ export function getInvestigationResult(
   const hasFlag = (flag: string) => flags.includes(flag)
   const hasSeen = (id: string) => investigationsSeen.includes(id)
 
+  // Filter to matching investigations
   const matching = INVESTIGATIONS.filter((inv) => {
     if (inv.location !== location) return false
 
-    if ((inv.oncePer === 'ever' || inv.oncePer === 'chapter' || inv.oncePer === 'loop') && hasSeen(inv.id)) {
-      return false
-    }
+    // Check oncePer
+    if (inv.oncePer === 'ever' && hasSeen(inv.id)) return false
+    if (inv.oncePer === 'loop' && hasSeen(inv.id)) return false
 
+    // Check required flags
     if (inv.requiresFlags && !inv.requiresFlags.every(hasFlag)) return false
+
+    // Check forbidden flags
     if (inv.notFlags && inv.notFlags.some(hasFlag)) return false
 
     return true
   })
 
+  // Return first matching (they're in priority order in the array)
+  // Later entries with more requirements take precedence
   return matching[matching.length - 1] || null
 }

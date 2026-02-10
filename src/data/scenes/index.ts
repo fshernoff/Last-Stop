@@ -8,11 +8,9 @@ import { dianeScenes } from './diane'
 import { moScenes } from './mo'
 import { drifterScenes } from './drifter'
 import { endingScenes } from './endings'
-import { chapter1Scenes } from './chapter1'
 
 // Combine all scene arrays
 const ALL_SCENES: Scene[] = [
-  ...chapter1Scenes,
   ...margeScenes,
   ...earlScenes,
   ...karenScenes,
@@ -55,7 +53,6 @@ export function getAllScenes(): Scene[] {
 }
 
 export {
-  chapter1Scenes,
   margeScenes,
   earlScenes,
   karenScenes,

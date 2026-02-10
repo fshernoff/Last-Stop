@@ -60,7 +60,7 @@ export const dianeScenes: Scene[] = [
       {
         id: 'diane_intro_close',
         speaker: 'npc',
-        text: '"Diane. Sales. That’s all you need to know."',
+        text: "\"Diane. I'm in sales. What's your excuse for being here?\"",
       },
     ],
     effects: {

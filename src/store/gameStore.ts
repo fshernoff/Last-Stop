@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { getBeatDefinition } from '../story/chapters'
-import type { StoryBeatId } from '../story/schema'
+import { PERSISTENT_ITEMS } from '../types'
 import type {
   GameState,
   GameActions,
@@ -9,6 +8,8 @@ import type {
   CharacterId,
   TrustTier,
   Scene,
+  Observation,
+  ObservationEntry,
 } from '../types'
 
 const INITIAL_TRUST: Record<CharacterId, TrustTier> = {
@@ -48,11 +49,10 @@ const TRUST_BOOST_FLAGS: Record<CharacterId, string[]> = {
 }
 
 const createInitialState = (): GameState => ({
-  storyBeatId: 'ch1_b1_wake',
-  beatHistory: ['ch1_b1_wake'],
-  lastBeatTransition: null,
+  currentLoop: 1,
   totalPlayTime: 0,
-  timeOfDay: 'morning',
+  lastPlayedAt: null,
+  currentTime: 0, // 6:00 AM
   player: {
     name: '',
     currentLocation: 'room_player',
@@ -61,8 +61,10 @@ const createInitialState = (): GameState => ({
   trust: { ...INITIAL_TRUST },
   rapport: { ...INITIAL_RAPPORT },
   scenesSeenEver: [],
-  scenesSeenThisChapter: [],
+  scenesSeenThisLoop: [],
   inventory: [],
+  activeObservations: [],
+  observationLog: [],
   insightPoints: 0,
   currentHint: null,
   endingAcknowledged: false,
@@ -72,6 +74,25 @@ export const useGameStore = create<GameState & GameActions>()(
   persist(
     (set, get) => ({
       ...createInitialState(),
+
+      // Time
+      advanceTime: (minutes: number) => {
+        set((state) => {
+          const newTime = state.currentTime + minutes
+          // If past midnight (1080 = 18 hours from 6AM), trigger day reset
+          if (newTime >= 1080) {
+            // Will be handled by game logic checking this
+            return {
+              currentTime: 1080,
+              totalPlayTime: state.totalPlayTime + minutes,
+            }
+          }
+          return {
+            currentTime: newTime,
+            totalPlayTime: state.totalPlayTime + minutes,
+          }
+        })
+      },
 
       // Location
       moveTo: (location: LocationId) => {
@@ -154,10 +175,10 @@ export const useGameStore = create<GameState & GameActions>()(
           }
 
           if (
-            (oncePer === 'loop' || oncePer === 'chapter' || oncePer === 'ever') &&
-            !state.scenesSeenThisChapter.includes(sceneId)
+            (oncePer === 'loop' || oncePer === 'ever') &&
+            !state.scenesSeenThisLoop.includes(sceneId)
           ) {
-            updates.scenesSeenThisChapter = [...state.scenesSeenThisChapter, sceneId]
+            updates.scenesSeenThisLoop = [...state.scenesSeenThisLoop, sceneId]
           }
 
           return updates
@@ -170,13 +191,7 @@ export const useGameStore = create<GameState & GameActions>()(
           return state.scenesSeenEver.includes(sceneId)
         }
         if (oncePer === 'loop') {
-          return state.scenesSeenThisChapter.includes(sceneId)
-        }
-        if (oncePer === 'chapter') {
-          return state.scenesSeenThisChapter.includes(sceneId)
-        }
-        if (oncePer === 'beat') {
-          return state.scenesSeenThisChapter.includes(sceneId)
+          return state.scenesSeenThisLoop.includes(sceneId)
         }
         return false // 'none' means can always repeat
       },
@@ -199,26 +214,129 @@ export const useGameStore = create<GameState & GameActions>()(
         return get().inventory.includes(item)
       },
 
-      // Story progression
-      advanceBeat: (nextBeatId: string, reason = 'progression') => {
+      // Day/Chapter management
+      resetDay: () => {
         set((state) => {
-          const nextBeat = getBeatDefinition(nextBeatId as StoryBeatId)
-          const currentBeat = getBeatDefinition(state.storyBeatId as StoryBeatId)
-          const isChapterChange = nextBeat.chapterId !== currentBeat.chapterId
+          // Decay trust: tier 2 -> tier 1
+          const decayedTrust = Object.fromEntries(
+            Object.entries(state.trust).map(([char, tier]) => [
+              char,
+              tier === 2 ? 1 : tier,
+            ])
+          ) as Record<CharacterId, TrustTier>
+
+          // Keep only persistent items
+          const persistentItems = state.inventory.filter((item) =>
+            (PERSISTENT_ITEMS as readonly string[]).includes(item)
+          )
+
+          const flags = state.flags.includes('day_reset_occurred')
+            ? state.flags
+            : [...state.flags, 'day_reset_occurred']
 
           return {
-            storyBeatId: nextBeat.id,
-            beatHistory: [...state.beatHistory, nextBeat.id],
-            lastBeatTransition: {
-              from: state.storyBeatId,
-              to: nextBeat.id,
-              reason,
-              at: Date.now(),
+            currentTime: 0,
+            player: {
+              ...state.player,
+              currentLocation: 'room_player',
             },
-            timeOfDay: nextBeat.timeOfDay ?? state.timeOfDay,
-            scenesSeenThisChapter: isChapterChange ? [] : state.scenesSeenThisChapter,
+            trust: decayedTrust,
+            scenesSeenThisLoop: [],
+            inventory: persistentItems,
+            activeObservations: [],
+            observationLog: [],
+            currentHint: null,
+            flags,
           }
         })
+      },
+
+      advanceChapter: (chapter?: number) => {
+        set((state) => {
+          const nextChapter = Math.max(state.currentLoop, chapter ?? state.currentLoop + 1)
+
+          // Decay trust: tier 2 -> tier 1
+          const decayedTrust = Object.fromEntries(
+            Object.entries(state.trust).map(([char, tier]) => [
+              char,
+              tier === 2 ? 1 : tier,
+            ])
+          ) as Record<CharacterId, TrustTier>
+
+          // Keep only persistent items
+          const persistentItems = state.inventory.filter((item) =>
+            (PERSISTENT_ITEMS as readonly string[]).includes(item)
+          )
+
+          const flags = state.flags.includes('day_reset_occurred')
+            ? state.flags
+            : [...state.flags, 'day_reset_occurred']
+
+          return {
+            currentLoop: nextChapter,
+            currentTime: 0,
+            player: {
+              ...state.player,
+              currentLocation: 'room_player',
+            },
+            trust: decayedTrust,
+            scenesSeenThisLoop: [],
+            inventory: persistentItems,
+            activeObservations: [],
+            observationLog: [],
+            currentHint: null,
+            flags,
+          }
+        })
+      },
+
+      // Observations
+      setObservations: (observations: Observation[]) => {
+        set({ activeObservations: observations })
+      },
+
+      addObservationEntry: (entry: ObservationEntry) => {
+        set((state) => ({
+          observationLog: [...state.observationLog, entry],
+        }))
+      },
+
+      clearObservationLog: () => {
+        set({ observationLog: [] })
+      },
+
+      startObservation: (location: LocationId, startTime?: number, endTime?: number) => {
+        set((state) => {
+          if (state.activeObservations.length >= 3) return state
+          // Don't add duplicate observations for the same location
+          if (state.activeObservations.some((obs) => obs.location === location)) {
+            return state
+          }
+          const newObservation: Observation = {
+            location,
+            startTime: startTime ?? state.currentTime,
+            endTime: endTime ?? 1080, // Until midnight
+          }
+          return {
+            activeObservations: [...state.activeObservations, newObservation],
+          }
+        })
+      },
+
+      stopObservation: (location: LocationId) => {
+        set((state) => ({
+          activeObservations: state.activeObservations.filter(
+            (obs) => obs.location !== location
+          ),
+        }))
+      },
+
+      updateLastPlayedAt: () => {
+        set({ lastPlayedAt: Date.now() })
+      },
+
+      setLastPlayedAt: (timestamp: number | null) => {
+        set({ lastPlayedAt: timestamp })
       },
 
       // Insights
@@ -254,12 +372,11 @@ export const useGameStore = create<GameState & GameActions>()(
     }),
     {
       name: 'last-stop-save',
-      version: 3,
-      migrate: () => createInitialState(),
+      version: 2,
       partialize: (state) => {
         // Don't persist action functions, only state
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { moveTo, setFlag, clearFlag, hasFlag, setTrust, getTrust, incrementRapport, markSceneSeen, hasSeenScene, addItem, removeItem, hasItem, advanceBeat, addInsight, spendInsight, setCurrentHint, resetGame, acknowledgeEnding, setEndingAcknowledged, ...persistedState } = state
+        const { advanceTime, moveTo, setFlag, clearFlag, hasFlag, setTrust, getTrust, incrementRapport, markSceneSeen, hasSeenScene, addItem, removeItem, hasItem, resetDay, advanceChapter, setObservations, addObservationEntry, clearObservationLog, startObservation, stopObservation, updateLastPlayedAt, setLastPlayedAt, addInsight, spendInsight, setCurrentHint, resetGame, acknowledgeEnding, setEndingAcknowledged, ...persistedState } = state
         return persistedState
       },
     }

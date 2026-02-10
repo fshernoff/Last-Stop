@@ -1,8 +1,9 @@
 import { useGameStore } from '../store/gameStore'
 import { LOCATIONS, canEnterLocation } from '../data/locations'
-import { CHARACTERS, getCharacterLocation, getCharactersAtLocation } from '../data/characters'
-import { timeOfDayToMinutes } from '../story/timeOfDay'
+import { CHARACTERS, getCharacterLocation, getDrifterLocation } from '../data/characters'
 import type { LocationId, CharacterId } from '../types'
+
+const TIME_COST_MOVE = 15
 
 // Map layout positions (x, y coordinates for visual placement)
 const MAP_LAYOUT: Record<LocationId, { x: number; y: number; label: string }> = {
@@ -34,17 +35,21 @@ const NPC_CODES: Record<CharacterId, string> = {
 }
 
 export function MapScreen() {
-  const { player, timeOfDay, flags, moveTo } = useGameStore()
+  const { player, currentTime, currentLoop, flags, advanceTime, moveTo } = useGameStore()
   const currentLocation = player.currentLocation
-  const timeMarker = timeOfDayToMinutes(timeOfDay)
 
   // Get NPC positions
   const getNPCsAtLocation = (locationId: LocationId): CharacterId[] => {
     const npcs: CharacterId[] = []
     for (const [id] of Object.entries(CHARACTERS)) {
       const charId = id as CharacterId
-      const loc = getCharacterLocation(charId, timeMarker)
-      if (loc === locationId) npcs.push(charId)
+      if (charId === 'drifter') {
+        const drifterLoc = getDrifterLocation(currentLoop, currentTime)
+        if (drifterLoc === locationId) npcs.push(charId)
+      } else {
+        const loc = getCharacterLocation(charId, currentTime)
+        if (loc === locationId) npcs.push(charId)
+      }
     }
     return npcs
   }
@@ -64,9 +69,10 @@ export function MapScreen() {
   const handleLocationClick = (locationId: LocationId) => {
     if (locationId === currentLocation) return
     if (!isAdjacent(locationId)) return
-    if (!canEnterLocation(locationId, flags, timeMarker)) return
+    if (!canEnterLocation(locationId, flags)) return
 
     moveTo(locationId)
+    advanceTime(TIME_COST_MOVE)
   }
 
   // Render a location cell
@@ -75,16 +81,12 @@ export function MapScreen() {
     const location = LOCATIONS[locationId]
     const isHere = currentLocation === locationId
     const canMove = isAdjacent(locationId)
-    const canEnter = canEnterLocation(locationId, flags, timeMarker)
-    const isLocked = !canEnter && location.requiresFlag && !flags.includes(location.requiresFlag)
+    const canEnter = canEnterLocation(locationId, flags)
+    const isLocked = !canEnter && location.requiresFlag
     const npcsHere = getNPCsAtLocation(locationId)
 
     // Determine if it's a room (numbered location)
     const isRoom = ['room_player', 'room_2', 'room_4', 'room_6', 'room_9', 'room_11'].includes(locationId)
-    const isGuestRoom = isRoom && locationId !== 'room_player'
-    const occupants = getCharactersAtLocation(locationId, timeMarker)
-    const hasRoomPermission = location.requiresFlag ? flags.includes(location.requiresFlag) : false
-    const isOccupied = isGuestRoom && occupants.length > 0 && !hasRoomPermission
 
     return (
       <button
@@ -97,7 +99,7 @@ export function MapScreen() {
             ? 'bg-amber-600 border-amber-400 text-white'
             : canMove && canEnter
               ? 'bg-slate-700 border-slate-600 hover:bg-slate-600 hover:border-slate-500 cursor-pointer'
-              : isLocked || isOccupied
+              : isLocked
                 ? 'bg-slate-800 border-slate-700 text-slate-600'
                 : 'bg-slate-800 border-slate-700 text-slate-500'
           }
@@ -107,7 +109,6 @@ export function MapScreen() {
         <div className="font-semibold">{layout.label}</div>
         {isHere && <div className="text-[10px] text-amber-200">YOU</div>}
         {isLocked && <div className="text-[10px]">🔒</div>}
-        {isOccupied && !isLocked && <div className="text-[10px]">Occupied</div>}
         {npcsHere.length > 0 && !isHere && (
           <div className="text-[10px] text-amber-400 mt-0.5">
             {npcsHere.map((id) => (isCharacterKnown(id) ? NPC_CODES[id] : '?')).join(' ')}
@@ -191,7 +192,7 @@ export function MapScreen() {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-slate-400">Tap</span>
-            <span>to move</span>
+            <span>to move ({TIME_COST_MOVE}min)</span>
           </div>
         </div>
         <div className="mt-3 pt-3 border-t border-slate-700 text-xs text-slate-500">

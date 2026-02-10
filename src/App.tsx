@@ -1,41 +1,169 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useGameStore } from './store/gameStore'
-import { getChapterNumber } from './story/schema'
-import { getBeatDefinition } from './story/chapters'
-import { TIME_OF_DAY_LABELS } from './story/timeOfDay'
+import { formatTime, isMidnight } from './utils/time'
+import {
+  shouldProcessIdleTime,
+  processObservations,
+} from './utils/observations'
 import { ActionsTab } from './components/ActionsTab'
 import { MapScreen } from './components/MapScreen'
 import { ItemsScreen } from './components/ItemsScreen'
 import { KnownScreen } from './components/KnownScreen'
+import { ObserveScreen } from './components/ObserveScreen'
 import { MenuScreen } from './components/MenuScreen'
 import { EndingScreen } from './components/EndingScreen'
 
-type TabId = 'actions' | 'map' | 'items' | 'known' | 'menu'
+type TabId = 'actions' | 'map' | 'items' | 'known' | 'observe' | 'menu'
 
 const TAB_LABELS: Record<TabId, string> = {
   actions: 'Actions',
   map: 'Map',
   items: 'Items',
   known: 'Known',
+  observe: 'Observe',
   menu: 'Menu',
 }
 
 function App() {
   const {
-    storyBeatId,
-    timeOfDay,
-    lastBeatTransition,
+    currentLoop,
+    currentTime,
+    lastPlayedAt,
+    activeObservations,
     flags,
     endingAcknowledged,
+    resetDay,
+    advanceTime,
+    addObservationEntry,
+    setObservations,
+    updateLastPlayedAt,
+    addInsight,
     acknowledgeEnding,
     resetGame,
   } = useGameStore()
 
   // UI state
+  const [showDayReset, setShowDayReset] = useState(false)
+  const [showChapterTransition, setShowChapterTransition] = useState<number | null>(null)
   const [selectedTab, setSelectedTab] = useState<TabId>('actions')
 
-  const beatDefinition = getBeatDefinition(storyBeatId as never)
-  const chapterNumber = getChapterNumber(beatDefinition.chapterId)
+  // Track if we've processed idle time this session
+  const hasProcessedIdle = useRef(false)
+  const hasInitializedChapter = useRef(false)
+  const prevChapter = useRef(currentLoop)
+
+  // Process idle time and observations on app load
+  useEffect(() => {
+    if (hasProcessedIdle.current) return
+
+    const { shouldProcess, elapsedMs } = shouldProcessIdleTime(lastPlayedAt)
+
+    if (shouldProcess && activeObservations.length > 0) {
+      hasProcessedIdle.current = true
+
+      const { entries, newGameTime } = processObservations(
+        activeObservations,
+        currentTime,
+        elapsedMs,
+        currentLoop
+      )
+
+      // Add observation entries to the log
+      for (const entry of entries) {
+        addObservationEntry(entry)
+      }
+
+      // Advance game time
+      if (newGameTime > currentTime) {
+        advanceTime(newGameTime - currentTime)
+      }
+
+      if (entries.length > 0) {
+        const discoveryCount = entries.filter((entry) => entry.setsFlag).length
+        const insightEarned = Math.min(3, Math.floor(entries.length / 3) + discoveryCount)
+        if (insightEarned > 0) {
+          addInsight(insightEarned)
+        }
+      }
+
+      // Clear active observations after processing
+      setObservations([])
+
+      // If we have entries, switch to observe tab to show the log
+      if (entries.length > 0) {
+        setSelectedTab('observe')
+      }
+
+      // If reached midnight, show reset modal (will be handled by the next effect)
+    }
+
+    // Update lastPlayedAt on load
+    updateLastPlayedAt()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only run once on mount
+
+  // Update lastPlayedAt when page visibility changes or periodically
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // User is leaving - update timestamp
+        updateLastPlayedAt()
+      }
+    }
+
+    // Update timestamp periodically while active (every 30 seconds)
+    const intervalId = setInterval(() => {
+      updateLastPlayedAt()
+    }, 30000)
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    // Also update on beforeunload for browsers that don't fire visibilitychange
+    const handleBeforeUnload = () => {
+      updateLastPlayedAt()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      clearInterval(intervalId)
+    }
+  }, [updateLastPlayedAt])
+
+  // Check for midnight and trigger day reset
+  useEffect(() => {
+    if (isMidnight(currentTime) && !showDayReset) {
+      setShowDayReset(true)
+    }
+  }, [currentTime, showDayReset])
+
+  // Show chapter transition modal when chapter advances (skip initial hydration)
+  useEffect(() => {
+    if (!hasInitializedChapter.current) {
+      hasInitializedChapter.current = true
+      prevChapter.current = currentLoop
+      return
+    }
+
+    if (currentLoop < prevChapter.current) {
+      setShowChapterTransition(null)
+    }
+
+    if (currentLoop > prevChapter.current) {
+      setShowDayReset(false)
+      setShowChapterTransition(currentLoop)
+    }
+
+    prevChapter.current = currentLoop
+  }, [currentLoop])
+
+  // Handle day reset
+  const handleDayReset = () => {
+    resetDay()
+    setShowDayReset(false)
+    setSelectedTab('actions') // Return to actions tab after reset
+  }
 
   const endingId = flags.includes('ending_a')
     ? 'ending_a'
@@ -54,6 +182,8 @@ function App() {
         return <ItemsScreen />
       case 'known':
         return <KnownScreen />
+      case 'observe':
+        return <ObserveScreen />
       case 'menu':
         return <MenuScreen />
       default:
@@ -76,16 +206,53 @@ function App() {
           }}
         />
       )}
+      {/* Chapter Transition Modal */}
+      {showChapterTransition !== null && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 max-w-md text-center">
+            <h2 className="text-2xl font-bold text-amber-400 mb-4">
+              CHAPTER {showChapterTransition}
+            </h2>
+            <p className="text-slate-300 mb-6">
+              The day rewinds. New threads are waiting.
+            </p>
+            <button
+              onClick={() => setShowChapterTransition(null)}
+              className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded font-semibold transition-colors"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Day Reset Modal */}
+      {showDayReset && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 max-w-md text-center">
+            <h2 className="text-2xl font-bold text-red-400 mb-4">MIDNIGHT</h2>
+            <p className="text-slate-300 mb-2">
+              The world stutters. Rewinds. You're back in bed.
+            </p>
+            <p className="text-slate-400 text-sm mb-6">
+              The day starts over. Chapter {currentLoop} continues.
+            </p>
+            <button
+              onClick={handleDayReset}
+              className="px-6 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded font-semibold transition-colors"
+            >
+              Wake Up
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Top Bar */}
       <header className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex justify-between items-center shrink-0">
         <h1 className="text-lg font-bold tracking-wide">LAST STOP</h1>
         <div className="flex gap-4 text-sm text-slate-400">
-          <span>Chapter {chapterNumber}</span>
+          <span>Chapter {currentLoop}</span>
           <span className="text-slate-600">|</span>
-          <span>{TIME_OF_DAY_LABELS[timeOfDay]}</span>
-          <span className="text-slate-600">|</span>
-          <span>{beatDefinition.title}</span>
+          <span>{formatTime(currentTime)}</span>
         </div>
       </header>
 
@@ -93,17 +260,6 @@ function App() {
       <main className="flex-1 p-4 pb-20 overflow-y-auto">
         {renderTabContent()}
       </main>
-
-      {/* Debug Overlay */}
-      <div className="fixed left-3 bottom-20 bg-black/70 text-xs text-slate-200 rounded px-3 py-2 border border-slate-600">
-        <div>Beat: {storyBeatId}</div>
-        <div>Time: {TIME_OF_DAY_LABELS[timeOfDay]}</div>
-        {lastBeatTransition && (
-          <div>
-            Last: {lastBeatTransition.from} → {lastBeatTransition.to}
-          </div>
-        )}
-      </div>
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 px-2 py-2">

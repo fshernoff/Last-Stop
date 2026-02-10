@@ -5,18 +5,22 @@ const ITEM_DATA: Record<string, { name: string; description: string; persistent?
   master_key: {
     name: 'Master Key',
     description: 'A brass key that opens every room in the motel. Earl trusted you with this.',
+    persistent: true,
   },
   thomas_journal: {
     name: "Thomas's Journal",
     description: 'A worn leather journal filled with scientific notes and personal entries. The handwriting grows increasingly erratic toward the end.',
+    persistent: true,
   },
   facility_keycard: {
     name: 'Facility Keycard',
     description: 'A government-issue keycard with a faded logo. Grants access to somewhere underground.',
+    persistent: true,
   },
   facility_map: {
     name: 'Facility Map',
     description: 'A rough map marked with a path into the desert. Mile marker 7 is circled in red.',
+    persistent: true,
   },
   coffee_cup: {
     name: 'Cup of Coffee',
@@ -80,11 +84,11 @@ export function ItemsScreen() {
                     <h3 className="font-semibold text-slate-100">
                       {item.name}
                     </h3>
-                  {item.persistent && (
-                    <span className="text-xs text-amber-400 bg-amber-900/30 px-2 py-0.5 rounded">
-                      Key Item
-                    </span>
-                  )}
+                    {item.persistent && (
+                      <span className="text-xs text-amber-400 bg-amber-900/30 px-2 py-0.5 rounded">
+                        Persists
+                      </span>
+                    )}
                   </div>
                   <p className="text-sm text-slate-400 mt-1 leading-relaxed">
                     {item.description}
@@ -96,12 +100,15 @@ export function ItemsScreen() {
         )}
       </div>
 
+      {/* Info about persistent items */}
       <div className="bg-slate-800 rounded-lg border border-slate-700 p-4">
         <h3 className="text-sm font-semibold mb-2 text-slate-400 uppercase tracking-wide">
           About Items
         </h3>
         <p className="text-xs text-slate-500 leading-relaxed">
-          Items in your inventory stay with you throughout the story.
+          Most items are lost when the day resets at midnight. Items marked{' '}
+          <span className="text-amber-400">Persists</span> remain in your
+          inventory across resets.
         </p>
       </div>
     </div>
