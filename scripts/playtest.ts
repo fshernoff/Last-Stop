@@ -384,11 +384,13 @@ function playThrough(): PlayReport {
     const obsTargets: Array<{ loc: LocationId, start: number, end: number }> = [
       { loc: 'office', start: 900, end: 1080 },     // Earl's anomaly at 960
       { loc: 'parking_lot', start: 540, end: 720 },  // White sedan at 585
-      { loc: 'diner', start: 720, end: 900 },        // Mo asks facility at 780
+      { loc: 'diner', start: 720, end: 900 },        // Mo asks facility at 780, time skip at 720
       { loc: 'courtyard', start: 0, end: 600 },      // Earl knocks room 6 at 60, Karen walks desert at 540
       { loc: 'office', start: 540, end: 660 },       // Diane-Earl talk at 600
       { loc: 'back_area', start: 360, end: 480 },    // Drifter at 420
       { loc: 'desert', start: 540, end: 720 },       // Karen walks
+      { loc: 'desert', start: 390, end: 510 },       // Drifter lost at 450
+      { loc: 'courtyard', start: 990, end: 1080 },   // Reality flicker at 1050
     ]
 
     for (const obs of obsTargets) {
@@ -499,11 +501,55 @@ function playThrough(): PlayReport {
         if (!isMidnight(s.currentTime) && s.flags.includes('diane_refused_deal') && !s.flags.includes('diane_gave_files_anyway') && s.trust.diane >= 2) {
           seekCharacter('diane', log)
         }
+        // Seek Drifter for lie confrontation (player knows real location + Drifter gave wrong direction)
+        if (!isMidnight(s.currentTime) && s.flags.includes('drifter_gave_wrong_direction') && s.flags.includes('knows_facility_location') && !s.flags.includes('drifter_confronted_about_lie')) {
+          seekCharacter('drifter', log)
+        }
+        // Seek Drifter for badge scene
+        if (!isMidnight(s.currentTime) && s.flags.includes('found_vasquez_badge') && s.flags.includes('met_drifter') && !s.flags.includes('drifter_saw_badge')) {
+          seekCharacter('drifter', log)
+        }
+        // Seek Earl for safe confrontation
+        if (!isMidnight(s.currentTime) && s.flags.includes('opened_earl_safe') && s.flags.includes('earl_revealed') && !s.flags.includes('earl_confronted_about_safe')) {
+          seekCharacter('earl', log)
+        }
+        // Seek Diane for red herring resolution
+        if (!isMidnight(s.currentTime) && s.flags.includes('diane_accused_earl') && s.flags.includes('knows_earl_drove_others_away') && !s.flags.includes('diane_cleared_earl') && s.trust.diane >= 2) {
+          seekCharacter('diane', log)
+        }
+        // Seek Diane for sedan missed scene (chapter 4+)
+        if (!isMidnight(s.currentTime) && s.flags.includes('diane_cover_blown') && !s.flags.includes('intercepted_diane_sedan') && !s.flags.includes('diane_sedan_missed') && s.currentChapter >= 4) {
+          seekCharacter('diane', log)
+        }
 
         // Try Earl night event between passes (it needs the office at 9-10PM)
         if (!isMidnight(s.currentTime) && s.flags.includes('earl_revealed') && s.flags.includes('has_thomas_journal') && !s.flags.includes('caught_earl_with_device')) {
           tryTimedEvent('office', 910, ['earl'], log, true)
         }
+      }
+    }
+
+    // Phase 4b: Dedicated Earl night stakeout — wait until 9PM if conditions are met
+    // Must happen BEFORE investigations which burn all remaining time
+    if (!isMidnight(s.currentTime) && s.flags.includes('earl_revealed') && s.flags.includes('has_thomas_journal') && !s.flags.includes('caught_earl_with_device')) {
+      const waitTime = 910 - s.currentTime
+      if (waitTime > 0) {
+        advanceTime(s, waitTime)
+        logAction(s, log, 'WAIT', `Waited ${waitTime} minutes for Earl's nightly routine`)
+      }
+      if (!isMidnight(s.currentTime)) {
+        navigateTo(s, 'office', log)
+        if (!isMidnight(s.currentTime)) {
+          const scene = doTalk(s, 'earl', log)
+          if (scene) {
+            scenesPlayed.add(scene.id)
+            updateMaxTrust()
+          }
+        }
+      }
+      // Talk to everyone after stakeout to pick up downstream scenes
+      if (!isMidnight(s.currentTime)) {
+        tryTalkToAll(log)
       }
     }
 

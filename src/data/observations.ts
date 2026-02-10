@@ -50,6 +50,11 @@ export const OBSERVATION_EVENTS: Omit<ObservationEntry, 'location'>[] & { locati
   { time: 600, location: 'office', text: "Diane enters the office. She and Earl talk in low voices. You can't hear what they're saying, but Earl looks nervous.", setsFlag: 'observed_diane_earl_talk' },
   { time: 615, location: 'office', text: "Diane leaves the office. Earl stares after her for a long moment." },
   { time: 960, location: 'office', text: "Earl locks up the front desk and heads to the back room. He's carrying something wrapped in cloth - it glows faintly blue.", setsFlag: 'observed_earl_anomaly' },
+
+  // Time/space anomaly observations
+  { time: 720, location: 'diner', text: "The diner clock jumps from 6:00 PM to 5:47 PM, then back to 6:01 PM. Marge doesn't notice. Nobody does.", setsFlag: 'observed_time_skip' },
+  { time: 1050, location: 'courtyard', text: "The neon VACANCY sign flickers. For a fraction of a second, the courtyard looks different — the pool full, the chairs new, a car from the 1980s in the lot. Then it's gone.", setsFlag: 'observed_reality_flicker' },
+  { time: 450, location: 'desert', text: "The Drifter walks past, heading east with a compass. He stops at what should be the old water tower. There's nothing there. He checks the compass again. It spins freely, pointing nowhere.", setsFlag: 'observed_drifter_lost' },
 ]
 
 /**

@@ -351,7 +351,74 @@ export const dianeScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIMED: Intercept Diane's sedan meeting (8-9AM)
+  // RED HERRING: Diane accuses Earl of being dangerous
+  // ============================================================================
+  {
+    id: 'diane_accuses_earl',
+    character: 'diane',
+    requirements: {
+      trust: 1,
+      flags: ['diane_cover_blown', 'met_earl'],
+      notFlags: ['diane_accused_earl'],
+    },
+    priority: 68,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"I need to tell you something. About Earl."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She lowers her voice.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Fifteen people have gone missing within five miles of this motel. Over forty years. And one man has been here the entire time."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Earl."',
+        choices: [
+          { text: '"You think Earl is killing people?"', next: 'killing' },
+          { text: '"That\'s circumstantial."', next: 'circumstantial' },
+          { text: '"I know Earl. He\'s not capable of that."', next: 'not_capable' },
+        ],
+        convergeTo: 'diane_accuses_after',
+      },
+      {
+        id: 'killing',
+        speaker: 'npc',
+        text: '"I think Earl is responsible. Whether it\'s intentional or not, people come here and they don\'t leave."',
+      },
+      {
+        id: 'circumstantial',
+        speaker: 'npc',
+        text: '"Fifteen bodies of evidence isn\'t circumstantial. It\'s a pattern. And it leads right to that office."',
+      },
+      {
+        id: 'not_capable',
+        speaker: 'npc',
+        text: '"People said that about every person I\'ve ever investigated. \'Not capable.\' \'Such a nice man.\'"',
+      },
+      {
+        speaker: 'narration',
+        text: 'She taps the missing persons reports.',
+      },
+      {
+        id: 'diane_accuses_after',
+        speaker: 'npc',
+        text: '"Be careful around him. I mean it. Until we know more, he\'s my primary suspect."',
+      },
+    ],
+    effects: {
+      setFlags: ['diane_accused_earl', 'knows_diane_suspects_earl'],
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
+  // TIMED: Intercept Diane's sedan meeting (8-9AM, chapters 1-3 only)
   // ============================================================================
   {
     id: 'diane_timed_sedan_intercept',
@@ -361,6 +428,7 @@ export const dianeScenes: Scene[] = [
       notFlags: ['intercepted_diane_sedan'],
       location: 'parking_lot',
       timeWindow: { min: 120, max: 180 },
+      chapter: { max: 3 },
     },
     priority: 90,
     oncePer: 'ever',
@@ -388,7 +456,8 @@ export const dianeScenes: Scene[] = [
           {
             text: '"I\'ll tell you what I know about Earl."',
             next: 'share_earl',
-            effects: { setFlags: ['diane_shared_earl_info'], giveItem: 'sealed_case_files' },
+            requiresFlags: ['met_earl'],
+            effects: { setFlags: ['diane_shared_earl_info', 'has_sealed_case_files'], giveItem: 'sealed_case_files' },
           },
           {
             text: '"I can\'t betray Earl\'s trust."',
@@ -399,7 +468,7 @@ export const dianeScenes: Scene[] = [
             text: '"I found this. Take it — but leave Earl out of it."',
             next: 'offer_clipping',
             requiresItems: ['newspaper_clipping'],
-            effects: { setFlags: ['diane_has_clipping'], giveItem: 'sealed_case_files' },
+            effects: { setFlags: ['diane_has_clipping', 'has_sealed_case_files'], giveItem: 'sealed_case_files' },
           },
         ],
         convergeTo: 'sedan_after',
@@ -449,6 +518,68 @@ export const dianeScenes: Scene[] = [
       setFlags: ['intercepted_diane_sedan'],
       addRapport: { character: 'diane', amount: 2 },
       advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // CONSEQUENCE: Sedan contact spooked — player missed the window
+  // ============================================================================
+  {
+    id: 'diane_sedan_missed',
+    character: 'diane',
+    requirements: {
+      flags: ['diane_cover_blown'],
+      notFlags: ['intercepted_diane_sedan', 'diane_sedan_missed'],
+      chapter: { min: 4 },
+    },
+    priority: 72,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"My contact is gone."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She looks frustrated. Tired.',
+      },
+      {
+        speaker: 'npc',
+        text: '"The white sedan stopped coming. Someone spooked him. Or he got reassigned."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I had sealed government files on the 1984 incident. Real files. And now the pipeline is dry."',
+        choices: [
+          { text: '"Is there another way to get them?"', next: 'another_way' },
+          { text: '"What did they contain?"', next: 'contents' },
+        ],
+        convergeTo: 'sedan_missed_after',
+      },
+      {
+        id: 'another_way',
+        speaker: 'npc',
+        text: '"Not out here. Not in the loop. My contact was the only one who could reach the outside."',
+      },
+      {
+        id: 'contents',
+        speaker: 'npc',
+        text: '"Researcher names. Facility blueprints. Classified incident reports. Everything the government tried to bury."',
+      },
+      {
+        id: 'sedan_missed_after',
+        speaker: 'narration',
+        text: 'She stares at her notebook. A whole line of investigation, closed.',
+      },
+      {
+        speaker: 'npc',
+        text: '"We\'ll have to find another way. Whatever you can dig up on your own — journals, badges, anything physical — that\'s all we have now."',
+      },
+    ],
+    effects: {
+      setFlags: ['diane_sedan_missed'],
+      addRapport: { character: 'diane', amount: 1 },
+      advanceTime: 15,
     },
   },
 
@@ -572,7 +703,7 @@ export const dianeScenes: Scene[] = [
       },
     ],
     effects: {
-      setFlags: ['diane_gave_files_anyway'],
+      setFlags: ['diane_gave_files_anyway', 'has_sealed_case_files'],
       giveItem: 'sealed_case_files',
       advanceTime: 15,
     },
@@ -673,6 +804,80 @@ export const dianeScenes: Scene[] = [
         'knows_government_involved',
         'knows_thomas_role',
       ],
+      addRapport: { character: 'diane', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // RED HERRING RESOLUTION: Diane learns Earl isn't dangerous
+  // ============================================================================
+  {
+    id: 'diane_red_herring_resolved',
+    character: 'diane',
+    requirements: {
+      trust: 2,
+      flags: ['diane_accused_earl', 'knows_earl_drove_others_away'],
+      notFlags: ['diane_cleared_earl'],
+    },
+    priority: 84,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'player',
+        text: '"Diane, your missing persons — they\'re not dead."',
+      },
+      {
+        speaker: 'npc',
+        text: '"What?"',
+      },
+      {
+        speaker: 'player',
+        text: '"Earl told me. There were others before me who remembered the loop. Three of them. Earl drove them away because they wanted to shut down the device."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Drove them away."',
+      },
+      {
+        speaker: 'player',
+        text: '"Out of the loop. Back into the real world. They aged forty years in an instant. They\'re out there somewhere, confused, but alive."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Diane stares at her missing persons files. You watch her theory crumble.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I spent six months building a case against a grieving father."',
+        choices: [
+          { text: '"You didn\'t have all the facts."', next: 'no_facts' },
+          { text: '"The evidence pointed that way."', next: 'evidence' },
+        ],
+        convergeTo: 'diane_cleared_after',
+      },
+      {
+        id: 'no_facts',
+        speaker: 'npc',
+        text: '"No. I had the facts. I just had the wrong conclusion."',
+      },
+      {
+        id: 'evidence',
+        speaker: 'npc',
+        text: '"The evidence pointed to a monster. Instead I found a man who loved his son too much."',
+      },
+      {
+        id: 'diane_cleared_after',
+        speaker: 'narration',
+        text: 'She closes the folder. Slowly.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Okay. Earl\'s not the villain. He\'s the victim. That changes everything about how we handle this."',
+      },
+    ],
+    effects: {
+      setFlags: ['diane_cleared_earl', 'knows_missing_were_freed'],
       addRapport: { character: 'diane', amount: 2 },
       advanceTime: 20,
     },

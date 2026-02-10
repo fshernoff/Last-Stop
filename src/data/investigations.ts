@@ -65,6 +65,32 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     },
   },
 
+  // Player's room - study sealed case files
+  {
+    id: 'room_player_study_files',
+    location: 'room_player',
+    text: 'You spread the sealed case files across the bed. Most names are redacted, but one page lists the research team: Dr. Thomas Hoskins (deceased), Dr. R. Vasquez (missing), and Dr. V. Harlow (missing). Harlow. The initial V. You stare at the name.',
+    requiresFlags: ['has_sealed_case_files'],
+    notFlags: ['knows_vincent_real_name'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['knows_vincent_real_name', 'studied_case_files'],
+    },
+  },
+
+  // Player's room - study Thomas's journal for safe combination
+  {
+    id: 'room_player_study_journal',
+    location: 'room_player',
+    text: `You flip through Thomas's journal more carefully. In the margins of one page, scrawled in different ink: '7-20-84'. A date — or a combination. Thomas wrote underneath: 'Dad's safe. He thinks I don't know.'`,
+    requiresFlags: ['has_thomas_journal'],
+    notFlags: ['knows_safe_combination'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['knows_safe_combination'],
+    },
+  },
+
   // Player's room - after knowing about the reset
   {
     id: 'room_player_loop_aware',
@@ -110,6 +136,19 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     oncePer: 'loop',
     effects: {
       setFlags: ['explored_office', 'found_back_room'],
+    },
+  },
+
+  // Office - open Earl's safe with combination from Thomas's journal
+  {
+    id: 'office_safe',
+    location: 'office',
+    text: 'Behind the ledger, you find a small wall safe. You enter the combination from Thomas\'s journal: 7-20-84. It clicks open. Inside: a letter from the government, dated 1985, ordering Earl to surrender "all materials related to Project Stillwater." He never complied. He kept the device. At the bottom, a handwritten note from Thomas: "If you\'re reading this, I\'m sorry, Dad. Don\'t turn it on."',
+    requiresFlags: ['knows_safe_combination', 'earl_revealed'],
+    notFlags: ['opened_earl_safe'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['opened_earl_safe', 'knows_project_stillwater', 'knows_thomas_warned_earl'],
     },
   },
 
@@ -197,6 +236,20 @@ export const INVESTIGATIONS: InvestigationResult[] = [
     oncePer: 'loop',
     effects: {
       setFlags: ['explored_desert'],
+    },
+  },
+
+  // Desert - investigate Mo's mile marker anomaly
+  {
+    id: 'desert_mile_marker_dig',
+    location: 'desert',
+    text: 'You find mile marker 12 — or what should be mile marker 12. The post is bent, corroded. The numbers have been scratched off. At its base, half-buried in sand, you find a government-issue ID badge. The photo is sun-bleached but the name is legible: "R. Vasquez — Project Stillwater, Clearance Level 3." The third researcher. The one who wasn\'t Thomas or Vincent.',
+    requiresFlags: ['knows_mo_mile_discrepancy'],
+    notFlags: ['found_vasquez_badge'],
+    oncePer: 'ever',
+    effects: {
+      setFlags: ['found_vasquez_badge', 'knows_third_researcher'],
+      giveItem: 'vasquez_badge',
     },
   },
 

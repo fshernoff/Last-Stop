@@ -54,7 +54,10 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'met_diane', text: 'Met Diane Mercer, who says she\'s in sales', category: 'people', character: 'diane' },
   { flag: 'knows_diane_investigating', text: 'Diane is investigating the 1984 incident', category: 'people', character: 'diane' },
   { flag: 'knows_diane_files', text: 'Diane has sealed case files', category: 'people', character: 'diane' },
+  { flag: 'knows_diane_suspects_earl', text: 'Diane suspects Earl is behind the disappearances', category: 'people', character: 'diane' },
+  { flag: 'knows_missing_were_freed', text: 'The missing persons were freed from the loop, not killed', category: 'people', character: 'diane' },
   { flag: 'diane_will_help', text: 'Diane chose to help end the loop quietly', category: 'people', character: 'diane' },
+  { flag: 'diane_sedan_missed', text: 'Diane\'s government contact stopped coming — the sedan window closed', category: 'people', character: 'diane' },
 
   // Mo
   { flag: 'met_mo', text: 'Met Big Mo, a long-haul trucker', category: 'people', character: 'mo' },
@@ -66,6 +69,8 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'met_drifter', text: 'Encountered the Drifter', category: 'people', character: 'drifter' },
   { flag: 'knows_drifter_truth', text: 'The Drifter knows about the resets', category: 'people', character: 'drifter' },
   { flag: 'knows_drifter_identity', text: 'The Drifter is not what they seem', category: 'people', character: 'drifter' },
+  { flag: 'knows_drifter_is_vasquez_son', text: 'The Drifter is the son of R. Vasquez, one of the three researchers', category: 'people', character: 'drifter' },
+  { flag: 'knows_drifter_protects_facility', text: 'The Drifter has been sending people the wrong way to protect them', category: 'people', character: 'drifter' },
 
   // Vincent
   { flag: 'knows_vincent_exists', text: 'Someone is staying in Room 6', category: 'people', character: 'vincent' },
@@ -92,6 +97,14 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_vincent_is_researcher', text: 'Vincent is one of the three researchers who "disappeared" in 1984', category: 'mystery' },
   { flag: 'diane_revealed_incident_details', text: 'The 1984 incident was a temporal field test that went wrong', category: 'mystery' },
   { flag: 'knows_mo_mile_discrepancy', text: "Mo's mile markers don't add up — the loop warps distance", category: 'mystery' },
+  { flag: 'knows_vincent_real_name', text: 'The sealed files name "Dr. V. Harlow" — Vincent\'s real identity', category: 'mystery' },
+  { flag: 'knows_safe_combination', text: 'Thomas\'s journal contains a safe combination: 7-20-84', category: 'mystery' },
+  { flag: 'knows_project_stillwater', text: 'The government project was called "Project Stillwater"', category: 'mystery' },
+  { flag: 'knows_thomas_warned_earl', text: 'Thomas left a note for Earl: "Don\'t turn it on"', category: 'mystery' },
+  { flag: 'knows_earl_defied_government', text: 'Earl defied the government and kept the device', category: 'mystery' },
+  { flag: 'knows_third_researcher', text: 'R. Vasquez was the third researcher at the facility', category: 'mystery' },
+  { flag: 'observed_time_skip', text: 'The diner clock jumped backward — time itself is unstable here', category: 'mystery' },
+  { flag: 'observed_reality_flicker', text: 'The courtyard flickered to how it looked in the 1980s', category: 'mystery' },
 ]
 
 // Trust tier labels

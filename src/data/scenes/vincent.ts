@@ -144,6 +144,87 @@ export const vincentScenes: Scene[] = [
   },
 
   // ============================================================================
+  // SHORTCUT: Use Vincent's real name to open the door (cross-loop puzzle)
+  // ============================================================================
+  {
+    id: 'vincent_real_name_shortcut',
+    character: 'vincent',
+    requirements: {
+      flags: ['earl_told_about_vincent', 'knows_vincent_real_name'],
+      notFlags: ['vincent_opened_door'],
+    },
+    priority: 96,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'You stand outside Room 6. This time, you have a name.',
+      },
+      {
+        speaker: 'player',
+        text: '"Dr. Harlow."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Silence. Then a sharp intake of breath.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Where did you hear that name?"',
+      },
+      {
+        speaker: 'player',
+        text: '"Government case files. Three researchers. Thomas Hoskins. R. Vasquez. And V. Harlow."',
+        choices: [
+          { text: '"You\'ve been hiding in here for forty years."', next: 'hiding' },
+          { text: '"I\'m not the government. I\'m trying to help."', next: 'help' },
+        ],
+        convergeTo: 'vincent_name_after',
+      },
+      {
+        id: 'hiding',
+        speaker: 'narration',
+        text: 'A long pause. You hear something between a laugh and a sob.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Forty years. Has it really been forty years?"',
+      },
+      {
+        id: 'help',
+        speaker: 'npc',
+        text: '"Help. Everyone says that. Earl said that."',
+      },
+      {
+        speaker: 'narration',
+        text: 'But his voice is different. Not hostile. Tired.',
+      },
+      {
+        id: 'vincent_name_after',
+        speaker: 'npc',
+        text: '"Nobody has called me that since 1984."',
+      },
+      {
+        speaker: 'narration',
+        text: 'You hear the lock turn. The door opens.',
+      },
+      {
+        speaker: 'narration',
+        text: 'Vincent looks exactly like a man who\'s been alone in a dark room for forty years. But his eyes are sharp. Alert. You\'ve gotten his attention in a way no one else has.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Come in. And tell me everything you know. Because if you found those files, you know more than Earl ever did."',
+      },
+    ],
+    effects: {
+      setFlags: ['vincent_opened_door', 'vincent_contacted', 'met_vincent', 'knows_vincent_exists', 'knows_vincent_is_researcher'],
+      addRapport: { character: 'vincent', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
   // TIER 1: Talking through the door
   // ============================================================================
   {

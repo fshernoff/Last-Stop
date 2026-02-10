@@ -241,6 +241,7 @@ export const PERSISTENT_ITEMS = [
   'sealed_case_files',
   'newspaper_clipping',
   'photograph',
+  'vasquez_badge',
 ] as const
 
 export type PersistentItem = typeof PERSISTENT_ITEMS[number]

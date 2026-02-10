@@ -170,6 +170,65 @@ const HINT_RULES: HintRule[] = [
       !state.flags.includes('ready_for_ending'),
   },
   {
+    id: 'study_case_files',
+    text: 'You have sealed case files. Study them in your room — there might be names you recognize.',
+    when: (state) =>
+      state.flags.includes('has_sealed_case_files') &&
+      !state.flags.includes('knows_vincent_real_name'),
+  },
+  {
+    id: 'study_journal',
+    text: 'Thomas\'s journal might have more secrets. Study it carefully in your room.',
+    when: (state) =>
+      state.flags.includes('has_thomas_journal') &&
+      !state.flags.includes('knows_safe_combination'),
+  },
+  {
+    id: 'earl_safe',
+    text: 'You know the combination to Earl\'s safe. Check the office.',
+    when: (state) =>
+      state.flags.includes('knows_safe_combination') &&
+      state.flags.includes('earl_revealed') &&
+      !state.flags.includes('opened_earl_safe'),
+  },
+  {
+    id: 'confront_earl_safe',
+    text: 'You opened Earl\'s safe and found Thomas\'s warning. Confront Earl.',
+    when: (state) =>
+      state.flags.includes('opened_earl_safe') &&
+      !state.flags.includes('earl_confronted_about_safe'),
+  },
+  {
+    id: 'vincent_real_name',
+    text: 'You know Vincent\'s real name — Dr. Harlow. Try using it when you talk to him.',
+    when: (state) =>
+      state.flags.includes('knows_vincent_real_name') &&
+      !state.flags.includes('vincent_opened_door'),
+  },
+  {
+    id: 'mile_marker_dig',
+    text: 'Mo\'s mile markers don\'t match. Investigate the desert near the markers.',
+    when: (state) =>
+      state.flags.includes('knows_mo_mile_discrepancy') &&
+      !state.flags.includes('found_vasquez_badge'),
+  },
+  {
+    id: 'show_vasquez_badge',
+    text: 'You found Vasquez\'s badge. The Drifter might recognize the name.',
+    when: (state) =>
+      state.flags.includes('found_vasquez_badge') &&
+      state.flags.includes('met_drifter') &&
+      !state.flags.includes('drifter_saw_badge'),
+  },
+  {
+    id: 'drifter_lied',
+    text: 'The Drifter said the facility was east. But Karen found it past mile marker 7. He lied.',
+    when: (state) =>
+      state.flags.includes('drifter_gave_wrong_direction') &&
+      state.flags.includes('knows_facility_location') &&
+      !state.flags.includes('drifter_confronted_about_lie'),
+  },
+  {
     id: 'david_phone',
     text: 'David keeps checking his phone. He might notice something about the dates.',
     when: (state) =>

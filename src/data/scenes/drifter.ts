@@ -177,7 +177,7 @@ export const drifterScenes: Scene[] = [
   },
 
   // ============================================================================
-  // TIER 2: Facility location and map
+  // TIER 2: Facility location — Drifter lies first, then tells truth
   // ============================================================================
   {
     id: 'drifter_tier2_facility_location',
@@ -185,6 +185,7 @@ export const drifterScenes: Scene[] = [
     requirements: {
       trust: 2,
       flags: ['drifter_told_father'],
+      notFlags: ['knows_facility_location'],
     },
     priority: 80,
     oncePer: 'ever',
@@ -200,7 +201,7 @@ export const drifterScenes: Scene[] = [
       {
         id: 'tell',
         speaker: 'npc',
-        text: "\"The facility. It's two miles into the desert. Past mile marker 7. Half-buried now, but it's there.\"",
+        text: '"The facility. It\'s east of here. Past the old water tower. Maybe ten miles."',
       },
       {
         speaker: 'narration',
@@ -208,32 +209,7 @@ export const drifterScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: '"My father drew this. He wanted someone to find it if something went wrong."',
-        choices: [
-          { text: '"What went wrong?"', next: 'wrong' },
-          { text: '"What\'s out there now?"', next: 'wrong' },
-        ],
-      },
-      {
-        id: 'wrong',
-        speaker: 'npc',
-        text: '"They were trying to freeze time. Create bubbles where nothing changed. Preserve moments forever."',
-      },
-      {
-        speaker: 'narration',
-        text: 'He laughs bitterly.',
-      },
-      {
-        speaker: 'npc',
-        text: '"Looks like they succeeded."',
-      },
-      {
-        speaker: 'player',
-        text: '"You know about the reset."',
-      },
-      {
-        speaker: 'npc',
-        text: "\"I've been here before. I've had this conversation before. I remember pieces.\"",
+        text: '"My father drew this."',
       },
       {
         speaker: 'narration',
@@ -241,19 +217,265 @@ export const drifterScenes: Scene[] = [
       },
       {
         speaker: 'npc',
-        text: "\"I've been trying to leave for weeks. Every time I get too far, I wake up back here. But maybe you can do something I can't.\"",
+        text: '"Don\'t go looking for trouble."',
       },
     ],
     effects: {
       setFlags: [
         'drifter_told_facility_location',
+        'drifter_gave_wrong_direction',
         'has_facility_map',
-        'knows_drifter_identity',
-        'knows_drifter_truth',
-        'knows_facility_location',
       ],
       addRapport: { character: 'drifter', amount: 2 },
       giveItem: 'facility_map',
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // TIER 2: Drifter tells truth if player already knows the real location
+  // ============================================================================
+  {
+    id: 'drifter_tier2_honest_location',
+    character: 'drifter',
+    requirements: {
+      trust: 2,
+      flags: ['drifter_told_father', 'knows_facility_location'],
+      notFlags: ['drifter_told_facility_location'],
+    },
+    priority: 81,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: "\"I'm going to tell you something. And then I'm going to leave. And if you're smart, you'll do the same.\"",
+        choices: [
+          { text: '"Tell me."', next: 'tell' },
+          { text: '"I already know where the facility is."', next: 'already_know' },
+        ],
+      },
+      {
+        id: 'tell',
+        speaker: 'npc',
+        text: '"The facility. It\'s east of here. Past the old water tower. Maybe ten miles."',
+      },
+      {
+        speaker: 'player',
+        text: '"That\'s not right. It\'s two miles into the desert, past mile marker 7. I\'ve been there."',
+      },
+      {
+        speaker: 'narration',
+        text: 'The Drifter goes very still.',
+      },
+      {
+        id: 'already_know',
+        speaker: 'npc',
+        text: '"You\'ve been there."',
+      },
+      {
+        speaker: 'narration',
+        text: 'It\'s not a question. He studies you differently now.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Fine. I lied about the direction. I\'ve been lying to everyone who asks."',
+        choices: [
+          { text: '"Why?"', next: 'why_lie' },
+          { text: '"What are you protecting?"', next: 'why_lie' },
+        ],
+      },
+      {
+        id: 'why_lie',
+        speaker: 'npc',
+        text: '"Because my father died in that place. And everyone who gets close to it gets trapped."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I\'ve been sending people the wrong way for months. Trying to keep them safe."',
+      },
+      {
+        speaker: 'narration',
+        text: 'His hands are shaking.',
+      },
+      {
+        speaker: 'npc',
+        text: '"But you already found it. So there\'s no point lying anymore."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He pulls out his father\'s map — the real one this time.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Here. The real map. Every entrance, every corridor my father documented. You\'ll need it if you\'re going back."',
+      },
+    ],
+    effects: {
+      setFlags: [
+        'drifter_told_facility_location',
+        'drifter_caught_lying',
+        'has_facility_map',
+        'knows_drifter_identity',
+        'knows_drifter_truth',
+        'knows_drifter_protects_facility',
+      ],
+      addRapport: { character: 'drifter', amount: 2 },
+      giveItem: 'facility_map',
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // CATCH THE LIE: Confront Drifter after discovering the real location
+  // ============================================================================
+  {
+    id: 'drifter_caught_lying',
+    character: 'drifter',
+    requirements: {
+      flags: ['drifter_gave_wrong_direction', 'knows_facility_location'],
+      notFlags: ['drifter_confronted_about_lie'],
+    },
+    priority: 85,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'player',
+        text: '"You lied to me. The facility isn\'t east. It\'s past mile marker 7, two miles into the desert."',
+      },
+      {
+        speaker: 'narration',
+        text: 'The Drifter flinches. Then his shoulders drop.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Yeah. I lied."',
+        choices: [
+          { text: '"Why?"', next: 'why' },
+          { text: '"How many people have you sent the wrong way?"', next: 'how_many' },
+        ],
+        convergeTo: 'drifter_lie_after',
+      },
+      {
+        id: 'why',
+        speaker: 'npc',
+        text: '"Because my father died in that building. And I\'ve watched three people walk toward it and never come back."',
+      },
+      {
+        id: 'how_many',
+        speaker: 'npc',
+        text: '"Enough. I stopped counting."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks genuinely ashamed.',
+      },
+      {
+        id: 'drifter_lie_after',
+        speaker: 'npc',
+        text: '"I thought I was protecting people. Sending them the wrong way so they wouldn\'t find the facility. Wouldn\'t get trapped like the rest of us."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But you found it anyway. And you came back."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He reaches into his coat and pulls out a folded paper.',
+      },
+      {
+        speaker: 'npc',
+        text: '"The real map. My father\'s actual notes. I owe you this much."',
+      },
+    ],
+    effects: {
+      setFlags: [
+        'drifter_confronted_about_lie',
+        'knows_drifter_identity',
+        'knows_drifter_truth',
+        'knows_drifter_protects_facility',
+      ],
+      addRapport: { character: 'drifter', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // PUZZLE: Show Vasquez badge to Drifter — reveals his father's identity
+  // ============================================================================
+  {
+    id: 'drifter_shown_vasquez_badge',
+    character: 'drifter',
+    requirements: {
+      flags: ['met_drifter', 'found_vasquez_badge'],
+      notFlags: ['drifter_saw_badge'],
+    },
+    priority: 88,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'You hold up the government ID badge.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Where did you get that?"',
+      },
+      {
+        speaker: 'narration',
+        text: 'His voice is different. Not defensive. Stricken.',
+      },
+      {
+        speaker: 'npc',
+        text: '"That\'s... that\'s my father\'s badge."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He takes it with trembling hands. Traces the name with his thumb. R. Vasquez.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Roberto Vasquez. Clearance Level 3. Project Stillwater."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I never had a photo of him at work. They took everything when the facility shut down."',
+        choices: [
+          { text: '"I\'m sorry."', next: 'sorry' },
+          { text: '"He was one of the three researchers."', next: 'three' },
+        ],
+        convergeTo: 'drifter_badge_after',
+      },
+      {
+        id: 'sorry',
+        speaker: 'npc',
+        text: '"Don\'t be. You gave me something I\'ve been looking for my whole life."',
+      },
+      {
+        id: 'three',
+        speaker: 'npc',
+        text: '"Thomas Hoskins. Vincent Harlow. And my father. The three who built the device."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks at you differently now. The wariness is gone.',
+      },
+      {
+        id: 'drifter_badge_after',
+        speaker: 'npc',
+        text: '"My father left notes about what they were building. He knew it was dangerous. He tried to stop it."',
+      },
+      {
+        speaker: 'npc',
+        text: '"That\'s why I\'m here. I\'ve been trying to finish what he started. To shut it down."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But I can\'t do it alone. Not from inside the loop."',
+      },
+    ],
+    effects: {
+      setFlags: ['drifter_saw_badge', 'knows_drifter_is_vasquez_son', 'drifter_told_father', 'knows_1984_incident'],
+      addRapport: { character: 'drifter', amount: 3 },
       advanceTime: 20,
     },
   },

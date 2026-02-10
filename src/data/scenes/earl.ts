@@ -835,6 +835,87 @@ export const earlScenes: Scene[] = [
   },
 
   // ============================================================================
+  // PUZZLE: Player found Thomas's warning in Earl's safe
+  // ============================================================================
+  {
+    id: 'earl_safe_confrontation',
+    character: 'earl',
+    requirements: {
+      flags: ['opened_earl_safe', 'earl_revealed'],
+      notFlags: ['earl_confronted_about_safe'],
+    },
+    priority: 175,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'player',
+        text: '"I opened your safe, Earl."',
+      },
+      {
+        speaker: 'narration',
+        text: 'The color drains from his face.',
+      },
+      {
+        speaker: 'npc',
+        text: '"How-"',
+      },
+      {
+        speaker: 'player',
+        text: '"Thomas wrote the combination in his journal. He knew you\'d have a safe. He knew you\'d hide things."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Earl sits down heavily.',
+      },
+      {
+        speaker: 'player',
+        text: '"Thomas left you a note inside. \'Don\'t turn it on.\' You read it. And you turned it on anyway."',
+        choices: [
+          { text: '"Why?"', next: 'why' },
+          { text: '"He tried to save you from yourself."', next: 'save' },
+        ],
+        convergeTo: 'earl_safe_after',
+      },
+      {
+        id: 'why',
+        speaker: 'npc',
+        text: '"Because I missed him. Because the house was empty and the motel was empty and everything was empty."',
+      },
+      {
+        speaker: 'npc',
+        text: '"And the device hummed when I touched it. Like it was alive. Like he was still in there."',
+      },
+      {
+        id: 'save',
+        speaker: 'npc',
+        text: '"My boy was always trying to save me. From myself. From grief. From the bottle."',
+      },
+      {
+        speaker: 'npc',
+        text: '"And I couldn\'t let him save me from this. Because this was the one thing that kept him close."',
+      },
+      {
+        id: 'earl_safe_after',
+        speaker: 'narration',
+        text: 'He stares at the wall. At the photo of Thomas.',
+      },
+      {
+        speaker: 'npc',
+        text: '"The government told me to hand everything over. I told them to go to hell. And then the loop started and they couldn\'t reach me anymore."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Forty years of hiding from the world. And the world forgot I existed."',
+      },
+    ],
+    effects: {
+      setFlags: ['earl_confronted_about_safe', 'knows_earl_defied_government', 'knows_thomas_warned_earl'],
+      addRapport: { character: 'earl', amount: 2 },
+      advanceTime: 25,
+    },
+  },
+
+  // ============================================================================
   // CONSEQUENCE: Diane confronts Earl after player shared his secret
   // ============================================================================
   {
