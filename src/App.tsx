@@ -154,9 +154,13 @@ function App() {
 
   const endingId = flags.includes('ending_a')
     ? 'ending_a'
-    : flags.includes('ending_d')
-      ? 'ending_d'
-      : null
+    : flags.includes('ending_b')
+      ? 'ending_b'
+      : flags.includes('ending_c')
+        ? 'ending_c'
+        : flags.includes('ending_d')
+          ? 'ending_d'
+          : null
 
   // Render the current tab content
   const renderTabContent = () => {

@@ -349,4 +349,58 @@ export const karenScenes: Scene[] = [
       advanceTime: 15,
     },
   },
+
+  // ============================================================================
+  // Karen & David find the facility keycard together
+  // ============================================================================
+  {
+    id: 'karen_david_facility_visit',
+    character: 'karen',
+    requirements: {
+      flags: ['david_believes_karen', 'karen_followed_to_desert'],
+      notFlags: ['karen_david_visited_facility'],
+    },
+    priority: 72,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"David and I went back to the facility together. After you told him."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She looks different. Lighter. Like something has been resolved between them.',
+      },
+      {
+        speaker: 'npc',
+        text: '"His phone died within a hundred feet of the structure. Just went black."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But I found something. Half-buried by the entrance."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She holds up a keycard. Government-issued. Faded but functional.',
+      },
+      {
+        speaker: 'npc',
+        text: '"This was in the sand. Like someone dropped it forty years ago and the desert kept it."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She hands it to you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Whatever\'s in there — be careful."',
+      },
+    ],
+    effects: {
+      setFlags: ['karen_david_visited_facility'],
+      giveItem: 'facility_keycard',
+      addRapport: { character: 'karen', amount: 2 },
+      advanceTime: 15,
+    },
+  },
 ]

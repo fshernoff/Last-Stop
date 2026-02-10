@@ -21,6 +21,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_loop_cause', text: 'The device in the back room is causing this', category: 'loop' },
   { flag: 'knows_how_to_end', text: 'The cycle can be broken', category: 'loop' },
   { flag: 'knows_loop_duration', text: 'The loop has been active for forty years', category: 'loop' },
+  { flag: 'knows_earl_drove_others_away', text: 'Earl drove away others who remembered before you', category: 'loop' },
 
   // Earl
   { flag: 'met_earl', text: 'Met Earl, the motel owner', category: 'people', character: 'earl' },
@@ -42,15 +43,18 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'knows_karen_unhappy', text: 'Karen and David are having marriage troubles', category: 'people', character: 'karen' },
   { flag: 'knows_karen_desert', text: 'Karen takes walks in the desert alone', category: 'people', character: 'karen' },
   { flag: 'knows_karen_saw_something', text: 'Karen saw something strange in the desert', category: 'people', character: 'karen' },
+  { flag: 'karen_david_visited_facility', text: 'Karen and David found a government keycard at the facility', category: 'people', character: 'karen' },
 
   // David Chen
   { flag: 'met_david', text: 'Met David Chen, another motel guest', category: 'people', character: 'david' },
   { flag: 'knows_david_secret', text: 'David is hiding work trouble from Karen', category: 'people', character: 'david' },
+  { flag: 'david_knows_loop', text: 'David noticed his phone shows the same date repeating', category: 'people', character: 'david' },
 
   // Diane
   { flag: 'met_diane', text: 'Met Diane Mercer, who says she\'s in sales', category: 'people', character: 'diane' },
   { flag: 'knows_diane_investigating', text: 'Diane is investigating the 1984 incident', category: 'people', character: 'diane' },
   { flag: 'knows_diane_files', text: 'Diane has sealed case files', category: 'people', character: 'diane' },
+  { flag: 'diane_will_help', text: 'Diane chose to help end the loop quietly', category: 'people', character: 'diane' },
 
   // Mo
   { flag: 'met_mo', text: 'Met Big Mo, a long-haul trucker', category: 'people', character: 'mo' },
@@ -68,6 +72,7 @@ const KNOWLEDGE_ENTRIES: KnowledgeEntry[] = [
   { flag: 'met_vincent', text: 'Met Vincent, the mysterious guest', category: 'people', character: 'vincent' },
   { flag: 'knows_vincent_connection', text: 'Vincent has a connection to Thomas', category: 'people', character: 'vincent' },
   { flag: 'vincent_was_partner', text: "Vincent was Thomas's research partner", category: 'people', character: 'vincent' },
+  { flag: 'knows_vincent_guilt', text: 'Vincent knew the device was dangerous but said nothing', category: 'people', character: 'vincent' },
   { flag: 'can_enter_room6', text: 'Gained access to Room 6', category: 'places' },
 
   // Places

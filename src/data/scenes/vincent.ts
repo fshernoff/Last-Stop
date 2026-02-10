@@ -560,6 +560,85 @@ export const vincentScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIER 2: Player deduces the mystery (higher priority than full reveal)
+  // ============================================================================
+  {
+    id: 'vincent_player_deduces',
+    character: 'vincent',
+    requirements: {
+      trust: 2,
+      flags: ['vincent_opened_door', 'caught_earl_with_device', 'knows_vincent_is_researcher', 'knows_mo_mile_discrepancy'],
+    },
+    priority: 101,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You have that look. Like you\'ve figured something out."',
+      },
+      {
+        speaker: 'player',
+        text: '"I have. Listen."',
+      },
+      {
+        speaker: 'narration',
+        text: 'You take a breath. You\'ve been piecing this together from a dozen sources. It\'s time to see if you\'re right.',
+      },
+      {
+        speaker: 'player',
+        text: '"Earl\'s grief is powering the device. Every night he talks to Thomas through it. His love is the fuel."',
+      },
+      {
+        speaker: 'player',
+        text: '"The loop bends space — Mo\'s mile markers don\'t match because reality is folded around the motel."',
+      },
+      {
+        speaker: 'player',
+        text: '"And you\'re one of the anchors. You were at the facility in 1984 when the device first activated."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Vincent stares at you. A long silence.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I spent three months trying to piece that together. You did it in days."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He sits on the edge of the bed.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You\'re right. About all of it. Earl has to let go."',
+      },
+      {
+        speaker: 'npc',
+        text: '"He\'s the only one who can turn it off. The device won\'t listen to anyone else."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But he won\'t do it alone. He needs someone to tell him it\'s okay."',
+      },
+    ],
+    effects: {
+      setFlags: [
+        'vincent_told_everything',
+        'knows_how_to_end_loop',
+        'ready_for_ending',
+        'knows_vincent_connection',
+        'knows_how_to_end',
+        'knows_device_purpose',
+        'knows_thomas_role',
+        'player_deduced',
+      ],
+      addRapport: { character: 'vincent', amount: 2 },
+      advanceChapter: 5,
+      advanceTime: 25,
+    },
+  },
+
+  // ============================================================================
   // TIER 2: Full reveal
   // ============================================================================
   {
@@ -684,6 +763,63 @@ export const vincentScenes: Scene[] = [
       addRapport: { character: 'vincent', amount: 2 },
       advanceChapter: 5,
       advanceTime: 30,
+    },
+  },
+
+  // ============================================================================
+  // TIER 2: Vincent's guilt — he knew the device was dangerous
+  // ============================================================================
+  {
+    id: 'vincent_tier2_partners_guilt',
+    character: 'vincent',
+    requirements: {
+      trust: 2,
+      flags: ['vincent_told_everything'],
+      notFlags: ['vincent_confessed_guilt'],
+    },
+    priority: 97,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"There\'s something I left out. When I told you about the device."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He\'s not looking at you. He\'s looking at the wall of notes.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I saw the danger. In the math. Before we ever turned it on."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I told Thomas it was too volatile. He said it would be fine."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I could have stopped him. Refused to help. Reported the project."',
+      },
+      {
+        speaker: 'player',
+        text: '"Why didn\'t you?"',
+      },
+      {
+        speaker: 'npc',
+        text: '"Because I wanted to see if it worked. The same curiosity that killed Thomas is why I\'m still here."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Earl blames himself for turning it on. Thomas blamed himself for building it. But I\'m the one who knew the risks and said nothing."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Three guilty men. One device. Forty years."',
+      },
+    ],
+    effects: {
+      setFlags: ['vincent_confessed_guilt', 'knows_vincent_guilt'],
+      advanceTime: 20,
     },
   },
 ]

@@ -191,6 +191,74 @@ export const davidScenes: Scene[] = [
   },
 
   // ============================================================================
+  // TIER 1: David's phone shows the same date repeating
+  // ============================================================================
+  {
+    id: 'david_phone_anomaly',
+    character: 'david',
+    requirements: {
+      trust: 1,
+      flags: ['met_david', 'knows_loop_exists'],
+      notFlags: ['david_noticed_dates'],
+    },
+    priority: 58,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"Hey, can I ask you something? My phone."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He holds it up. The date reads the same as yesterday. And the day before.',
+      },
+      {
+        speaker: 'npc',
+        text: '"My voicemails are all timestamped the same. My boss left me three messages — all at 2:47 PM on Tuesday."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Am I losing it?"',
+        choices: [
+          { text: '"You\'re not losing it. The day is repeating."', next: 'not_losing_it' },
+          { text: '"Check Karen\'s phone too."', next: 'check_karen' },
+          { text: '"It\'s this place. Something is wrong here."', next: 'this_place' },
+        ],
+        convergeTo: 'david_phone_after',
+      },
+      {
+        id: 'not_losing_it',
+        speaker: 'npc',
+        text: '"What?"',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks at his phone again. Then at you.',
+      },
+      {
+        id: 'check_karen',
+        speaker: 'npc',
+        text: '"She doesn\'t have signal either. We\'re both stuck."',
+      },
+      {
+        id: 'this_place',
+        speaker: 'npc',
+        text: '"I knew it. Karen was right."',
+      },
+      {
+        id: 'david_phone_after',
+        speaker: 'npc',
+        text: '"We need to get out of here. Karen was right about everything."',
+      },
+    ],
+    effects: {
+      setFlags: ['david_noticed_dates', 'david_knows_loop'],
+      addRapport: { character: 'david', amount: 2 },
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 2: Reconciliation
   // ============================================================================
   {

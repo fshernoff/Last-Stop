@@ -170,6 +170,38 @@ const HINT_RULES: HintRule[] = [
       !state.flags.includes('ready_for_ending'),
   },
   {
+    id: 'david_phone',
+    text: 'David keeps checking his phone. He might notice something about the dates.',
+    when: (state) =>
+      state.flags.includes('met_david') &&
+      state.flags.includes('knows_loop_exists') &&
+      !state.flags.includes('david_noticed_dates'),
+  },
+  {
+    id: 'karen_david_facility',
+    text: 'Karen and David might visit the facility now that David believes her.',
+    when: (state) =>
+      state.flags.includes('david_believes_karen') &&
+      state.flags.includes('karen_followed_to_desert') &&
+      !state.flags.includes('karen_david_visited_facility'),
+  },
+  {
+    id: 'deduction_ready',
+    text: 'You have gathered evidence from many sources. Try talking to Vincent.',
+    when: (state) =>
+      state.flags.includes('caught_earl_with_device') &&
+      state.flags.includes('knows_vincent_is_researcher') &&
+      state.flags.includes('knows_mo_mile_discrepancy') &&
+      !state.flags.includes('ready_for_ending'),
+  },
+  {
+    id: 'diane_loyalty_reward',
+    text: "Diane respects your loyalty. Talk to her when you've built enough trust.",
+    when: (state) =>
+      state.flags.includes('diane_refused_deal') &&
+      !state.flags.includes('diane_gave_files_anyway'),
+  },
+  {
     id: 'ending',
     text: 'Return to Earl to decide how the cycle ends.',
     when: (state) => state.flags.includes('ready_for_ending'),

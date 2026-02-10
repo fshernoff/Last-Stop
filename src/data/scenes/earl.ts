@@ -833,4 +833,217 @@ export const earlScenes: Scene[] = [
       advanceTime: 25,
     },
   },
+
+  // ============================================================================
+  // CONSEQUENCE: Diane confronts Earl after player shared his secret
+  // ============================================================================
+  {
+    id: 'earl_diane_confrontation',
+    character: 'earl',
+    requirements: {
+      flags: ['diane_shared_earl_info'],
+      notFlags: ['earl_knows_diane_told'],
+    },
+    priority: 170,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'narration',
+        text: 'Earl is standing behind the desk. He doesn\'t look up when you enter. That\'s unusual.',
+      },
+      {
+        speaker: 'npc',
+        text: '"That woman. Diane. She came to me. Asked about the back room. About Thomas."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He looks at you. Hard.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You told her."',
+        choices: [
+          { text: '"I\'m sorry. I thought she could help."', next: 'apologize' },
+          { text: '"She already knew most of it."', next: 'explain' },
+          { text: '[Say nothing]', next: 'silent' },
+        ],
+        convergeTo: 'earl_confrontation_after',
+      },
+      {
+        id: 'apologize',
+        speaker: 'npc',
+        text: '"Help. Right."',
+      },
+      {
+        speaker: 'narration',
+        text: 'His voice is flat.',
+      },
+      {
+        id: 'explain',
+        speaker: 'npc',
+        text: '"She didn\'t know enough. Not until you filled in the gaps."',
+      },
+      {
+        id: 'silent',
+        speaker: 'narration',
+        text: 'Your silence says everything.',
+      },
+      {
+        id: 'earl_confrontation_after',
+        speaker: 'npc',
+        text: '"I trusted you. I showed you everything. And you handed it to a stranger."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He turns away.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I don\'t know what to do with that. Get out."',
+      },
+    ],
+    effects: {
+      setFlags: ['earl_knows_diane_told', 'earl_trust_damaged'],
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
+  // CONSEQUENCE: Earl forgives player after trust was damaged
+  // ============================================================================
+  {
+    id: 'earl_forgiveness',
+    character: 'earl',
+    requirements: {
+      trust: 2,
+      flags: ['earl_trust_damaged', 'caught_earl_with_device'],
+      notFlags: ['earl_forgave_player'],
+    },
+    priority: 82,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"I\'ve been angry. At you. At myself."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He\'s not looking at you. He\'s looking at the photo of Thomas on the wall.',
+      },
+      {
+        speaker: 'npc',
+        text: '"But you came to the office that night. You saw me talking to Thomas."',
+      },
+      {
+        speaker: 'npc',
+        text: '"You could have used that against me too. You didn\'t."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He turns to face you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Maybe you had your reasons for telling Diane."',
+        choices: [
+          { text: '"I was trying to help."', next: 'help' },
+          { text: '"I\'m sorry."', next: 'sorry' },
+        ],
+        convergeTo: 'earl_forgive_after',
+      },
+      {
+        id: 'help',
+        speaker: 'npc',
+        text: '"I know. I\'m not good at letting people help."',
+      },
+      {
+        id: 'sorry',
+        speaker: 'npc',
+        text: '"I know you are."',
+      },
+      {
+        id: 'earl_forgive_after',
+        speaker: 'narration',
+        text: 'Something softens in his face. Not forgiveness, exactly. But the beginning of it.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Don\'t make me regret this. Again."',
+      },
+    ],
+    effects: {
+      setFlags: ['earl_forgave_player'],
+      addRapport: { character: 'earl', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // TIER 2: Earl's deep confession — forty years of driving people away
+  // ============================================================================
+  {
+    id: 'earl_tier2_forty_years',
+    character: 'earl',
+    requirements: {
+      trust: 2,
+      flags: ['caught_earl_with_device', 'earl_read_journal'],
+      notFlags: ['earl_confessed_forty_years'],
+    },
+    priority: 83,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"You saw me. That night in the office. Talking to the device."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He\'s not asking. He knows.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I\'ve been doing that every night for six months."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But here\'s what I haven\'t told anyone."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He sits down. He looks old.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You\'re not the first person who remembered. Before Vincent. Before you. There were others."',
+      },
+      {
+        speaker: 'player',
+        text: '"What happened to them?"',
+      },
+      {
+        speaker: 'npc',
+        text: '"I drove them away. Every one. They wanted to shut down the device. And I couldn\'t let them."',
+      },
+      {
+        speaker: 'npc',
+        text: '"I told myself I was protecting Thomas. But I was protecting myself. From having to let go."',
+      },
+      {
+        speaker: 'npc',
+        text: '"Three people tried to help me. Three people I pushed out. And now they\'re out there somewhere, forty years older, wondering if this place was a dream."',
+      },
+      {
+        speaker: 'narration',
+        text: 'He stares at his hands.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I don\'t want to do that to you."',
+      },
+    ],
+    effects: {
+      setFlags: ['earl_confessed_forty_years', 'knows_earl_drove_others_away'],
+      advanceTime: 25,
+    },
+  },
 ]

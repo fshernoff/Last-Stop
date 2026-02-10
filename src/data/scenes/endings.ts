@@ -55,6 +55,19 @@ export const endingScenes: Scene[] = [
             effects: { setFlags: ['ending_a'] },
           },
           {
+            text: '"Let me carry this. You\'ve done enough."',
+            next: 'ending_b_path',
+            effects: { setFlags: ['ending_b'] },
+            requiresFlags: ['vincent_was_partner', 'caught_earl_with_device'],
+          },
+          {
+            text: '"Give me the device. I\'m ending this myself."',
+            next: 'ending_c_path',
+            effects: { setFlags: ['ending_c'] },
+            requiresFlags: ['earl_confirmed_government'],
+            requiresItems: ['facility_keycard'],
+          },
+          {
             text: '"I\'m not ready to leave this place."',
             next: 'ending_d_path',
             effects: { setFlags: ['ending_d'] },
@@ -123,6 +136,160 @@ export const endingScenes: Scene[] = [
       {
         speaker: 'narration',
         text: 'Just a last stop.',
+      },
+      {
+        speaker: 'narration',
+        text: '[THE END]',
+      },
+
+      // ── ENDING B: Replace ────────────────────────────────────────────────
+      {
+        id: 'ending_b_path',
+        speaker: 'narration',
+        text: 'Earl stares at you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What are you talking about?"',
+      },
+      {
+        speaker: 'player',
+        text: '"I understand the device now. Vincent helped me see it. It doesn\'t run on electricity or physics. It runs on grief. On love. On not letting go."',
+      },
+      {
+        speaker: 'npc',
+        text: '"You can\'t-"',
+      },
+      {
+        speaker: 'player',
+        text: '"I saw you that night. In the office. Talking to Thomas. I know what it costs you."',
+      },
+      {
+        speaker: 'narration',
+        text: 'You reach for the device. The hum shifts — uncertain, searching.',
+      },
+      {
+        speaker: 'narration',
+        text: 'You think of everyone trapped here. Of Earl, carrying forty years of grief like a stone. Of Thomas, who wanted his father to be free.',
+      },
+      {
+        speaker: 'narration',
+        text: 'The hum settles. It recognizes you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"What did you do?"',
+      },
+      {
+        speaker: 'player',
+        text: '"I gave you what Thomas wanted. Go, Earl. Drive away. For the first time in forty years."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Earl stands motionless. Then something breaks in his face — not grief, but release.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You don\'t know what you\'re taking on."',
+      },
+      {
+        speaker: 'player',
+        text: '"I do. And I\'m choosing it."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Earl walks out. You hear his truck start — a sound that hasn\'t been heard in forty years.',
+      },
+      {
+        speaker: 'narration',
+        text: 'The day resets. You wake at 6AM. The device hums softly on the workbench.',
+      },
+      {
+        speaker: 'narration',
+        text: 'Marge smiles at you from behind the counter.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You look like you belong here, hun."',
+      },
+      {
+        speaker: 'narration',
+        text: 'You do now.',
+      },
+      {
+        speaker: 'narration',
+        text: '[THE END]',
+      },
+
+      // ── ENDING C: Destroy ─────────────────────────────────────────────────
+      {
+        id: 'ending_c_path',
+        speaker: 'narration',
+        text: 'You pull the facility keycard from your pocket. Earl stares at it.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Where did you get that?"',
+      },
+      {
+        speaker: 'player',
+        text: '"The facility. The one the government sealed. There\'s a containment chamber inside. It was built to shut the device down."',
+      },
+      {
+        speaker: 'npc',
+        text: '"You want to destroy it."',
+      },
+      {
+        speaker: 'player',
+        text: '"I want to end this. For real. No more resets. No more grief powering a machine."',
+      },
+      {
+        speaker: 'narration',
+        text: 'Earl looks at the device. At the journal. At the photo of Thomas on the wall.',
+      },
+      {
+        speaker: 'npc',
+        text: '"If you destroy it... Thomas is gone. Really gone. No more talking to him. No more pretending."',
+      },
+      {
+        speaker: 'player',
+        text: '"He\'s been gone for forty years, Earl. You just haven\'t let yourself know it."',
+      },
+      {
+        speaker: 'narration',
+        text: 'A long silence. Then Earl picks up the device and hands it to you.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Do it. Before I change my mind."',
+      },
+      {
+        speaker: 'narration',
+        text: 'You drive to the facility. The keycard works. The containment chamber is exactly where the files said it would be.',
+      },
+      {
+        speaker: 'narration',
+        text: 'You place the device inside. Activate the sequence. The hum rises to a scream.',
+      },
+      {
+        speaker: 'narration',
+        text: 'Then silence.',
+      },
+      {
+        speaker: 'narration',
+        text: 'Forty years of frozen time rush forward. The motel ages in seconds. Paint peels. Windows crack. The desert reclaims what was always hers.',
+      },
+      {
+        speaker: 'narration',
+        text: 'Back at the motel, Vincent stands in the parking lot — older now, frail, blinking in unfamiliar sunlight. Earl sits on the office steps, looking every one of his years.',
+      },
+      {
+        speaker: 'narration',
+        text: 'But the sky is different. The air moves. Time moves.',
+      },
+      {
+        speaker: 'narration',
+        text: 'Not gently. Not kindly. But forward.',
       },
       {
         speaker: 'narration',

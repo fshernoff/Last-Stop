@@ -1,5 +1,5 @@
 interface EndingScreenProps {
-  endingId: 'ending_a' | 'ending_d'
+  endingId: 'ending_a' | 'ending_b' | 'ending_c' | 'ending_d'
   onContinue: () => void
   onReset: () => void
 }
@@ -9,6 +9,16 @@ const ENDING_CONTENT: Record<EndingScreenProps['endingId'], { title: string; sum
     title: 'Ending A: Release',
     summary:
       'Earl lets go. The cycle breaks. Morning comes for the first time in months.',
+  },
+  ending_b: {
+    title: 'Ending B: Replace',
+    summary:
+      "You take Earl's burden. The loop continues, but now it's your choice.",
+  },
+  ending_c: {
+    title: 'Ending C: Destroy',
+    summary:
+      'The device is destroyed. Forty years of frozen time rush forward. Nothing is gentle, but everything is real.',
   },
   ending_d: {
     title: 'Ending D: Stay',

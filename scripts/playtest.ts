@@ -487,6 +487,18 @@ function playThrough(): PlayReport {
         if (!isMidnight(s.currentTime) && s.flags.includes('diane_revealed_incident_details') && !s.flags.includes('vincent_knows_diane')) {
           seekCharacter('vincent', log)
         }
+        // Seek David for phone anomaly scene
+        if (!isMidnight(s.currentTime) && s.flags.includes('met_david') && s.flags.includes('knows_loop_exists') && !s.flags.includes('david_noticed_dates')) {
+          seekCharacter('david', log)
+        }
+        // Seek Karen for facility keycard after David reconciliation
+        if (!isMidnight(s.currentTime) && s.flags.includes('david_believes_karen') && s.flags.includes('karen_followed_to_desert') && !s.flags.includes('karen_david_visited_facility')) {
+          seekCharacter('karen', log)
+        }
+        // Seek Diane for consequence scenes
+        if (!isMidnight(s.currentTime) && s.flags.includes('diane_refused_deal') && !s.flags.includes('diane_gave_files_anyway') && s.trust.diane >= 2) {
+          seekCharacter('diane', log)
+        }
 
         // Try Earl night event between passes (it needs the office at 9-10PM)
         if (!isMidnight(s.currentTime) && s.flags.includes('earl_revealed') && s.flags.includes('has_thomas_journal') && !s.flags.includes('caught_earl_with_device')) {
@@ -523,10 +535,12 @@ function playThrough(): PlayReport {
     }
 
     // Check for endings before reset
-    if (s.flags.includes('ending_complete') || s.flags.includes('ending_a') || s.flags.includes('ending_d')) {
+    if (s.flags.includes('ending_complete') || s.flags.includes('ending_a') || s.flags.includes('ending_b') || s.flags.includes('ending_c') || s.flags.includes('ending_d')) {
       if (s.flags.includes('ending_a')) endingsReached.push('ending_a')
+      if (s.flags.includes('ending_b')) endingsReached.push('ending_b')
+      if (s.flags.includes('ending_c')) endingsReached.push('ending_c')
       if (s.flags.includes('ending_d')) endingsReached.push('ending_d')
-      if (endingsReached.length === 0) endingsReached.push('ending (choice-based — both paths reachable)')
+      if (endingsReached.length === 0) endingsReached.push('ending (choice-based — all paths reachable)')
       logAction(s, log, 'ENDING', `Reached ending: ${endingsReached.join(', ')}`)
       break
     }

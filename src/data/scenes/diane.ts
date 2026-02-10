@@ -533,6 +533,52 @@ export const dianeScenes: Scene[] = [
   },
 
   // ============================================================================
+  // CONSEQUENCE: Diane respects loyalty — gives files despite refusal
+  // ============================================================================
+  {
+    id: 'diane_respects_loyalty',
+    character: 'diane',
+    requirements: {
+      trust: 2,
+      flags: ['diane_refused_deal'],
+      notFlags: ['diane_gave_files_anyway'],
+    },
+    priority: 78,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"I\'ve been thinking about what happened. At the sedan."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She sets down her pen.',
+      },
+      {
+        speaker: 'npc',
+        text: '"You could have traded Earl\'s secret for my files. You didn\'t."',
+      },
+      {
+        speaker: 'npc',
+        text: '"That tells me something about you. That you\'re in this for the right reasons."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She slides an envelope across the table.',
+      },
+      {
+        speaker: 'npc',
+        text: '"Take them. You\'ve earned them."',
+      },
+    ],
+    effects: {
+      setFlags: ['diane_gave_files_anyway'],
+      giveItem: 'sealed_case_files',
+      advanceTime: 15,
+    },
+  },
+
+  // ============================================================================
   // TIER 2: Shows her files
   // ============================================================================
   {
@@ -628,6 +674,77 @@ export const dianeScenes: Scene[] = [
         'knows_thomas_role',
       ],
       addRapport: { character: 'diane', amount: 2 },
+      advanceTime: 20,
+    },
+  },
+
+  // ============================================================================
+  // TIER 2: Diane chooses to help end the loop quietly
+  // ============================================================================
+  {
+    id: 'diane_tier2_decision',
+    character: 'diane',
+    requirements: {
+      trust: 2,
+      flags: ['diane_knows_vincent'],
+      notFlags: ['diane_decided'],
+    },
+    priority: 83,
+    oncePer: 'ever',
+    lines: [
+      {
+        speaker: 'npc',
+        text: '"I have everything I need. Enough evidence to blow this open."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She taps the stack of files on the table.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I could file a report. The government would be here in days."',
+        choices: [
+          { text: '"That would destroy Earl."', next: 'destroy_earl' },
+          { text: '"What about Vincent?"', next: 'what_vincent' },
+          { text: '"What do you want to do?"', next: 'want_to_do' },
+        ],
+        convergeTo: 'diane_decision_after',
+      },
+      {
+        id: 'destroy_earl',
+        speaker: 'npc',
+        text: '"I know."',
+      },
+      {
+        id: 'what_vincent',
+        speaker: 'npc',
+        text: '"He\'d be taken. Studied. A man who survived forty years in a time loop — they\'d never let him go."',
+      },
+      {
+        id: 'want_to_do',
+        speaker: 'narration',
+        text: 'She\'s quiet for a long time.',
+      },
+      {
+        id: 'diane_decision_after',
+        speaker: 'npc',
+        text: '"I became an investigator to find the truth. I found it."',
+      },
+      {
+        speaker: 'npc',
+        text: '"But the truth here isn\'t about files and reports. It\'s about a father who couldn\'t let go of his son."',
+      },
+      {
+        speaker: 'narration',
+        text: 'She closes the folder.',
+      },
+      {
+        speaker: 'npc',
+        text: '"I\'m not filing anything. I\'m going to help you end this. Quietly."',
+      },
+    ],
+    effects: {
+      setFlags: ['diane_decided', 'diane_will_help'],
       advanceTime: 20,
     },
   },
