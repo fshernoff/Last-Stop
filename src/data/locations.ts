@@ -13,12 +13,14 @@ export const LOCATIONS: Record<LocationId, Location> = {
     name: 'Room 2',
     description: "The Chens' room. The DO NOT DISTURB sign sways slightly in the breeze from the AC vent.",
     adjacentTo: ['courtyard'],
+    requiresFlag: 'has_master_key',
   },
   room_4: {
     id: 'room_4',
     name: 'Room 4',
     description: "Diane's room. The curtains are drawn tight. A faint glow suggests a laptop screen inside.",
     adjacentTo: ['courtyard'],
+    requiresFlag: 'has_master_key',
   },
   room_6: {
     id: 'room_6',
@@ -26,18 +28,21 @@ export const LOCATIONS: Record<LocationId, Location> = {
     description:
       'The door is closed. The DO NOT DISTURB sign looks permanent. You hear nothing from inside, but something tells you someone is there.',
     adjacentTo: ['courtyard'],
+    requiresFlag: 'can_enter_room6',
   },
   room_9: {
     id: 'room_9',
     name: 'Room 9',
     description: "Mo's room. A trucker's cap hangs on the door handle. The curtains are open.",
     adjacentTo: ['courtyard'],
+    requiresFlag: 'has_master_key',
   },
   room_11: {
     id: 'room_11',
     name: 'Room 11',
     description: "The Drifter's room. The blinds are bent, as if someone's been peeking through them often.",
     adjacentTo: ['courtyard'],
+    requiresFlag: 'has_master_key',
   },
   parking_lot: {
     id: 'parking_lot',

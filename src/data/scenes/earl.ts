@@ -506,6 +506,7 @@ export const earlScenes: Scene[] = [
       setFlags: [
         'earl_revealed',
         'has_master_key',
+        'can_enter_room6',
         'knows_earl_remembers',
         'knows_loop_cause',
         'knows_earl_built_device',
